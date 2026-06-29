@@ -133,7 +133,7 @@ export function heatOpt({ xLabels, yLabels, matrix }) {
     grid:{ left:104, right:14, top:8, bottom:24 },
     xAxis:{ type:'category', data:xLabels, position:'top', axisLine:{ show:false }, axisTick:{ show:false }, splitLine:{ show:false }, axisLabel:{ color:C.dim, fontFamily:FONT, fontSize:11 } },
     yAxis:{ type:'category', data:yLabels, inverse:true, axisLine:{ show:false }, axisTick:{ show:false }, splitLine:{ show:false }, axisLabel:{ color:C.dim, fontFamily:FONT, fontSize:11 } },
-    visualMap:{ show:false, min:0, max:100, inRange:{ color:['#0E1C35','#143a63','#1f5fa6','#2B8FEA','#5AAFF2'] } },
+    visualMap:{ show:false, min:0, max:100, inRange:{ color:['#1d4172','#2563a8','#2B8FEA','#57a8f0'] } },
     series:[{ type:'heatmap', data, label:{ show:true, color:'#eaf3ff', fontFamily:FONT, fontSize:10, formatter:p=>p.value[2]+'%' },
       itemStyle:{ borderColor:'#0B1628', borderWidth:4, borderRadius:7 },
       emphasis:{ itemStyle:{ borderColor:'#22FF88', borderWidth:2, shadowBlur:12, shadowColor:'rgba(34,255,136,.5)' } } }],

@@ -147,33 +147,18 @@ tbody tr:hover{background:#13234a;border-left-color:var(--green)}
 .foot-note{margin-top:26px;color:var(--dim);font-size:11px;text-align:center}
 .demo-banner{background:linear-gradient(90deg,rgba(43,143,234,.16),rgba(34,255,136,.10));color:var(--blue2);text-align:center;font-size:12px;padding:7px;border-bottom:1px solid var(--line)}
 
-/* ---- hover dynamics & entry ---- */
-.card{transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
-.card:hover{transform:translateY(-3px);border-color:rgba(43,143,234,.35);box-shadow:0 16px 36px -20px rgba(43,143,234,.55)}
-.kpi:hover{border-color:rgba(34,255,136,.35);box-shadow:0 16px 36px -20px rgba(34,255,136,.4)}
-.leak-card:hover{border-color:rgba(255,107,107,.4)}
-.stat-pill{transition:transform .14s ease,border-color .14s ease}
-.stat-pill:hover{transform:translateY(-1px);border-color:var(--blue)}
-.pill-btn{transition:transform .14s ease,border-color .14s ease,color .14s ease}
-.pill-btn:hover{transform:translateY(-1px)}
-.cta{transition:transform .14s ease,box-shadow .14s ease}
-.cta:hover{transform:translateY(-1px);box-shadow:0 12px 30px -8px rgba(34,255,136,.65)}
-.client{transition:border-color .14s ease}
-.client:hover{border-color:var(--blue)}
-.connect{transition:transform .16s ease,border-color .16s ease}
-.connect:hover{transform:translateY(-2px);border-color:rgba(43,143,234,.4)}
-.btn-connect{transition:filter .14s ease,transform .14s ease}
-.btn-connect:hover{filter:brightness(1.08);transform:translateY(-1px)}
-.ask{transition:background .14s ease,transform .14s ease}
-.ask:hover{background:rgba(34,255,136,.16);transform:translateY(-1px)}
-.add-step{transition:.14s} .add-step:hover{border-color:var(--blue);color:#fff}
-.tabset button{transition:.14s}
-tbody tr td{transition:background .12s ease}
+/* ---- subtle static hovers (no floating/lift) + entry ---- */
+.card{transition:border-color .16s ease}
+.card:hover{border-color:rgba(43,143,234,.28)}
+.btn-connect{transition:filter .14s ease}
+.btn-connect:hover{filter:brightness(1.08)}
+.ask{transition:background .14s ease}
+.ask:hover{background:rgba(34,255,136,.16)}
+.add-step:hover{border-color:var(--blue);color:#fff}
 
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.rowgrid>*{animation:fadeIn .32s ease both}
-
-@media(prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+.rowgrid>*{animation:fadeIn .28s ease both}
+@media(prefers-reduced-motion:reduce){*{animation:none !important}}
 
 @media(max-width:1100px){
   .rowgrid>*{grid-column:span 12 !important}
