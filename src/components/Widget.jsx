@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import EChart from './EChart.jsx'
 import GeoMap from './GeoMap.jsx'
-import { lineOpt, barOpt, donutOpt, funnelOpt, sankeyOpt, heatOpt, scatterOpt, gaugeOpt, stackBarOpt, C } from '../lib/charts.js'
+import { lineOpt, barOpt, donutOpt, funnelOpt, sankeyOpt, heatOpt, scatterOpt, gaugeOpt, stackBarOpt, ringOpt, C } from '../lib/charts.js'
 import { CHANNELS, parseMetric, fmtMetric, useFilters } from '../lib/filters.js'
 import { funnelStore } from '../lib/funnelStore.js'
 import { targetsStore } from '../lib/targetsStore.js'
@@ -876,6 +876,31 @@ function SignatureFunnel({ title = 'Funnel overview', spend, steps = [], side = 
   )
 }
 
+function PerformanceFunnel({ title, src, stages = [] }) {
+  const nodes = stages.flatMap((s, i) => {
+    const arr = []
+    if (i > 0) arr.push(
+      <div key={'c' + i} style={{ flex:'0 0 auto', minWidth:70, textAlign:'center' }}>
+        <span className="ms" style={{ color:'var(--muted)', fontSize:20 }}>trending_flat</span>
+        <div style={{ fontFamily:'var(--font-title)', fontWeight:700, fontSize:13, color:'var(--green)' }}>{s.conv}</div>
+      </div>
+    )
+    arr.push(
+      <div key={'s' + i} style={{ flex:'1 1 0', textAlign:'center', minWidth:120 }}>
+        <EChart option={ringOpt({ pct: s.pct, color: s.color, label: s.value })} height={150} />
+        <div style={{ color:'var(--text)', fontWeight:600, marginTop:2 }}>{s.name}</div>
+      </div>
+    )
+    return arr
+  })
+  return (
+    <div className="card">
+      <div className="cardhead"><h3>{title}</h3>{src && <span className="tag-src">{src}</span>}</div>
+      <div style={{ display:'flex', alignItems:'center', gap:4, padding:'8px 0 6px' }}>{nodes}</div>
+    </div>
+  )
+}
+
 export default function Widget({ spec, idx = 0 }) {
   const fil = useFilters()
   const span = { gridColumn: `span ${spec.w || 12}` }
@@ -907,5 +932,6 @@ export default function Widget({ spec, idx = 0 }) {
   if (spec.type === 'changelog') return <div style={span}><Changelog {...spec} /></div>
   if (spec.type === 'trackingHealth') return <div style={span}><TrackingHealth {...spec} /></div>
   if (spec.type === 'signatureFunnel') return <div style={span}><SignatureFunnel {...spec} /></div>
+  if (spec.type === 'perfFunnel') return <div style={span}><PerformanceFunnel {...spec} /></div>
   return null
 }

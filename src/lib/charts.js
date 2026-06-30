@@ -207,3 +207,19 @@ export function gaugeOpt({ value, max = value * 1.5, goal, unit = '' }) {
       style:{ text:`Goal ${fmt(goal)}${unit}`, fill:C.grey, font:`11px ${FONT}` } }],
   }
 }
+
+export function ringOpt({ pct = 100, color = C.green, label = '' }) {
+  return {
+    backgroundColor:'transparent',
+    series:[{
+      type:'pie', radius:['72%','92%'], center:['50%','50%'], silent:true,
+      startAngle:90, label:{ show:false }, labelLine:{ show:false },
+      data:[
+        { value: Math.max(2, pct), itemStyle:{ color: grad(C.blue, color), borderRadius:12, shadowBlur:16, shadowColor: color + '66' } },
+        { value: Math.max(0, 100 - pct), itemStyle:{ color:'rgba(255,255,255,.06)' } },
+      ],
+    }],
+    graphic:[{ type:'text', left:'center', top:'middle',
+      style:{ text: label, fill:'#fff', font:`800 ${label.length > 5 ? 19 : 24}px ${FONT}`, textAlign:'center' } }],
+  }
+}

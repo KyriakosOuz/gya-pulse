@@ -70,6 +70,11 @@ const OVERVIEW = {
       steps:[{name:'Impressions',value:9598,p:'100%'},{name:'Clicks',value:954,p:'9.9%'},{name:'All conversions',value:155,p:'1.6%'},{name:'Conversions',value:143,p:'1.5%'},{name:'Value',value:8,p:'0.08%'}],
       side:[{label:'Avg. CPM',value:'€90.67',delta:'22%',up:true},{label:'Avg. CPC',value:'€0.91',delta:'18%',up:true},{label:'Cost / conv.',value:'€5.62',delta:'7%',up:true},{label:'Conversion rate',value:'0.79%'}],
       footer:'114.3% of previous month'},
+    {type:'perfFunnel',w:12,title:'Performance funnel',src:'Blended · paid',stages:[
+      {name:'Impressions',value:'3.6M',pct:100,color:'#2B8FEA'},
+      {name:'Clicks',value:'83.1K',pct:62,conv:'2.28%',color:'#28C3AE'},
+      {name:'Conversions',value:'8.7K',pct:34,conv:'10.5%',color:'#22FF88'},
+    ]},
     donut('Devices',DEV,6), geoBlock(6,'Revenue by country'),
   ]},
   leadgen:{ sub:'Meta Ads + Google Ads + GA4 + Search Console · vs previous 28 days', blocks:[
