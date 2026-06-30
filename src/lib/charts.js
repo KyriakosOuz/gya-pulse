@@ -156,3 +156,36 @@ export function scatterOpt({ points }) {
       emphasis:{ scale:1.4, itemStyle:{ shadowBlur:14, shadowColor:'rgba(34,255,136,.6)' } } }],
   }
 }
+
+export function gaugeOpt({ value, max = value * 1.5, goal, unit = '' }) {
+  const onTarget = goal == null || value >= goal
+  const col = onTarget ? C.green : C.red
+  return {
+    backgroundColor:'transparent',
+    series:[{
+      type:'gauge', startAngle:210, endAngle:-30, min:0, max,
+      radius:'92%', center:['50%','58%'],
+      progress:{ show:true, width:14, roundCap:true, itemStyle:{ color: grad(C.blue, col) } },
+      axisLine:{ lineStyle:{ width:14, color:[[1,'rgba(255,255,255,.07)']] } },
+      pointer:{ show:false },
+      axisTick:{ show:false }, splitLine:{ show:false },
+      axisLabel:{ show:false },
+      anchor:{ show:false },
+      title:{ show:false },
+      detail:{ valueAnimation:true, offsetCenter:[0,0], fontFamily:FONT, fontWeight:800,
+        fontSize:30, color:'#fff', formatter:v => `${fmt(v)}${unit}` },
+      data:[{ value }],
+      markLine: goal == null ? undefined : {},
+    },
+    // goal marker drawn as a second thin gauge tick band
+    goal == null ? null : {
+      type:'gauge', startAngle:210, endAngle:-30, min:0, max, radius:'92%', center:['50%','58%'],
+      axisLine:{ show:false }, pointer:{ show:false }, axisTick:{ show:false }, splitLine:{ show:false },
+      axisLabel:{ show:false }, detail:{ show:false },
+      data:[{ value:goal }],
+      anchor:{ show:false },
+    }].filter(Boolean),
+    graphic: goal == null ? [] : [{ type:'text', left:'center', top:'82%',
+      style:{ text:`Goal ${fmt(goal)}${unit}`, fill:C.grey, font:`11px ${FONT}` } }],
+  }
+}

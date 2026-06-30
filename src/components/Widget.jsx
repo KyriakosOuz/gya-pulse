@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import EChart from './EChart.jsx'
 import GeoMap from './GeoMap.jsx'
-import { lineOpt, barOpt, donutOpt, funnelOpt, sankeyOpt, heatOpt, scatterOpt, C } from '../lib/charts.js'
+import { lineOpt, barOpt, donutOpt, funnelOpt, sankeyOpt, heatOpt, scatterOpt, gaugeOpt, C } from '../lib/charts.js'
 import { CHANNELS, parseMetric, fmtMetric, useFilters } from '../lib/filters.js'
 import { funnelStore } from '../lib/funnelStore.js'
 import { targetsStore } from '../lib/targetsStore.js'
@@ -72,6 +72,7 @@ function ChartCard({ spec, delay, onSelect }) {
     if (kind === 'sankey') return sankeyOpt(rest)
     if (kind === 'heat') return heatOpt(rest)
     if (kind === 'scatter') return scatterOpt(rest)
+    if (kind === 'gauge') return gaugeOpt(rest)
     return {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spec])
