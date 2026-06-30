@@ -780,6 +780,80 @@ function Branding() {
   )
 }
 
+function HealthScore({ title, score, max = 100, items = [] }) {
+  const pct = Math.round((score / max) * 100)
+  const col = pct >= 80 ? 'var(--green)' : pct >= 60 ? 'var(--blue2)' : 'var(--red)'
+  const dot = s => s === 'ok' ? 'var(--green)' : s === 'warn' ? '#F2B84B' : 'var(--red)'
+  return (
+    <div className="card">
+      <div className="cardhead"><h3>{title}</h3></div>
+      <div style={{ display:'flex', alignItems:'center', gap:18, padding:'4px 2px 12px' }}>
+        <div style={{ fontFamily:'var(--font-title)', fontWeight:800, fontSize:42, color:col, lineHeight:1 }}>{score}<span style={{ fontSize:18, color:'var(--muted)' }}>/{max}</span></div>
+        <div style={{ flex:1 }}>
+          {items.map((it, i) => (
+            <div key={i} style={{ display:'flex', alignItems:'center', gap:9, margin:'5px 0' }}>
+              <span style={{ width:9, height:9, borderRadius:'50%', background:dot(it.status), boxShadow:`0 0 6px ${dot(it.status)}66` }} />
+              <span style={{ color:'var(--text)' }}>{it.label}</span>
+              <small style={{ marginLeft:'auto', color:'var(--muted)' }}>{it.note}</small>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function Leaderboard({ title, rows = [] }) {
+  return (
+    <div className="card" style={{ padding:0, overflow:'hidden' }}>
+      <div className="cardhead" style={{ padding:'16px 18px 4px' }}><h3>{title}</h3></div>
+      <div style={{ padding:'4px 8px 10px' }}>
+        {rows.map((r, i) => (
+          <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'9px 10px', borderTop: i ? '1px solid var(--line)' : 'none' }}>
+            <span style={{ width:22, color:'var(--muted)', fontFamily:'var(--font-title)', fontWeight:700 }}>{i + 1}</span>
+            <div style={{ flex:1 }}><b style={{ color:'#fff' }}>{r.name}</b>{r.sub && <small style={{ display:'block', color:'var(--muted)' }}>{r.sub}</small>}</div>
+            {r.trend && <small style={{ color: r.trend.startsWith('-') ? 'var(--red)' : 'var(--green)' }}>{r.trend}</small>}
+            <span className={`v ${r.status || 'plain'}`} style={{ fontFamily:'var(--font-title)', fontWeight:700 }}>{r.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function Changelog({ title, rows = [] }) {
+  return (
+    <div className="card" style={{ padding:0, overflow:'hidden' }}>
+      <div className="cardhead" style={{ padding:'16px 18px 4px' }}><h3>{title}</h3><span className="tag-src">{rows.length} entries</span></div>
+      <table>
+        <thead><tr><th>Week of</th><th>Campaign updates</th><th>Trends seen</th><th>What we changed &amp; result</th></tr></thead>
+        <tbody>{rows.map((r, i) => (
+          <tr key={i}><td><span className="muted">{r.date}</span></td><td>{r.update}</td><td className="muted">{r.trend}</td><td className="muted">{r.change}</td></tr>
+        ))}</tbody>
+      </table>
+    </div>
+  )
+}
+
+function TrackingHealth({ title, rows = [] }) {
+  const badge = s => s === 'firing'
+    ? { t:'Firing', c:'var(--green)' } : s === 'stale'
+    ? { t:'Stale', c:'#F2B84B' } : { t:'Not firing', c:'var(--red)' }
+  return (
+    <div className="card" style={{ padding:0, overflow:'hidden' }}>
+      <div className="cardhead" style={{ padding:'16px 18px 4px' }}><h3>{title}</h3><span className="tag-src">Pixel / GTM health</span></div>
+      <table>
+        <thead><tr><th>Tag / event</th><th>Source</th><th>Status</th><th className="r">Last seen</th></tr></thead>
+        <tbody>{rows.map((r, i) => { const b = badge(r.status); return (
+          <tr key={i}><td><span className="cname">{r.name}</span></td><td className="muted">{r.source}</td>
+            <td><span style={{ display:'inline-flex', alignItems:'center', gap:7 }}><span style={{ width:9, height:9, borderRadius:'50%', background:b.c, boxShadow:`0 0 6px ${b.c}66` }} /><b style={{ color:b.c }}>{b.t}</b></span></td>
+            <td className="r muted">{r.last}</td></tr>
+        ) })}</tbody>
+      </table>
+    </div>
+  )
+}
+
 export default function Widget({ spec, idx = 0 }) {
   const fil = useFilters()
   const span = { gridColumn: `span ${spec.w || 12}` }
@@ -806,5 +880,9 @@ export default function Widget({ spec, idx = 0 }) {
   if (spec.type === 'kbreak') return <div style={span}><KBreak {...spec} /></div>
   if (spec.type === 'connections') return <div style={span}><Connections /></div>
   if (spec.type === 'note') return <div style={span}><Note {...spec} /></div>
+  if (spec.type === 'healthScore') return <div style={span}><HealthScore {...spec} /></div>
+  if (spec.type === 'leaderboard') return <div style={span}><Leaderboard {...spec} /></div>
+  if (spec.type === 'changelog') return <div style={span}><Changelog {...spec} /></div>
+  if (spec.type === 'trackingHealth') return <div style={span}><TrackingHealth {...spec} /></div>
   return null
 }
