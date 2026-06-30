@@ -462,6 +462,7 @@ const C = {
     ]},
     {type:'chart',kind:'line',title:'Users & sessions over time',src:'GA4',w:8,x:WK,series:[{name:'Sessions',color:BLUE,data:[88,96,92,104,99,112,118,122],area:true},{name:'Users',color:GREEN,data:[64,70,68,77,73,82,85,88],area:true}]},
     donutDev(4), geoBlock(6,'Users by country'), chanHbar(6,'Sessions by channel'),
+    {type:'chart',kind:'scatter',title:'Product performance (CVR × revenue × spend)',src:'GA4',w:6,points:[[10.0,92000,1840],[8.1,78400,980],[7.8,45600,760],[16.3,31000,1240],[9.6,26000,520],[6.1,22800,380],[12.4,18400,610],[3.6,16200,135]]},
   ]},
   'ga4/realtime':{ sub:'Activity in the last 30 minutes', blocks:[
     {type:'kpis',items:[k('Active users now','438','▲ live',true,true,SP.up),k('Views / min','1,204',null,null,null),k('Top channel','Paid Social',null,null,null),k('Conversions (30m)','37','▲',true,true,SP.up)]},
@@ -538,6 +539,8 @@ const C = {
   /* ---------------- GOOGLE ADS ---------------- */
   'ads/overview':{ sub:'Spend, clicks, conversions & ROAS', blocks:[
     {type:'kpis',items:[k('Spend','$27.1k','▲ 6.1%',true,true,SP.up),k('Impressions','1.9M','▲ 4%',true,true,SP.up),k('CTR','3.42%','▲ 0.3%',true,true,SP.up),k('Avg. CPC','$0.74','▼ 5%',true,true,SP.dn),k('Conversions','2,410','▲ 8%',true,true,SP.up),k('ROAS','5.2x','▲ 0.3x',true,true,SP.up)]},
+    {type:'chart',kind:'gauge',title:'Shopping ROAS vs goal',src:'Google Ads',w:4,value:4.8,max:8,goal:4.0,unit:'x'},
+    {type:'kpis',w:8,items:[k('Conversion value','€128,400','+14%',true,true,null),k('Cost / sale','€11.40','-6%',false,true,null),k('Shopping clicks','18,420','+9%',true,true,null),k('ROAS','4.8x','+0.4',true,true,null)]},
     {type:'chart',kind:'line',title:'Spend vs conversions',w:8,x:WK,series:[{name:'Conversions',color:GREEN,data:[280,300,290,330,320,360,380,402],area:true},{name:'Spend ($)',color:BLUE,data:[3.1,3.4,3.3,3.8,3.6,4.0,4.2,4.4]}]},
     {type:'chart',kind:'donut',title:'Spend by campaign type',w:4,legend:true,height:150,data:[{name:'Search',value:52,color:GREEN},{name:'Shopping',value:31,color:BLUE},{name:'PMax',value:17,color:GREY}]},
     geoBlock(12,'Conversions by country'),
@@ -605,6 +608,7 @@ const C = {
     {type:'chart',kind:'line',title:'Spend vs revenue',w:8,x:WK,series:[{name:'Revenue',color:GREEN,data:[120,134,128,150,143,168,180,196],area:true},{name:'Spend',color:BLUE,data:[28,31,30,34,33,37,38,40]}]},
     {type:'chart',kind:'donut',title:'Spend by placement',w:4,legend:true,height:150,data:[{name:'Feed',value:46,color:GREEN},{name:'Reels',value:34,color:BLUE},{name:'Stories',value:20,color:GREY}]},
     chanHbar(12,'Spend by campaign'),
+    {type:'chart',kind:'funnel',title:'Catalog: ATC → Checkout → Buy',src:'Meta Ads',w:6,big:true,steps:[{name:'Add to cart',value:28310,p:'100%'},{name:'Initiate checkout',value:12640,p:'44.6%'},{name:'Purchase',value:7180,p:'25.4%'}]},
   ]},
   'meta/campaigns':{ sub:'6 campaigns · click a row to drill into ad sets & ads · synced 14 min ago', pills:[['campaign','6','Campaigns','var(--blue2)'],['play_circle','4','Active','var(--green)'],['pause_circle','2','Paused','var(--muted)'],['warning','2','Off target','var(--red)']], blocks:[
     {type:'campaignTree',w:12,setLabel:'Ad sets',columns:META_TREE_COLS,rows:META_CAMPAIGNS},
