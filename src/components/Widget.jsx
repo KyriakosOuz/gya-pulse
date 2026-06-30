@@ -690,7 +690,7 @@ function AddClient() {
   function create() {
     const n = name.trim(); if (!n || !fil) return
     const id = n.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + n.length
-    fil.createClient({ id, name: n, type, initial: n[0].toUpperCase(), sub: type === 'ecommerce' ? 'Ecommerce client' : 'Lead-gen client' })
+    fil.createClient({ id, name: n, type, initial: n[0].toUpperCase(), sub: type === 'ecommerce' ? 'Ecommerce client' : type === 'awareness' ? 'Awareness client' : 'Lead-gen client' })
   }
   return (
     <div className="card form-card">
@@ -698,7 +698,7 @@ function AddClient() {
       <p className="muted" style={{ marginTop: 0, fontSize: 13 }}>Create a workspace and pick the client type — it appears in the client switcher (top-left) immediately and opens its dashboard.</p>
       <div className="fld"><label>Client name</label><input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Acme Co" onKeyDown={e => e.key === 'Enter' && create()} /></div>
       <div className="fld"><label>Client type</label>
-        <div className="seg"><button className={type === 'ecommerce' ? 'on' : ''} onClick={() => setType('ecommerce')}>Ecommerce</button><button className={type === 'leadgen' ? 'on' : ''} onClick={() => setType('leadgen')}>Lead-gen</button></div>
+        <div className="seg"><button className={type === 'ecommerce' ? 'on' : ''} onClick={() => setType('ecommerce')}>Ecommerce</button><button className={type === 'leadgen' ? 'on' : ''} onClick={() => setType('leadgen')}>Lead-gen</button><button className={type === 'awareness' ? 'on' : ''} onClick={() => setType('awareness')}>Awareness</button></div>
       </div>
       <button className="btn-primary" disabled={!name.trim()} onClick={create}><span className="ms">add</span> Create client</button>
     </div>
