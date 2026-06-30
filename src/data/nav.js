@@ -1,68 +1,47 @@
 // Two-level navigation: rail sources -> secondary sub-tabs.
-// Navigation is a function of client type — ecommerce and lead-gen clients
-// get different targeted sections (Products/Customers vs Leads).
+// Navigation is a function of client type — ecommerce clients get Google Merchant,
+// lead-gen clients get Webinars. Everything else is shared, Overview-only per the brief.
 
-const FUNNELS = { key: 'funnels', icon: 'filter_alt', label: 'Funnels', eyebrow: 'Flagship · funnels & journeys', title: 'FUNNELS & JOURNEYS', tabs: [
-  { key: 'builder', icon: 'filter_alt', label: 'Builder', star: true },
-  { key: 'ecommerce', icon: 'shopping_cart', label: 'Ecommerce funnel' },
-  { key: 'lead', icon: 'person_add', label: 'Lead funnel' },
-  { key: 'journeys', icon: 'account_tree', label: 'Journeys' },
-  { key: 'saved', icon: 'bookmark', label: 'Saved funnels' },
-] }
+const OVERVIEW = { key: 'overview', icon: 'space_dashboard', label: 'Overview', eyebrow: 'Blended · all channels' }
 
-const GA4 = { key: 'ga4', icon: 'monitoring', label: 'GA4', title: 'GOOGLE ANALYTICS', tabs: [
+const META = { key: 'meta', icon: 'campaign', label: 'Meta', title: 'META ADS', tabs: [
   { key: 'overview', icon: 'dashboard', label: 'Overview' },
-  { key: 'realtime', icon: 'bolt', label: 'Realtime' },
-  { key: 'acquisition', icon: 'call_split', label: 'Acquisition' },
-  { key: 'engagement', icon: 'touch_app', label: 'Engagement' },
-  { key: 'funnels', icon: 'filter_alt', label: 'Funnels & Journeys', star: true },
-  { key: 'conversions', icon: 'flag', label: 'Conversions' },
-  { key: 'monetization', icon: 'payments', label: 'Monetization' },
-  { key: 'retention', icon: 'history', label: 'Retention' },
-  { key: 'demographics', icon: 'groups', label: 'Demographics' },
-  { key: 'tech', icon: 'devices', label: 'Tech' },
-  { key: 'explore', icon: 'tune', label: 'Explore' },
 ] }
 
 const ADS = { key: 'ads', icon: 'ads_click', label: 'Ads', title: 'GOOGLE ADS', tabs: [
   { key: 'overview', icon: 'dashboard', label: 'Overview' },
-  { key: 'campaigns', icon: 'campaign', label: 'Campaigns' },
-  { key: 'adgroups', icon: 'ad_group', label: 'Ad groups / Ads' },
-  { key: 'keywords', icon: 'key', label: 'Keywords & terms' },
-  { key: 'funnel', icon: 'filter_alt', label: 'Conversion funnel', star: true },
-  { key: 'audiences', icon: 'groups', label: 'Audiences' },
-  { key: 'geo', icon: 'public', label: 'Devices & Geo' },
+] }
+
+const GA4 = { key: 'ga4', icon: 'monitoring', label: 'GA4', title: 'GOOGLE ANALYTICS', tabs: [
+  { key: 'overview', icon: 'dashboard', label: 'Overview' },
+  { key: 'events', icon: 'touch_app', label: 'In-page actions' },
+  { key: 'demographics', icon: 'groups', label: 'Demographics' },
 ] }
 
 const SEARCH = { key: 'search', icon: 'travel_explore', label: 'Search', title: 'SEARCH CONSOLE', tabs: [
   { key: 'overview', icon: 'dashboard', label: 'Overview' },
-  { key: 'queries', icon: 'search', label: 'Queries' },
-  { key: 'pages', icon: 'description', label: 'Pages' },
-  { key: 'geo', icon: 'public', label: 'Countries & devices' },
-  { key: 'trends', icon: 'trending_up', label: 'Trends' },
 ] }
 
-const META = { key: 'meta', icon: 'campaign', label: 'Meta', title: 'META ADS', tabs: [
+// Ecommerce-only
+const MERCHANT = { key: 'merchant', icon: 'storefront', label: 'Merchant', title: 'GOOGLE MERCHANT', tabs: [
   { key: 'overview', icon: 'dashboard', label: 'Overview' },
-  { key: 'campaigns', icon: 'campaign', label: 'Campaigns' },
-  { key: 'adsets', icon: 'ad_group', label: 'Ad sets / Ads' },
-  { key: 'breakdowns', icon: 'pie_chart', label: 'Breakdowns' },
 ] }
 
-const YOUTUBE = { key: 'youtube', icon: 'smart_display', label: 'YouTube', title: 'YOUTUBE ANALYTICS', tabs: [
+// Lead-gen-only
+const WEBINAR = { key: 'webinar', icon: 'co_present', label: 'Webinars', title: 'ZOOM / WEBINARS', tabs: [
   { key: 'overview', icon: 'dashboard', label: 'Overview' },
-  { key: 'videos', icon: 'movie', label: 'Videos' },
-  { key: 'audience', icon: 'groups', label: 'Audience' },
+  { key: 'funnel', icon: 'filter_alt', label: 'Webinar funnel', star: true },
 ] }
-const LINKEDIN = { key: 'linkedin', icon: 'work', label: 'LinkedIn', title: 'LINKEDIN ANALYTICS', tabs: [
+
+// Placeholder integrations (all types) — content deferred to post-MVP
+const YOUTUBE = { key: 'youtube', icon: 'smart_display', label: 'YouTube', title: 'YOUTUBE', tabs: [
   { key: 'overview', icon: 'dashboard', label: 'Overview' },
-  { key: 'content', icon: 'article', label: 'Content' },
-  { key: 'followers', icon: 'group_add', label: 'Followers' },
+] }
+const LINKEDIN = { key: 'linkedin', icon: 'work', label: 'LinkedIn', title: 'LINKEDIN', tabs: [
+  { key: 'overview', icon: 'dashboard', label: 'Overview' },
 ] }
 const SOCIAL = { key: 'social', icon: 'thumb_up', label: 'Social', title: 'META SOCIAL (IG / FB)', tabs: [
   { key: 'overview', icon: 'dashboard', label: 'Overview' },
-  { key: 'instagram', icon: 'photo_camera', label: 'Instagram' },
-  { key: 'facebook', icon: 'public', label: 'Facebook' },
 ] }
 
 const CLIENTS_NAV = { key: 'clients', icon: 'groups', label: 'Clients', title: 'AGENCY', tabs: [
@@ -74,61 +53,21 @@ const CLIENTS_NAV = { key: 'clients', icon: 'groups', label: 'Clients', title: '
 
 const SETTINGS = { key: 'settings', icon: 'settings', label: 'Settings', title: 'SETTINGS', tabs: [
   { key: 'connections', icon: 'link', label: 'Connections' },
-  { key: 'health', icon: 'monitor_heart', label: 'Tracking health' },
   { key: 'targets', icon: 'target', label: 'KPI targets' },
-  { key: 'alerts', icon: 'notifications', label: 'Alerts' },
   { key: 'branding', icon: 'palette', label: 'Branding' },
   { key: 'team', icon: 'group', label: 'Team' },
+  { key: 'health', icon: 'monitor_heart', label: 'Tracking health' },
   { key: 'log', icon: 'history_edu', label: 'Reporting log' },
 ] }
 
-// Ecommerce-only sections
-const PRODUCTS = { key: 'products', icon: 'inventory_2', label: 'Products', eyebrow: 'Ecommerce · product performance', title: 'PRODUCTS', tabs: [
-  { key: 'overview', icon: 'leaderboard', label: 'Top products' },
-  { key: 'categories', icon: 'category', label: 'Categories' },
-  { key: 'shopping', icon: 'storefront', label: 'Shopping feed' },
-  { key: 'inventory', icon: 'inventory', label: 'Inventory & stock' },
-] }
-
-const CUSTOMERS = { key: 'customers', icon: 'diversity_3', label: 'Customers', eyebrow: 'Retention & lifetime value', title: 'CUSTOMERS', tabs: [
-  { key: 'retention', icon: 'history', label: 'Retention' },
-  { key: 'cohorts', icon: 'grid_on', label: 'Cohorts' },
-  { key: 'ltv', icon: 'savings', label: 'LTV & CAC' },
-] }
-
-// Lead-gen-only section
-const LEADS = { key: 'leads', icon: 'person_add', label: 'Leads', eyebrow: 'Lead-gen · pipeline', title: 'LEAD GENERATION', tabs: [
-  { key: 'overview', icon: 'dashboard', label: 'Overview' },
-  { key: 'funnel', icon: 'filter_alt', label: 'Acquisition funnel', star: true },
-  { key: 'channels', icon: 'call_split', label: 'Channels & landing' },
-  { key: 'quality', icon: 'verified', label: 'Lead quality' },
-] }
-
-const WEBINAR = { key: 'webinar', icon: 'co_present', label: 'Webinars', eyebrow: 'B2B · Zoom & webinars', title: 'WEBINARS', tabs: [
-  { key: 'overview', icon: 'dashboard', label: 'Overview' },
-  { key: 'attendance', icon: 'groups', label: 'Attendance' },
-  { key: 'funnel', icon: 'filter_alt', label: 'Webinar funnel', star: true },
-] }
-
-// Awareness-only section (TOFU brand reach)
-const AWARENESS = { key: 'awareness', icon: 'visibility', label: 'Brand reach', eyebrow: 'Awareness · top of funnel', title: 'BRAND REACH', tabs: [
-  { key: 'overview', icon: 'dashboard', label: 'Overview' },
-  { key: 'reach', icon: 'public', label: 'Reach & geo' },
-  { key: 'video', icon: 'play_circle', label: 'Video engagement' },
-  { key: 'organic', icon: 'travel_explore', label: 'Organic visibility' },
-] }
-
 export function buildNav(clientType = 'ecommerce') {
-  const overview = { key: 'overview', icon: 'space_dashboard', label: 'Overview', eyebrow: 'Blended · all channels' }
-  const targeted = clientType === 'leadgen' ? [LEADS, WEBINAR]
-    : clientType === 'awareness' ? [AWARENESS]
-    : [PRODUCTS, CUSTOMERS]
   return [
-    overview,
-    ...targeted,
-    FUNNELS,
+    OVERVIEW,
+    META, ADS, GA4, SEARCH,
+    ...(clientType === 'ecommerce' ? [MERCHANT] : []),
+    ...(clientType === 'leadgen' ? [WEBINAR] : []),
     { key: 'sep' },
-    GA4, ADS, SEARCH, META, SOCIAL, YOUTUBE, LINKEDIN,
+    YOUTUBE, LINKEDIN, SOCIAL,
     { key: 'sep' },
     CLIENTS_NAV, SETTINGS,
   ]
