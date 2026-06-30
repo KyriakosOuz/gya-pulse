@@ -49,6 +49,22 @@ const META = { key: 'meta', icon: 'campaign', label: 'Meta', title: 'META ADS', 
   { key: 'breakdowns', icon: 'pie_chart', label: 'Breakdowns' },
 ] }
 
+const YOUTUBE = { key: 'youtube', icon: 'smart_display', label: 'YouTube', title: 'YOUTUBE ANALYTICS', tabs: [
+  { key: 'overview', icon: 'dashboard', label: 'Overview' },
+  { key: 'videos', icon: 'movie', label: 'Videos' },
+  { key: 'audience', icon: 'groups', label: 'Audience' },
+] }
+const LINKEDIN = { key: 'linkedin', icon: 'work', label: 'LinkedIn', title: 'LINKEDIN ANALYTICS', tabs: [
+  { key: 'overview', icon: 'dashboard', label: 'Overview' },
+  { key: 'content', icon: 'article', label: 'Content' },
+  { key: 'followers', icon: 'group_add', label: 'Followers' },
+] }
+const SOCIAL = { key: 'social', icon: 'thumb_up', label: 'Social', title: 'META SOCIAL (IG / FB)', tabs: [
+  { key: 'overview', icon: 'dashboard', label: 'Overview' },
+  { key: 'instagram', icon: 'photo_camera', label: 'Instagram' },
+  { key: 'facebook', icon: 'public', label: 'Facebook' },
+] }
+
 const CLIENTS_NAV = { key: 'clients', icon: 'groups', label: 'Clients', title: 'AGENCY', tabs: [
   { key: 'portfolio', icon: 'grid_view', label: 'Portfolio' },
   { key: 'master', icon: 'leaderboard', label: 'Master roll-up' },
@@ -112,7 +128,7 @@ export function buildNav(clientType = 'ecommerce') {
     ...targeted,
     FUNNELS,
     { key: 'sep' },
-    GA4, ADS, SEARCH, META,
+    GA4, ADS, SEARCH, META, SOCIAL, YOUTUBE, LINKEDIN,
     { key: 'sep' },
     CLIENTS_NAV, SETTINGS,
   ]
