@@ -25,20 +25,46 @@ function firstTabs(nav) {
   return Object.fromEntries(nav.filter(n => n.tabs).map(n => [n.key, n.tabs[0].key]))
 }
 
-function aiResponse(ai, client, page) {
+// Static map: active source key → blurb + 2-3 key metrics for that section.
+// Used by aiResponse to produce tab-aware mock narratives.
+const SOURCE_CONTEXT = {
+  overview:  { blurb: 'blended performance across all channels',          metrics: 'blended ROAS, total spend, and cross-channel CVR' },
+  ga4:       { blurb: 'Google Analytics 4 site behaviour',                metrics: 'Sessions, Engagement Rate, and Goal Completions' },
+  ads:       { blurb: 'Google Ads paid search',                           metrics: 'Impressions, CTR, CPC, and Conversion Value' },
+  search:    { blurb: 'Search Console organic visibility',                 metrics: 'Total Clicks, Average Position, and organic CTR' },
+  meta:      { blurb: 'Meta Ads (Facebook & Instagram)',                   metrics: 'Reach, CPM, Link Clicks, and purchase ROAS' },
+  social:    { blurb: 'Meta organic social (IG & FB)',                     metrics: 'Reach, Engagement Rate, and Follower Growth' },
+  youtube:   { blurb: 'YouTube channel analytics',                         metrics: 'Views, Watch Time, Avg View Duration, and Subscriber Growth' },
+  linkedin:  { blurb: 'LinkedIn campaign performance',                     metrics: 'Impressions, CTR, and Cost Per Lead' },
+  awareness: { blurb: 'brand reach and top-of-funnel',                    metrics: 'Total Reach, Frequency, Video Completion Rate, and Share of Voice' },
+  leads:     { blurb: 'lead generation pipeline',                          metrics: 'Lead Volume, Cost Per Lead, and Lead Quality Rate' },
+  webinar:   { blurb: 'webinar registrations and attendance',              metrics: 'Registrations, Attendance Rate, and Cost Per Attendee' },
+  products:  { blurb: 'product catalogue and ecommerce performance',       metrics: 'Revenue by Product, Units Sold, and Add-to-Cart Rate' },
+  customers: { blurb: 'customer retention and lifetime value',             metrics: 'LTV, CAC, Retention Rate, and Cohort Revenue' },
+  funnels:   { blurb: 'conversion funnels and user journeys',              metrics: 'Drop-off Rate, Step Conversion, and Time-to-Convert' },
+}
+const DEFAULT_SOURCE_CTX = { blurb: 'this section', metrics: 'key performance indicators, trends, and conversion metrics' }
+
+function aiResponse(ai, client, page, source) {
   if (ai.kind === 'campaign') {
     return `Here's my read on "${ai.name}":\n\n• It's pacing ahead of budget — spend is tracking above plan for the period, so expect it to exhaust early.\n• Efficiency is healthy: CTR and ROAS are both above target, so the over-pacing is buying profitable volume, not waste.\n• Watch frequency on the top ad set — returns usually soften past ~3.0.\n\nRecommendation: raise the budget cap 15–20% while ROAS holds above target, and refresh the lowest-CTR creative before fatigue sets in.`
   }
+  const ctx = SOURCE_CONTEXT[source] || DEFAULT_SOURCE_CTX
   const ecom = client.type === 'ecommerce'
+  const leadgen = client.type === 'leadgen'
   if (ecom) {
-    return `Performance summary for ${client.name} — ${page}:\n\n• Revenue is up 14% on 8% more spend, so blended ROAS held at 4.76x — you're scaling efficiently.\n• AOV ($43.51) and footwear momentum (+18%) are the growth drivers.\n• The drag is conversion rate (down 2.7%), concentrated on mobile checkout.\n\nTop 3 actions:\n1. Ship a one-page mobile checkout — biggest single lever.\n2. Shift budget toward footwear / retargeting where ROAS is highest.\n3. Build a cart-abandonment flow; 62% of viewers never add to cart.`
+    return `Performance summary for ${client.name} — ${ctx.blurb}:\n\n• Revenue is up 14% on 8% more spend; blended ROAS held at 4.76× — you're scaling efficiently. Key signals here: ${ctx.metrics}.\n• AOV ($43.51) and footwear momentum (+18%) are the growth drivers.\n• The drag is conversion rate (down 2.7%), concentrated on mobile checkout.\n\nTop 3 actions:\n1. Ship a one-page mobile checkout — biggest single lever.\n2. Shift budget toward footwear / retargeting where ROAS is highest.\n3. Build a cart-abandonment flow; 62% of viewers never add to cart.`
   }
-  return `Performance summary for ${client.name} — ${page}:\n\n• Lead volume is up 12% while CPL fell 6% to $30 — more leads, cheaper.\n• Quality held at 65% qualified; Paid Search brings the best-qualified leads.\n• Paid Social is cheapest per lead but converts lower downstream.\n\nTop 3 actions:\n1. Reallocate budget toward Paid Search for qualified volume.\n2. Tighten Paid Social targeting to lift lead quality.\n3. Add CRM data so we can optimise to closed revenue, not just leads.`
+  if (leadgen) {
+    return `Performance summary for ${client.name} — ${ctx.blurb}:\n\n• Lead volume is up 12% while CPL fell 6% to $30. Watching ${ctx.metrics} here confirms the efficiency gain is real.\n• Quality held at 65% qualified; Paid Search brings the best-qualified leads.\n• Paid Social is cheapest per lead but converts lower downstream.\n\nTop 3 actions:\n1. Reallocate budget toward Paid Search for qualified volume.\n2. Tighten Paid Social targeting to lift lead quality.\n3. Add CRM data so we can optimise to closed revenue, not just leads.`
+  }
+  // awareness default
+  return `Performance summary for ${client.name} — ${ctx.blurb}:\n\n• Brand reach is expanding: ${ctx.metrics} are all trending positively over the period.\n• Frequency is within the 2–4× sweet spot, and Video Completion Rate (68%) is above the 55% industry benchmark.\n• Organic and paid reach are complementing each other with no significant audience overlap eating into efficiency.\n\nTop 3 actions:\n1. Double down on the top-performing creative format — video completions are driving the highest brand recall.\n2. Expand geo targeting to the two secondary markets showing organic traction.\n3. Set up a brand lift study to tie reach metrics to downstream search intent.`
 }
 
-function AIDrawer({ ai, client, page, onClose }) {
+function AIDrawer({ ai, client, page, source, onClose }) {
   const [shown, setShown] = useState('')
-  const full = useMemo(() => ai ? aiResponse(ai, client, page) : '', [ai, client, page])
+  const full = useMemo(() => ai ? aiResponse(ai, client, page, source) : '', [ai, client, page, source])
   useEffect(() => {
     if (!ai) return
     setShown('')
@@ -271,7 +297,7 @@ export default function App() {
           <div className="foot-note">GYA Pulse · prototype with sample data · {nav.filter(n => n.key !== 'sep').length} sections · {TYPE_LABEL[client.type]} view</div>
         </div>
       </main>
-      <AIDrawer ai={ai} client={client} page={title} onClose={() => setAi(null)} />
+      <AIDrawer ai={ai} client={client} page={title} source={source} onClose={() => setAi(null)} />
       {toast && <div className={`toast ${toast.ok ? 'ok' : 'err'}`}><span className="ms">{toast.ok ? 'check_circle' : 'error'}</span>{toast.text}</div>}
     </div>
     </FilterContext.Provider>
