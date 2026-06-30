@@ -746,6 +746,15 @@ const C = {
   ]},
 
   /* ---------------- AWARENESS tabs ---------------- */
+  'awareness/overview':{ sub:'Top-of-funnel brand reach summary', blocks:[
+    {type:'kpis',w:12,items:[
+      k('Reach','1.84M','+22%',true,true,null), k('Impressions','4.21M','+18%',true,true,null),
+      k('Frequency','2.3','+0.2',true,'plain',null), k('Video 100% plays','15%','+3%',true,true,null),
+    ]},
+    {type:'chart',kind:'stack',title:'Video engagement (play %)',src:'Meta Ads',w:7,...AW_VIDEO},
+    {type:'chart',kind:'donut',title:'New vs Returning',src:'GA4',w:5,legend:true,height:150,data:AW_NVR},
+    {type:'geo',title:'Geographic reach',w:12,data:GEO,height:230},
+  ]},
   'awareness/reach':{ sub:'Reach, frequency & geographic penetration', blocks:[
     {type:'kpis',w:12,items:[k('Reach','1.84M','+22%',true,true,null),k('Frequency','2.3','+0.2',true,'plain',null),k('Impressions','4.21M','+18%',true,true,null),k('CPM','€4.90','-6%',false,true,null)]},
     {type:'geo',title:'Reach by country',w:7,data:GEO,height:300},
@@ -831,6 +840,6 @@ export function getContent(source, tab, clientType = 'ecommerce') {
   const key = `${source}/${tab}`
   if (clientType === 'leadgen' && LEAD_OVERRIDE[key]) return LEAD_OVERRIDE[key]
   if (clientType === 'awareness' && AWARENESS_OVERRIDE[key]) return AWARENESS_OVERRIDE[key]
-  if (clientType === 'awareness' && key.startsWith('awareness/')) return C[key]
+  if (clientType === 'awareness' && key.startsWith('awareness/')) return C[key] || { sub:'', blocks:[{ type:'note', title:'Coming soon', text:'This tab is part of the full build.' }] }
   return C[key] || { sub:'', blocks:[{ type:'note', title:'Coming soon', text:'This tab is part of the full build.' }] }
 }
