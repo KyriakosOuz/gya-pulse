@@ -89,9 +89,9 @@ button,input,select,textarea,table{font-family:var(--font-body)}
 .kpi.good{border-left-color:var(--green);box-shadow:inset 0 0 0 1px rgba(34,255,136,.12),0 0 24px -8px rgba(34,255,136,.3)}
 .kpi.bad{border-left-color:var(--red)}
 .kpi.neutral{border-left-color:var(--blue)}
-.kpi.good:hover{border-color:rgba(34,255,136,.4);box-shadow:inset 0 0 0 1px rgba(34,255,136,.18),0 0 28px -8px rgba(34,255,136,.4);transform:translateY(-2px)}
+.kpi.good:hover{border-color:rgba(34,255,136,.28)}
 .kpi .klabel{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.1em;text-transform:uppercase}
-.kpi .kval{font-family:var(--font-title);font-size:40px;font-weight:700;color:var(--white);margin:8px 0 11px;line-height:1.02;letter-spacing:-.02em}
+.kpi .kval{font-family:var(--font-title);font-size:27px;font-weight:700;color:var(--white);margin:6px 0 9px;line-height:1.05;letter-spacing:-.02em}
 .kpi .krow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .tag{font-family:var(--font-title);font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid transparent}
 .tag.good{background:rgba(34,255,136,.12);border-color:rgba(34,255,136,.4);color:#22FF88}
@@ -157,8 +157,7 @@ tbody tr:hover{background:#13234a;border-left-color:var(--green)}
 .demo-banner{background:linear-gradient(90deg,rgba(43,143,234,.16),rgba(34,255,136,.10));color:var(--blue2);text-align:center;font-size:12px;padding:7px;border-bottom:1px solid var(--line)}
 
 /* ---- premium card glow + lift on hover (research item 7) ---- */
-.card:hover{border-color:rgba(43,143,234,.25);box-shadow:0 0 28px -8px rgba(43,143,234,.25);transform:translateY(-2px)}
-@media(prefers-reduced-motion:reduce){.card:hover,.kpi.good:hover{transform:none}}
+.card:hover{border-color:rgba(43,143,234,.16)}
 .btn-connect{transition:filter .14s ease}
 .btn-connect:hover{filter:brightness(1.08)}
 .ask{transition:background .14s ease}
