@@ -58,6 +58,7 @@ const CLIENTS_NAV = { key: 'clients', icon: 'groups', label: 'Clients', title: '
 
 const SETTINGS = { key: 'settings', icon: 'settings', label: 'Settings', title: 'SETTINGS', tabs: [
   { key: 'connections', icon: 'link', label: 'Connections' },
+  { key: 'health', icon: 'monitor_heart', label: 'Tracking health' },
   { key: 'targets', icon: 'target', label: 'KPI targets' },
   { key: 'alerts', icon: 'notifications', label: 'Alerts' },
   { key: 'branding', icon: 'palette', label: 'Branding' },

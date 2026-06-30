@@ -658,6 +658,22 @@ const C = {
 
   /* ---------------- SETTINGS ---------------- */
   'settings/connections':{ sub:'Connect data sources for this client', blocks:[ {type:'connections'} ]},
+  'settings/health':{ sub:'Pixel / GTM firing status across tracked events', blocks:[
+    {type:'kpis',w:12,items:[k('Tags firing','11 / 13',null,true,'good',null),k('Stale tags','1',null,false,'plain',null),k('Not firing','1',null,false,'bad',null),k('Last container push','2d ago',null,true,'plain',null)]},
+    {type:'trackingHealth',w:12,title:'Tag & event health',rows:[
+      {name:'GA4 config',source:'GTM · All pages',status:'firing',last:'just now'},
+      {name:'page_view',source:'GA4',status:'firing',last:'just now'},
+      {name:'CRS — sign_up',source:'GA4 · Signups case',status:'firing',last:'4 min ago'},
+      {name:'AlbaPV — purchase',source:'GA4 · Ecommerce case',status:'firing',last:'8 min ago'},
+      {name:'add_to_cart',source:'GA4',status:'firing',last:'12 min ago'},
+      {name:'Meta Pixel — PageView',source:'Meta',status:'firing',last:'just now'},
+      {name:'Meta Pixel — Purchase',source:'Meta',status:'stale',last:'3h ago'},
+      {name:'begin_checkout',source:'GA4',status:'firing',last:'15 min ago'},
+      {name:'Google Ads — conversion',source:'Google Ads',status:'firing',last:'9 min ago'},
+      {name:'form_submit',source:'GA4',status:'down',last:'2d ago'},
+    ]},
+    {type:'insight',icon:'warning',tone:'bad',title:'form_submit stopped firing 2 days ago',text:'The lead form conversion tag has not fired since the last site deploy. Check the GTM trigger and the form selector before trusting CPL this period.'},
+  ]},
   'settings/targets':{ sub:'These targets drive the green / red coloring across campaigns, KPIs & the detail panel', blocks:[
     {type:'note',icon:'target',title:'One source of truth',text:'Edit a target below and it updates everywhere instantly — the campaign detail panel’s KPI breakdown and on-target pills all read these same definitions.'},
     {type:'kpiTargets',w:12},
