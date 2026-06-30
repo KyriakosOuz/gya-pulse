@@ -170,7 +170,7 @@ export default function App() {
     <FilterContext.Provider value={fil}>
     <div className="app">
       <nav className="rail">
-        <div className="logo"><Logo /></div>
+        <div className="logo"><Logo /><small style={{ display: 'block', marginTop: 6, fontFamily: 'var(--font-title)', fontWeight: 800, letterSpacing: '.08em', fontSize: 13, color: '#fff' }}>MARΣ</small></div>
         <div className="rail-nav">
           {nav.map((n, i) => n.key === 'sep'
             ? <div className="rail-sep" key={'sep' + i} />
@@ -294,7 +294,7 @@ export default function App() {
             {content.blocks.map((b, i) => loading ? <Skeleton key={i} spec={b} /> : <Widget key={i} spec={b} idx={i} />)}
           </div>
 
-          <div className="foot-note">GYA Pulse · prototype with sample data · {nav.filter(n => n.key !== 'sep').length} sections · {TYPE_LABEL[client.type]} view</div>
+          <div className="foot-note">MARΣ · Media-Intelligence &amp; Advanced Reporting System · prototype with sample data · {nav.filter(n => n.key !== 'sep').length} sections · {TYPE_LABEL[client.type]} view</div>
         </div>
       </main>
       <AIDrawer ai={ai} client={client} page={title} source={source} onClose={() => setAi(null)} />
