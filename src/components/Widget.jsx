@@ -2,6 +2,7 @@ import { Fragment, useEffect, useMemo, useRef, useState, useSyncExternalStore } 
 import EChart from './EChart.jsx'
 import GeoMap from './GeoMap.jsx'
 import { ResponsiveFunnel } from '@nivo/funnel'
+import HFunnel from './HFunnel.jsx'
 import { lineOpt, barOpt, donutOpt, funnelOpt, sankeyOpt, heatOpt, scatterOpt, gaugeOpt, stackBarOpt, ringOpt, C } from '../lib/charts.js'
 import { nivoTheme, FUNNEL_COLORS } from '../lib/nivoTheme.js'
 import { CHANNELS, parseMetric, fmtMetric, useFilters } from '../lib/filters.js'
@@ -97,7 +98,9 @@ function ChartCard({ spec, delay, onSelect }) {
   return (
     <div className="card">
       <div className="cardhead"><h3>{title}</h3>{src && <span className="tag-src">{src}</span>}</div>
-      {kind === 'donut' && rest.legend
+      {kind === 'hfunnel'
+        ? <HFunnel steps={rest.steps} height={height || 300} />
+        : kind === 'donut' && rest.legend
         ? <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <div style={{ width: 130 }}><EChart option={opt} height={height || 150} delay={delay} onSelect={onSelect} /></div>
             <div style={{ flex: 1, fontSize: 12.5 }}>
@@ -883,7 +886,7 @@ function NivoFunnel({ data, height = 340 }) {
         labelColor="#04122b"
         beforeSeparatorLength={0}
         afterSeparatorLength={0}
-        currentPartSizeExtension={10}
+        currentPartSizeExtension={0}
         currentBorderWidth={0}
         motionConfig="gentle"
         valueFormat={(v) => v.toLocaleString()}

@@ -5,6 +5,7 @@ import { TYPE_LABEL } from './data/clients.js'
 import { clientStore } from './lib/clientStore.js'
 import { setConnected } from './lib/connections.js'
 import Widget, { Skeleton } from './components/Widget.jsx'
+import ChartShowcase from './pages/ChartShowcase.jsx'
 
 const PROVIDER_LABEL = { google: 'Google', meta: 'Meta', shopify: 'Shopify', woocommerce: 'WooCommerce', merchant: 'Google Merchant Center' }
 import { FilterContext, DEFAULT_FILTERS, RANGES, CHANNELS, filterSig, transformContent } from './lib/filters.js'
@@ -180,12 +181,13 @@ export default function App() {
         </div>
         <div className="spacer" />
         <div className="rail-nav">
+          <button className={`rail-btn ${source === '__showcase' ? 'active' : ''}`} title="Chart Library Showcase" onClick={() => pick('__showcase')}><span className="ms">palette</span><small>Charts</small></button>
           <button className="rail-btn" title="AI Report" onClick={() => setAi({ kind: 'report' })}><span className="ms" style={{ color: 'var(--green)' }}>auto_awesome</span><small>Report</small></button>
           <button className="rail-btn" title="Ask AI" onClick={() => setAi({ kind: 'ask' })}><span className="ms">forum</span><small>Ask AI</small></button>
         </div>
       </nav>
 
-      {item?.tabs && (
+      {source !== '__showcase' && item?.tabs && (
         <aside className="sub">
           <div className="sub-title">{item.title}</div>
           {item.tabs.map(t => (
@@ -198,6 +200,7 @@ export default function App() {
 
       <main className="main">
         <div className="glow" /><div className="dots" />
+        {source === '__showcase' ? <ChartShowcase /> : (
         <div className="wrap">
           <div className="topbar">
             <div className="client-wrap">
@@ -296,6 +299,7 @@ export default function App() {
 
           <div className="foot-note">MARΣ · Media-Intelligence &amp; Advanced Reporting System · prototype with sample data · {nav.filter(n => n.key !== 'sep').length} sections · {TYPE_LABEL[client.type]} view</div>
         </div>
+        )}
       </main>
       <AIDrawer ai={ai} client={client} page={title} source={source} onClose={() => setAi(null)} />
       {toast && <div className={`toast ${toast.ok ? 'ok' : 'err'}`}><span className="ms">{toast.ok ? 'check_circle' : 'error'}</span>{toast.text}</div>}

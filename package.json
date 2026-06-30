@@ -11,10 +11,20 @@
   "dependencies": {
     "@nivo/core": "^0.99.0",
     "@nivo/funnel": "^0.99.0",
+    "@visx/axis": "^4.0.0",
+    "@visx/curve": "^4.0.0",
+    "@visx/gradient": "^4.0.0",
+    "@visx/grid": "^4.0.0",
+    "@visx/group": "^4.0.0",
+    "@visx/heatmap": "^4.0.0",
+    "@visx/scale": "^4.0.0",
+    "@visx/shape": "^4.0.0",
+    "d3": "^7.9.0",
     "echarts": "^5.5.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-google-charts": "^4.0.1"
+    "react-google-charts": "^4.0.1",
+    "recharts": "^3.9.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",

@@ -106,7 +106,7 @@ const TYPED = {
   ecommerce:{
     'meta/overview':{ sub:'Facebook & Instagram — catalog sales funnel', blocks:[
       {type:'kpis',items:[k('Catalog sales','€128.4k','▲ 14%',true,true,SP.up),k('Add to cart','28,310','▲ 9%',true,true,SP.up),k('Purchases','7,180','▲ 11%',true,true,SP.up)]},
-      {type:'chart',kind:'funnel',title:'Catalog: Add to cart → Initiate checkout → Purchase',src:'Meta Ads',w:12,big:true,height:300,steps:[{name:'Add to cart',value:28310,p:'100%'},{name:'Initiate checkout',value:12640,p:'44.6%'},{name:'Purchase',value:7180,p:'25.4%'}]},
+      {type:'chart',kind:'hfunnel',title:'Catalog: Add to cart → Initiate checkout → Purchase',src:'Meta Ads',w:12,big:true,height:300,steps:[{name:'Add to cart',value:28310,p:'100%'},{name:'Initiate checkout',value:12640,p:'44.6%'},{name:'Purchase',value:7180,p:'25.4%'}]},
       {type:'kpis',items:[k('Video Views','312k','▲ 11%',true,true,null),k('Reach','1.21M','▲ 16%',true,true,null),k('Frequency','2.1','▲ 0.1',true,'plain',null),k('Clicks','28,310','▲ 9%',true,true,null),k('CTR%','2.34%','▲ 0.3%',true,true,null),k('CPC','€0.86','▼ 4%',false,true,null),k('CPM','€6.40','▲ 2%',true,false,null),k('CPA','€5.62','▼ 7%',false,true,null),k('Conversions','7,180','▲ 11%',true,true,null),k('Conv. Value','€128.4k','▲ 14%',true,true,null),k('ROAS','4.8x','▲ 0.4x',true,true,null)]},
     ]},
     'ads/overview':{ sub:'Shopping performance — ROAS, conversion value & cost-per-sale', blocks:[
