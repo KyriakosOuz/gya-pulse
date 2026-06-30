@@ -746,6 +746,25 @@ const C = {
     {type:'chart',kind:'line',title:'Brand vs Non-brand impressions',src:'Search Console',w:12,...AW_ORGANIC},
     {type:'insight',icon:'travel_explore',tone:'good',title:'Brand demand is climbing',text:'Brand impressions grew 2.5× over the period while non-brand stayed flat — paid reach is converting into organic brand search.'},
   ]},
+  'youtube/overview':{ sub:'YouTube channel performance', blocks:[
+    {type:'kpis',w:12,items:[k('Views','284,000','+14%',true,true,null),k('Watch time (hrs)','9,420','+11%',true,true,null),k('Subscribers','+1,240','+8%',true,true,null),k('Avg. view duration','3m 12s','+6%',true,true,null)]},
+    {type:'chart',kind:'line',title:'Views & watch time',src:'YouTube',w:8,x:WK,series:[{name:'Views',color:GREEN,data:[24,28,31,35,38,42,45,48].map(v=>v*1000),area:true},{name:'Watch hrs',color:BLUE,data:[820,910,980,1050,1120,1190,1240,1310]}]},
+    {type:'chart',kind:'donut',title:'Traffic source',w:4,legend:true,height:150,data:[{name:'Browse',value:38,color:BLUE},{name:'Search',value:29,color:GREEN},{name:'Suggested',value:22,color:GREY},{name:'External',value:11,color:'#5AAFF2'}]},
+  ]},
+  'linkedin/overview':{ sub:'LinkedIn page & content performance', blocks:[
+    {type:'kpis',w:12,items:[k('Impressions','142,000','+17%',true,true,null),k('Engagement rate','4.8%','+0.5%',true,true,null),k('Followers','+540','+9%',true,true,null),k('Clicks','6,820','+12%',true,true,null)]},
+    {type:'chart',kind:'line',title:'Impressions & engagement',src:'LinkedIn',w:8,x:WK,series:[{name:'Impressions',color:BLUE,data:[14,16,17,19,21,22,24,26].map(v=>v*1000),area:true},{name:'Engagements',color:GREEN,data:[680,760,810,910,980,1040,1120,1210]}]},
+    {type:'leaderboard',w:4,title:'Top posts',rows:[
+      {name:'How we cut CPL 40%',value:'9.2% ER',status:'good',sub:'Case study'},
+      {name:'Hiring: Performance Lead',value:'7.1% ER',status:'good',sub:'Culture'},
+      {name:'Q2 industry report',value:'5.4% ER',status:'plain',sub:'Thought leadership'},
+    ]},
+  ]},
+  'social/overview':{ sub:'Organic Instagram & Facebook', blocks:[
+    {type:'kpis',w:12,items:[k('Reach','412,000','+13%',true,true,null),k('Engagement','38,400','+10%',true,true,null),k('Followers','+2,140','+7%',true,true,null),k('Profile visits','18,600','+15%',true,true,null)]},
+    {type:'chart',kind:'stack',title:'Engagement by type',src:'Meta Social',w:7,stack:true,x:WK,series:[{name:'Likes',color:'#2B8FEA',data:[3.2,3.5,3.7,4.0,4.2,4.5,4.7,5.0].map(v=>Math.round(v*1000))},{name:'Comments',color:'#28C3AE',data:[420,460,490,520,560,600,640,680]},{name:'Shares',color:'#22FF88',data:[180,200,220,240,260,280,300,320]}]},
+    {type:'chart',kind:'donut',title:'Reach: IG vs FB',w:5,legend:true,height:150,data:[{name:'Instagram',value:64,color:GREEN},{name:'Facebook',value:36,color:BLUE}]},
+  ]},
 }
 
 // Lead-gen clients see CPL-based campaign trees instead of the ROAS ones
@@ -787,25 +806,6 @@ const AWARENESS_OVERRIDE = {
   ]},
   'search/overview':{ sub:'Brand vs non-brand organic visibility', blocks:[
     {type:'chart',kind:'line',title:'Brand vs Non-brand impressions',src:'Search Console',w:12,...AW_ORGANIC},
-  ]},
-  'youtube/overview':{ sub:'YouTube channel performance', blocks:[
-    {type:'kpis',w:12,items:[k('Views','284,000','+14%',true,true,null),k('Watch time (hrs)','9,420','+11%',true,true,null),k('Subscribers','+1,240','+8%',true,true,null),k('Avg. view duration','3m 12s','+6%',true,true,null)]},
-    {type:'chart',kind:'line',title:'Views & watch time',src:'YouTube',w:8,x:WK,series:[{name:'Views',color:GREEN,data:[24,28,31,35,38,42,45,48].map(v=>v*1000),area:true},{name:'Watch hrs',color:BLUE,data:[820,910,980,1050,1120,1190,1240,1310]}]},
-    {type:'chart',kind:'donut',title:'Traffic source',w:4,legend:true,height:150,data:[{name:'Browse',value:38,color:BLUE},{name:'Search',value:29,color:GREEN},{name:'Suggested',value:22,color:GREY},{name:'External',value:11,color:'#5AAFF2'}]},
-  ]},
-  'linkedin/overview':{ sub:'LinkedIn page & content performance', blocks:[
-    {type:'kpis',w:12,items:[k('Impressions','142,000','+17%',true,true,null),k('Engagement rate','4.8%','+0.5%',true,true,null),k('Followers','+540','+9%',true,true,null),k('Clicks','6,820','+12%',true,true,null)]},
-    {type:'chart',kind:'line',title:'Impressions & engagement',src:'LinkedIn',w:8,x:WK,series:[{name:'Impressions',color:BLUE,data:[14,16,17,19,21,22,24,26].map(v=>v*1000),area:true},{name:'Engagements',color:GREEN,data:[680,760,810,910,980,1040,1120,1210]}]},
-    {type:'leaderboard',w:4,title:'Top posts',rows:[
-      {name:'How we cut CPL 40%',value:'9.2% ER',status:'good',sub:'Case study'},
-      {name:'Hiring: Performance Lead',value:'7.1% ER',status:'good',sub:'Culture'},
-      {name:'Q2 industry report',value:'5.4% ER',status:'plain',sub:'Thought leadership'},
-    ]},
-  ]},
-  'social/overview':{ sub:'Organic Instagram & Facebook', blocks:[
-    {type:'kpis',w:12,items:[k('Reach','412,000','+13%',true,true,null),k('Engagement','38,400','+10%',true,true,null),k('Followers','+2,140','+7%',true,true,null),k('Profile visits','18,600','+15%',true,true,null)]},
-    {type:'chart',kind:'stack',title:'Engagement by type',src:'Meta Social',w:7,stack:true,x:WK,series:[{name:'Likes',color:'#2B8FEA',data:[3.2,3.5,3.7,4.0,4.2,4.5,4.7,5.0].map(v=>Math.round(v*1000))},{name:'Comments',color:'#28C3AE',data:[420,460,490,520,560,600,640,680]},{name:'Shares',color:'#22FF88',data:[180,200,220,240,260,280,300,320]}]},
-    {type:'chart',kind:'donut',title:'Reach: IG vs FB',w:5,legend:true,height:150,data:[{name:'Instagram',value:64,color:GREEN},{name:'Facebook',value:36,color:BLUE}]},
   ]},
 }
 
