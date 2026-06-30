@@ -756,6 +756,20 @@ const LEAD_OVERRIDE = {
   'ads/campaigns':{ sub:'5 campaigns · click a row to drill into ad groups & ads', pills:[['campaign','5','Campaigns','var(--blue2)'],['play_circle','4','Active','var(--green)'],['pause_circle','1','Paused','var(--muted)'],['warning','1','Off target','var(--red)']], blocks:[
     {type:'campaignTree',w:12,setLabel:'Ad groups',columns:ADS_TREE_COLS_LEAD,rows:ADS_CAMPAIGNS_LEAD},
   ]},
+  'ads/overview':{ sub:'Lead generation — CPL & keyword relevance', blocks:[
+    {type:'kpis',w:12,items:[k('Leads','2,180','+12%',true,true,null),k('CPL','€96','-6%',false,true,null),k('Conv. rate','5.2%','+0.4%',true,true,null),k('Spend','€20,940','+3%',true,'plain',null)]},
+    {type:'chart',kind:'hbar',title:'Leads by keyword',src:'Google Ads',w:7,x:['injury lawyer','accident claim','legal advice','compensation','free consult','near me'],data:[540,420,310,260,180,140],color:GREEN},
+    {type:'chart',kind:'donut',title:'Search term relevance',w:5,legend:true,height:150,data:[{name:'High intent',value:58,color:GREEN},{name:'Mid',value:30,color:BLUE},{name:'Low / negative',value:12,color:'#3a4f7a'}]},
+  ]},
+  'meta/overview':{ sub:'Lead forms — completion & source split', blocks:[
+    {type:'chart',kind:'stack',title:'On-platform vs site leads',src:'Meta Ads',w:7,stack:false,x:['May Wk1','Wk2','Wk3','Wk4','Jun Wk1','Wk2'],series:[{name:'On-platform (Instant Form)',color:GREEN,data:[120,140,135,160,158,172]},{name:'Site leads',color:BLUE,data:[88,96,92,104,110,118]}]},
+    {type:'kpis',w:5,items:[k('Form completion','62%','+5%',true,true,null),k('On-platform CPL','€78','-9%',false,true,null),k('Site CPL','€118','+4%',false,'plain',null),k('Leads','2,180','+12%',true,true,null)]},
+  ]},
+  'ga4/overview':{ sub:'Path to lead — MQL → SQL flow', blocks:[
+    {type:'chart',kind:'sankey',title:'MQL → SQL conversion flow',src:'GA4',w:12,height:300,
+      nodes:[{name:'Visitors',itemStyle:{color:BLUE}},{name:'Resource download',itemStyle:{color:'#5AAFF2'}},{name:'MQL',itemStyle:{color:'#28C3AE'}},{name:'SQL',itemStyle:{color:GREEN}},{name:'Customer',itemStyle:{color:'#22FF88'}},{name:'Dropped',itemStyle:{color:'#3a4f7a'}}],
+      links:[{source:'Visitors',target:'Resource download',value:7600},{source:'Visitors',target:'Dropped',value:34500},{source:'Resource download',target:'MQL',value:2180},{source:'Resource download',target:'Dropped',value:5420},{source:'MQL',target:'SQL',value:1420},{source:'MQL',target:'Dropped',value:760},{source:'SQL',target:'Customer',value:184},{source:'SQL',target:'Dropped',value:1236}]},
+  ]},
 }
 
 // Awareness clients see TOFU-focused source overviews
