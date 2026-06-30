@@ -15,7 +15,7 @@ export default function GeoMap({ data, height = 206 }) {
         colorAxis: { colors: ['#16345c', '#2B8FEA', '#22FF88'] },
         legend: 'none',
         keepAspectRatio: false,
-        tooltip: { textStyle: { color: '#04122b', fontName: 'Commissioner' } },
+        tooltip: { textStyle: { color: '#04122b', fontName: 'Montserrat' } },
       }}
     />
   )

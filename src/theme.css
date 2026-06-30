@@ -1,22 +1,20 @@
-@font-face{
-  font-family:"Commissioner";
-  src:url("./fonts/Commissioner-Variable.ttf") format("truetype");
-  font-weight:100 900; font-display:swap;
-}
 :root{
   --bg:#070E1A; --bg2:#0B1628; --card:#0E1C35; --card2:#112040; --raise:#13254a;
   --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.12);
   --blue:#2B8FEA; --blue2:#5AAFF2; --green:#22FF88; --red:#FF6B6B; --amber:#F2B45A;
   --white:#fff; --text:#C5D0E0; --muted:#8A9BBB; --dim:#5b6b8a;
   --rail:84px; --sub:212px;
+  --font-title:'Montserrat',system-ui,sans-serif;
+  --font-body:'Noto Sans',system-ui,sans-serif;
 }
 *{box-sizing:border-box}
 html,body,#root{margin:0;height:100%}
-body{background:var(--bg);color:var(--text);font-family:"Commissioner",system-ui,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;-webkit-font-smoothing:antialiased}
 .num{font-feature-settings:"tnum" 1;letter-spacing:-.01em}
 .mono-label{letter-spacing:.14em;text-transform:uppercase}
 .ms{font-family:"Material Symbols Outlined";font-size:22px;line-height:1;user-select:none}
-h1,h2,h3{color:var(--white);margin:0;letter-spacing:-.02em}
+h1,h2,h3{color:var(--white);margin:0;letter-spacing:-.02em;font-family:var(--font-title)}
+.kpi-value,.v,.eyebrow{font-family:var(--font-title)}
 button{font-family:inherit}
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-thumb{background:#22335c;border-radius:8px}

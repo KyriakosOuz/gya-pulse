@@ -4,7 +4,7 @@ export const C = {
   blue:'#2B8FEA', blue2:'#5AAFF2', green:'#22FF88', grey:'#8A9BBB',
   dim:'#5b6b8a', text:'#C5D0E0', red:'#FF6B6B', card:'#0E1C35', line:'rgba(255,255,255,.05)'
 }
-const FONT = 'Commissioner, system-ui, sans-serif'
+const FONT = 'Montserrat, "Noto Sans", system-ui, sans-serif'
 const FUNNEL_COLORS = ['#2B8FEA','#2AAAD6','#28C3AE','#25E29C','#22FF88']
 const grad = (c1, c2, vertical) =>
   new echarts.graphic.LinearGradient(0, 0, vertical ? 0 : 1, vertical ? 1 : 0,
