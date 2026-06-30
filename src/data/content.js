@@ -107,16 +107,19 @@ const TYPED = {
     'meta/overview':{ sub:'Facebook & Instagram — catalog sales funnel', blocks:[
       {type:'kpis',items:[k('Catalog sales','€128.4k','▲ 14%',true,true,SP.up),k('Add to cart','28,310','▲ 9%',true,true,SP.up),k('Purchases','7,180','▲ 11%',true,true,SP.up)]},
       {type:'chart',kind:'funnel',title:'Catalog: Add to cart → Initiate checkout → Purchase',src:'Meta Ads',w:12,big:true,height:300,steps:[{name:'Add to cart',value:28310,p:'100%'},{name:'Initiate checkout',value:12640,p:'44.6%'},{name:'Purchase',value:7180,p:'25.4%'}]},
+      {type:'kpis',items:[k('Video Views','312k','▲ 11%',true,true,null),k('Reach','1.21M','▲ 16%',true,true,null),k('Frequency','2.1','▲ 0.1',true,'plain',null),k('Clicks','28,310','▲ 9%',true,true,null),k('CTR%','2.34%','▲ 0.3%',true,true,null),k('CPC','€0.86','▼ 4%',false,true,null),k('CPM','€6.40','▲ 2%',true,false,null),k('CPA','€5.62','▼ 7%',false,true,null),k('Conversions','7,180','▲ 11%',true,true,null),k('Conv. Value','€128.4k','▲ 14%',true,true,null),k('ROAS','4.8x','▲ 0.4x',true,true,null)]},
     ]},
     'ads/overview':{ sub:'Shopping performance — ROAS, conversion value & cost-per-sale', blocks:[
       {type:'kpis',items:[k('Shopping ROAS','4.8x','▲ 0.4x',true,true,SP.up),k('Conversion value','€128,400','▲ 14%',true,true,SP.up),k('Cost / sale','€11.40','▼ 6%',true,true,SP.dn)]},
       {type:'chart',kind:'gauge',title:'Shopping ROAS vs goal',src:'Google Ads',w:5,height:260,value:4.8,max:8,goal:4.0,unit:'x'},
       {type:'chart',kind:'line',title:'Shopping ROAS trend',src:'Google Ads',w:7,height:260,x:WK,series:[{name:'ROAS',color:GREEN,data:[4.1,4.3,4.2,4.5,4.6,4.7,4.8,4.8],area:true}]},
+      {type:'kpis',items:[k('Impressions','2.8M','▲ 14%',true,true,null),k('Display Impressions','412k','▲ 18%',true,true,null),k('Clicks','31,200','▲ 9%',true,true,null),k('CTR%','1.11%','▼ 0.2%',false,false,null),k('CPC','€0.87','▼ 5%',false,true,null),k('CPL','€11.40','▼ 6%',false,true,null),k('CPA','€11.40','▼ 6%',false,true,null),k('Conversions','7,180','▲ 11%',true,true,null),k('Conv. Value','€128.4k','▲ 14%',true,true,null),k('ROAS','4.8x','▲ 0.4x',true,true,null),k('Search Top-of-Page Rate','48%','▲ 4%',true,true,null),k('Avg. LTV','€243','▲ 8%',true,true,null)]},
     ]},
     'ga4/overview':{ sub:'Site behaviour — product performance & revenue source', blocks:[
       {type:'kpis',items:[k('Total users','80,633','▲ 18%',true,true,SP.up),k('Sessions','109,794','▲ 15%',true,true,SP.up),k('Engagement rate','61.4%','▲ 3.1%',true,true,SP.up),k('Conv. value','$312k','▲ 14%',true,true,SP.up)]},
       {type:'chart',kind:'scatter',title:'Product performance (CVR × revenue × spend)',src:'GA4',w:6,points:[[10.0,92000,1840],[8.1,78400,980],[7.8,45600,760],[16.3,31000,1240],[9.6,26000,520],[6.1,22800,380],[12.4,18400,610],[3.6,16200,135]]},
       {type:'chart',kind:'hbar',title:'Revenue by source',src:'GA4',w:6,x:CHAN,data:[112,96,54,38,90,22,11],color:GREEN},
+      {type:'kpis',items:[k('Page Views','284k','▲ 16%',true,true,null),k('Landing Page Views','109,794','▲ 15%',true,true,null),k('Avg Session Duration','2m 04s','▲ 11%',true,true,null),k('Reach','80,633','▲ 18%',true,true,null),k('Impressions','284k','▲ 16%',true,true,null),k('New Users','51,605','▲ 20%',true,true,null),k('Returning Users','29,028','▲ 14%',true,true,null)]},
     ]},
     'search/overview':{ sub:'Organic clicks, impressions & position', blocks:[
       {type:'kpis',items:[k('Clicks','48,210','▲ 12%',true,true,SP.up),k('Impressions','1.4M','▲ 9%',true,true,SP.up),k('Avg. CTR','3.44%','▲ 0.2%',true,true,SP.up),k('Avg. position','8.3','▲ 1.1',true,true,SP.dn)]},
@@ -144,16 +147,19 @@ const TYPED = {
     'meta/overview':{ sub:'Lead forms — completion & on-platform vs site split', blocks:[
       {type:'kpis',items:[k('Lead-form completion','62%','▲ 5%',true,true,SP.up),k('On-platform CPL','€78','▼ 9%',true,true,SP.dn),k('Site CPL','€118','▲ 4%',false,'plain',null)]},
       {type:'chart',kind:'stack',title:'On-platform (Instant Form) vs site leads',src:'Meta Ads',w:12,stack:false,x:['May Wk1','Wk2','Wk3','Wk4','Jun Wk1','Wk2'],series:[{name:'On-platform (Instant Form)',color:GREEN,data:[120,140,135,160,158,172]},{name:'Site leads',color:BLUE,data:[88,96,92,104,110,118]}]},
+      {type:'kpis',items:[k('Video Views','208k','▲ 8%',true,true,null),k('Reach','840k','▲ 14%',true,true,null),k('Frequency','2.8','▲ 0.3',true,'plain',null),k('Clicks','19,420','▲ 7%',true,true,null),k('CTR%','2.31%','▲ 0.2%',true,true,null),k('CPC','€1.08','▼ 3%',false,true,null),k('CPM','€12.77','▲ 4%',true,false,null),k('CPA','€9.60','▼ 6%',false,true,null),k('Conversions','2,180','▲ 12%',true,true,null),k('Conv. Value','€209.3k','▲ 9%',true,true,null),k('ROAS','3.2x','▲ 0.2x',true,'plain',null)]},
     ]},
     'ads/overview':{ sub:'Lead generation — CPL, conversion rate & keyword relevance', blocks:[
       {type:'kpis',items:[k('CPL','€96','▼ 6%',true,true,SP.dn),k('Conv. rate','5.2%','▲ 0.4%',true,true,SP.up),k('Spend','€20,940','▲ 3%',true,'plain',null)]},
       {type:'chart',kind:'hbar',title:'Leads by keyword',src:'Google Ads',w:12,x:['injury lawyer','accident claim','legal advice','compensation','free consult','near me'],data:[540,420,310,260,180,140],color:GREEN},
+      {type:'kpis',items:[k('Impressions','1.64M','▲ 11%',true,true,null),k('Display Impressions','228k','▲ 9%',true,true,null),k('Clicks','48,200','▲ 8%',true,true,null),k('CTR%','2.94%','▲ 0.3%',true,true,null),k('CPC','€0.43','▼ 6%',false,true,null),k('CPL','€9.60','▼ 6%',false,true,null),k('CPA','€9.60','▼ 6%',false,true,null),k('Conversions','2,180','▲ 12%',true,true,null),k('Conv. Value','€209.3k','▲ 9%',true,true,null),k('ROAS','3.2x','▲ 0.2x',true,'plain',null),k('Search Top-of-Page Rate','52%','▲ 6%',true,true,null),k('Avg. LTV','€1,140','▲ 5%',true,true,null)]},
     ]},
     'ga4/overview':{ sub:'Path to lead — resource downloads & MQL → SQL flow', blocks:[
       {type:'kpis',items:[k('Visitors','42,100','▲ 11%',true,true,SP.up),k('Resource downloads','7,600','▲ 14%',true,true,SP.up),k('MQL','1,420','▲ 8%',true,true,SP.up),k('SQL','184','▲ 5%',true,true,SP.up)]},
       {type:'chart',kind:'sankey',title:'MQL → SQL conversion flow',src:'GA4',w:12,height:300,
         nodes:[{name:'Visitors',itemStyle:{color:BLUE}},{name:'Resource download',itemStyle:{color:'#5AAFF2'}},{name:'MQL',itemStyle:{color:'#28C3AE'}},{name:'SQL',itemStyle:{color:GREEN}},{name:'Customer',itemStyle:{color:'#22FF88'}},{name:'Dropped',itemStyle:{color:'#3a4f7a'}}],
         links:[{source:'Visitors',target:'Resource download',value:7600},{source:'Visitors',target:'Dropped',value:34500},{source:'Resource download',target:'MQL',value:2180},{source:'Resource download',target:'Dropped',value:5420},{source:'MQL',target:'SQL',value:1420},{source:'MQL',target:'Dropped',value:760},{source:'SQL',target:'Customer',value:184},{source:'SQL',target:'Dropped',value:1236}]},
+      {type:'kpis',items:[k('Page Views','124k','▲ 12%',true,true,null),k('Landing Page Views','42,100','▲ 11%',true,true,null),k('Avg Session Duration','3m 12s','▲ 8%',true,true,null),k('Reach','42,100','▲ 11%',true,true,null),k('Impressions','124k','▲ 12%',true,true,null),k('New Users','27,365','▲ 14%',true,true,null),k('Returning Users','14,735','▲ 7%',true,true,null)]},
     ]},
     'search/overview':{ sub:'Organic clicks, impressions & position', blocks:[
       {type:'kpis',items:[k('Clicks','18,420','▲ 9%',true,true,SP.up),k('Impressions','640k','▲ 7%',true,true,SP.up),k('Avg. CTR','2.88%','▲ 0.2%',true,true,SP.up),k('Avg. position','9.1','▲ 0.8',true,true,SP.dn)]},
@@ -177,15 +183,18 @@ const TYPED = {
     'meta/overview':{ sub:'Reach, frequency & video engagement', blocks:[
       {type:'kpis',items:[k('Reach','1.84M','▲ 22%',true,true,SP.up),k('Frequency','2.3','▲ 0.2',true,'plain',null),k('Video views','512k','▲ 14%',true,true,SP.up)]},
       {type:'chart',kind:'stack',title:'Video engagement (play %)',src:'Meta Ads',w:12,...AW_VIDEO},
+      {type:'kpis',items:[k('Video Views','512k','▲ 14%',true,true,null),k('Reach','1.84M','▲ 22%',true,true,null),k('Frequency','2.3','▲ 0.2',true,'plain',null),k('Clicks','48,210','▲ 12%',true,true,null),k('CTR%','3.44%','▲ 0.2%',true,true,null),k('CPC','€0.91','▼ 5%',false,true,null),k('CPM','€4.90','▼ 6%',false,'plain',null),k('CPA','€36.00','▲ 3%',true,false,null),k('Conversions','512','▲ 6%',true,true,null),k('Conv. Value','€18.4k','▲ 8%',true,true,null),k('ROAS','1.8x','▼ 0.2x',false,false,null)]},
     ]},
     'ads/overview':{ sub:'Display reach & search visibility', blocks:[
       {type:'kpis',items:[k('Display impressions','322k','▲ 18%',true,true,SP.up),k('Search top-of-page rate','56%','▲ 4%',true,true,SP.up)]},
       {type:'chart',kind:'line',title:'Display impressions & top-of-page rate',src:'Google Ads',w:12,...AW_IMPRSHARE},
+      {type:'kpis',items:[k('Impressions','4.21M','▲ 18%',true,true,null),k('Display Impressions','322k','▲ 18%',true,true,null),k('Clicks','24,800','▲ 16%',true,true,null),k('CTR%','0.59%','▼ 0.1%',false,false,null),k('CPC','€0.74','▼ 3%',false,true,null),k('CPL','€36.00','▲ 3%',true,false,null),k('CPA','€36.00','▲ 3%',true,false,null),k('Conversions','512','▲ 6%',true,true,null),k('Conv. Value','€18.4k','▲ 8%',true,true,null),k('ROAS','1.8x','▼ 0.2x',false,false,null),k('Search Top-of-Page Rate','56%','▲ 4%',true,true,null),k('Avg. LTV','€184','▲ 4%',true,true,null)]},
     ]},
     'ga4/overview':{ sub:'New vs returning & engagement', blocks:[
       {type:'kpis',items:[k('Total users','80,633','▲ 18%',true,true,SP.up),k('New users','64%','▲ 4%',true,true,SP.up),k('Engagement rate','61.4%','▲ 3.1%',true,true,SP.up),k('Avg. session','1m 48s','▲ 9%',true,true,null)]},
       donut('New vs Returning',AW_NVR,6),
       {type:'chart',kind:'line',title:'Avg. session duration',src:'GA4',w:6,height:210,x:WK,series:[{name:'Seconds',color:GREEN,data:[92,98,101,108,112,118,121,128],area:true}]},
+      {type:'kpis',items:[k('Page Views','214k','▲ 21%',true,true,null),k('Landing Page Views','80,633','▲ 18%',true,true,null),k('Avg Session Duration','1m 48s','▲ 9%',true,true,null),k('Reach','80,633','▲ 18%',true,true,null),k('Impressions','214k','▲ 21%',true,true,null),k('New Users','51,605','▲ 22%',true,true,null),k('Returning Users','29,028','▲ 12%',true,true,null)]},
     ]},
     'search/overview':{ sub:'Brand vs non-brand organic visibility', blocks:[
       {type:'kpis',items:[k('Clicks','24,800','▲ 16%',true,true,SP.up),k('Impressions','870k','▲ 21%',true,true,SP.up),k('Avg. CTR','2.85%','▲ 0.3%',true,true,SP.up),k('Avg. position','7.6','▲ 1.4',true,true,SP.dn)]},
@@ -211,6 +220,7 @@ const C = {
     donut('Gender',[{name:'Female',value:54,color:GREEN},{name:'Male',value:43,color:BLUE},{name:'Unknown',value:3,color:GREY}],6),
     geoBlock(6,'Users by country'),
     {type:'chart',kind:'hbar',title:'Top cities',w:6,x:['Athens','Thessaloniki','Patras','Heraklion','Larissa','London'],data:[2280,901,556,317,260,232],color:GREEN},
+    {type:'chart',kind:'hbar',title:'State / Region',w:6,x:['Attica','Central Macedonia','Crete','Western Greece','Thessaly','Peloponnese'],data:[44200,18600,9800,7400,6100,4800],color:BLUE},
     donut('Device',DEV,6),
     donut('Economic status (proxy)',[{name:'Top 10%',value:18,color:GREEN},{name:'Mid 40%',value:52,color:BLUE},{name:'Lower 50%',value:30,color:GREY}],6),
   ]},
