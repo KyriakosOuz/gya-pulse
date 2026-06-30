@@ -1,7 +1,9 @@
 import { Fragment, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import EChart from './EChart.jsx'
 import GeoMap from './GeoMap.jsx'
+import { ResponsiveFunnel } from '@nivo/funnel'
 import { lineOpt, barOpt, donutOpt, funnelOpt, sankeyOpt, heatOpt, scatterOpt, gaugeOpt, stackBarOpt, ringOpt, C } from '../lib/charts.js'
+import { nivoTheme, FUNNEL_COLORS } from '../lib/nivoTheme.js'
 import { CHANNELS, parseMetric, fmtMetric, useFilters } from '../lib/filters.js'
 import { funnelStore } from '../lib/funnelStore.js'
 import { targetsStore } from '../lib/targetsStore.js'
@@ -869,13 +871,37 @@ function TrackingHealth({ title, rows = [] }) {
   )
 }
 
+function NivoFunnel({ data, height = 340 }) {
+  return (
+    <div style={{ height }}>
+      <ResponsiveFunnel
+        data={data}
+        direction="vertical"
+        theme={nivoTheme}
+        colors={FUNNEL_COLORS}
+        borderWidth={0}
+        labelColor="#04122b"
+        beforeSeparatorLength={0}
+        afterSeparatorLength={0}
+        currentPartSizeExtension={10}
+        currentBorderWidth={0}
+        motionConfig="gentle"
+        valueFormat={(v) => v.toLocaleString()}
+      />
+    </div>
+  )
+}
+
 function SignatureFunnel({ title = 'Funnel overview', spend, steps = [], side = [], footer }) {
-  const opt = useMemo(() => funnelOpt({ steps, big: true }), [steps])
+  const nivoData = useMemo(
+    () => steps.map(step => ({ id: step.name, value: step.value, label: `${step.name}  ${step.p}` })),
+    [steps]
+  )
   return (
     <div className="card">
       <div className="cardhead"><h3>{title}</h3>{spend && <span className="tag-src">Ad spend {spend}</span>}</div>
       <div style={{ display:'flex', gap:14, alignItems:'stretch' }}>
-        <div style={{ flex:'1 1 64%', minHeight:320 }}><EChart option={opt} height={320} /></div>
+        <div style={{ flex:'1 1 64%', minHeight:340 }}><NivoFunnel data={nivoData} height={340} /></div>
         <div style={{ flex:'1 1 36%', display:'flex', flexDirection:'column', justifyContent:'center', gap:12 }}>
           {side.map((s, i) => (
             <div key={i} style={{ borderLeft:'2px solid var(--line)', paddingLeft:12 }}>
