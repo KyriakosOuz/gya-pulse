@@ -63,6 +63,7 @@ const SETTINGS = { key: 'settings', icon: 'settings', label: 'Settings', title: 
   { key: 'alerts', icon: 'notifications', label: 'Alerts' },
   { key: 'branding', icon: 'palette', label: 'Branding' },
   { key: 'team', icon: 'group', label: 'Team' },
+  { key: 'log', icon: 'history_edu', label: 'Reporting log' },
 ] }
 
 // Ecommerce-only sections

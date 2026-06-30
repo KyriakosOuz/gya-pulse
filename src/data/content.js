@@ -687,6 +687,14 @@ const C = {
   'settings/team':{ sub:'Who can access this workspace', blocks:[
     {type:'teamManager',w:12},
   ]},
+  'settings/log':{ sub:'Logged campaign changes for client transparency', blocks:[
+    {type:'changelog',w:12,title:'Campaign changelog',rows:[
+      {date:'Jun 23, 2026',update:'Launched Reels-first creative test',trend:'CTR up to 9.2%, stable CPM',change:'Shifting budget to Reels next week — 18% lift in 100% video plays'},
+      {date:'Jun 16, 2026',update:'Paused 2 underperforming interest sets',trend:'CPA crept above target on broad interests',change:'Reallocated €40/day to lookalikes — CPA back under €5.60'},
+      {date:'Jun 9, 2026',update:'Added city-level targeting (Athens, Thessaloniki)',trend:'Higher CTR in metro areas',change:'City split now standard — top-of-page rate +4pts'},
+      {date:'Jun 2, 2026',update:'New month kickoff, refreshed budgets',trend:'Stable 8% CTR, €0.91 CPC',change:'Holding strategy; watching frequency (2.3)'},
+    ]},
+  ]},
 
   /* ---------------- OVERVIEW (awareness) ---------------- */
   'overview/awareness':{ sub:'Brand penetration & top-of-funnel engagement', blocks:[
