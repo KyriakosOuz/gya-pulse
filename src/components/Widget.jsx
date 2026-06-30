@@ -66,15 +66,16 @@ function KpiCard({ l, v, delta, up, good, sp, i }) {
     if (p && !isNaN(d)) prev = fmtMetric(p.n / (1 + (up ? d : -d) / 100), p.pre, p.unit)
   }
   return (
-    <div className={`card kpi ${tag}`} style={{ '--d': `${(i || 0) * 45}ms` }}>
-      <div className="klabel">{l}</div>
-      <div className="kval num" style={{ color }}><CountUp text={v} /></div>
-      <div className="krow">
-        <span className={`tag ${tag}`}>{tagText}</span>
-        {delta && <span className={`delta ${up ? 'up' : 'down'}`}>{delta}</span>}
+    <div className={`card kpf ${tag}`} style={{ '--d': `${(i || 0) * 45}ms` }} title={tagText}>
+      <div className="kpf-body">
+        <div className="kpf-top">
+          <span className="kpf-label">{l}</span>
+          {delta && <span className={`kpf-chip ${tag}`}>{delta}</span>}
+        </div>
+        <div className="kpf-val num" style={{ color }}><CountUp text={v} /></div>
+        {prev && <div className="kpf-prev">vs prev · {prev}</div>}
       </div>
-      {prev && <div className="kprev">vs prev · {prev}</div>}
-      {sp && <Sparkline data={sp} color={good === false ? C.red : C.green} />}
+      {sp && <div className="kpf-spark"><Sparkline data={sp} color={good === false ? C.red : C.green} /></div>}
     </div>
   )
 }

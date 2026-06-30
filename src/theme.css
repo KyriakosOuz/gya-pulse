@@ -102,6 +102,20 @@ button,input,select,textarea,table{font-family:var(--font-body)}
 .kprev{margin-top:8px;font-size:11px;color:var(--muted);font-weight:600}
 .spark{margin-top:11px;width:100%;height:30px;display:block}
 
+/* ---- sparkline-fill KPI card (standard) ---- */
+.kpf{padding:0;overflow:hidden;display:flex;flex-direction:column;min-height:148px}
+.kpf-body{padding:15px 16px 4px}
+.kpf-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.kpf-label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.04em}
+.kpf-chip{font-family:var(--font-title);font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid transparent;white-space:nowrap}
+.kpf-chip.good{background:rgba(34,255,136,.12);border-color:rgba(34,255,136,.35);color:#22FF88}
+.kpf-chip.bad{background:rgba(255,77,106,.12);border-color:rgba(255,77,106,.4);color:#FF4D6A}
+.kpf-chip.neutral{background:rgba(138,155,187,.12);border-color:rgba(138,155,187,.3);color:var(--muted)}
+.kpf-val{font-family:var(--font-title);font-size:27px;font-weight:800;color:var(--white);margin-top:8px;line-height:1.04;letter-spacing:-.02em}
+.kpf-prev{margin-top:4px;font-size:11px;color:var(--muted);font-weight:600}
+.kpf-spark{margin-top:auto}
+.kpf-spark .spark{height:46px;margin-top:0}
+
 /* stat pills */
 .stat-pills{display:flex;gap:10px;flex-wrap:wrap}
 .stat-pill{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--line);padding:9px 15px;border-radius:999px}
@@ -179,7 +193,7 @@ tbody tr:hover{background:#13234a;border-left-color:var(--green)}
 .rowgrid>*:nth-child(8){animation-delay:.37s}
 .rowgrid>*:nth-child(n+9){animation-delay:.42s}
 /* kpi cards stagger individually */
-.kgrid>.kpi{animation:popIn .5s cubic-bezier(.22,.61,.36,1) both;animation-delay:var(--d,0ms)}
+.kgrid>.kpf{animation:popIn .5s cubic-bezier(.22,.61,.36,1) both;animation-delay:var(--d,0ms)}
 /* product + campaign rows cascade in */
 .ptable tbody tr,.ctree tbody tr.lvl0{animation:rowIn .42s ease both;animation-delay:var(--d,0ms)}
 .ctree tbody tr.lvl1,.ctree tbody tr.lvl2{animation:rowIn .3s ease both}
@@ -475,3 +489,14 @@ tr.clickrow{cursor:pointer}
 .sc-table code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;color:var(--blue2);white-space:nowrap}
 .sc-table .grp td{background:rgba(43,143,234,.07);color:var(--green);font-family:var(--font-title);font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
 .sc-table .grp td:first-child{color:var(--green)}
+.sc-table.mapt code{white-space:normal;color:#7FD8FF;background:rgba(43,143,234,.08);border:1px solid rgba(43,143,234,.18);padding:1px 5px;border-radius:5px;margin:1px 2px 1px 0;display:inline-block;line-height:1.5}
+.sc-table.mapt .meta code{color:#C9A9FF;background:rgba(124,92,230,.1);border-color:rgba(124,92,230,.25)}
+.sc-table.mapt td{font-size:12px}
+/* ---- chart opening animations (for the static visx / d3 / custom svg charts) ---- */
+@keyframes chartWipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes chartPop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes chartFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.anim-wipe{animation:chartWipe .9s cubic-bezier(.22,.61,.36,1) both}
+.anim-pop{animation:chartPop .7s cubic-bezier(.22,.61,.36,1) both;transform-origin:center}
+.anim-fade{animation:chartFade .7s cubic-bezier(.22,.61,.36,1) both}
+@media(prefers-reduced-motion:reduce){.anim-wipe,.anim-pop,.anim-fade{animation:none}}

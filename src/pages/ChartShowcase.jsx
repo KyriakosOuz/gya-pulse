@@ -663,20 +663,71 @@ function DataRefTable() {
   )
 }
 
+/* ===================== API METRIC MAPPING ======================= *
+ * Real field names from the GA4 Data API (camelCase) and the Meta
+ * Marketing / Insights API (snake_case), confirmed against the official
+ * docs — so Apollo can match each element to data we can actually pull.
+ * ---------------------------------------------------------------- */
+const METRIC_MAP = [
+  { grp: 'Comparison charts' },
+  { el: 'Line / Area', ga4: ['sessions', 'activeUsers', 'totalRevenue', 'screenPageViews'], ga4d: 'by date', meta: ['impressions', 'spend', 'clicks', 'reach'], metad: 'by date_start' },
+  { el: 'Bar', ga4: ['sessions', 'totalRevenue'], ga4d: 'by sessionDefaultChannelGroup / country', meta: ['spend', 'impressions'], metad: 'by campaign_name / publisher_platform' },
+  { el: 'Donut / Pie', ga4: ['sessions'], ga4d: 'by deviceCategory / sessionDefaultChannelGroup', meta: ['impressions', 'reach'], metad: 'breakdown publisher_platform / gender' },
+  { el: 'Heatmap', ga4: ['activeUsers', 'engagementRate'], ga4d: 'dayOfWeekName × hour', meta: ['impressions'], metad: 'breakdowns age × gender' },
+  { el: 'Gauge', ga4: ['engagementRate', 'purchaserRate', 'returnOnAdSpend'], ga4d: 'value vs goal', meta: ['purchase_roas', 'ctr', 'frequency'], metad: 'value vs goal' },
+  { grp: 'Funnels & flows' },
+  { el: 'Funnel · HFunnel · Journey · 3D', ga4: ['itemsViewed', 'addToCarts', 'checkouts', 'ecommercePurchases'], ga4d: 'or sessions → engagedSessions → keyEvents', meta: ['landing_page_view', 'add_to_cart', 'initiate_checkout', 'purchase'], metad: 'from actions[] by action_type' },
+  { el: 'Streamgraph', ga4: ['sessions'], ga4d: 'date × sessionDefaultChannelGroup', meta: ['spend', 'impressions'], metad: 'date_start × publisher_platform' },
+  { grp: 'Other builders' },
+  { el: 'Stacked Bar', ga4: ['sessions', 'totalRevenue'], ga4d: 'date × channel group / itemCategory', meta: ['spend'], metad: 'campaign_name × publisher_platform' },
+  { el: 'Sankey', ga4: ['sessionSource', 'landingPage', 'eventName'], ga4d: 'users flowing between dims', meta: ['campaign_name', 'adset_name', 'ad_name'], metad: 'spend / actions flow' },
+  { el: 'Scatter', ga4: ['sessions', 'totalRevenue'], ga4d: 'per campaignName (bubble = users)', meta: ['cpc', 'ctr'], metad: 'per ad_name (bubble = impressions)' },
+  { el: 'Ring', ga4: ['engagementRate', 'purchaserRate', 'sessionKeyEventRate'], ga4d: 'single %', meta: ['ctr', 'frequency'], metad: '% of budget / vs cap' },
+  { el: 'Geo map', ga4: ['activeUsers', 'totalRevenue'], ga4d: 'by country', meta: ['reach', 'impressions'], metad: 'breakdown country' },
+  { grp: 'KPI cards' },
+  { el: 'KPI card', ga4: ['totalRevenue', 'sessions', 'ecommercePurchases', 'engagementRate'], ga4d: '+ spark by date', meta: ['spend', 'purchase_roas', 'reach', 'ctr'], metad: '+ spark by date_start' },
+]
+function MetricMapTable() {
+  return (
+    <div style={{ overflowX: 'auto' }}>
+      <table className="sc-table mapt">
+        <thead><tr><th>Element</th><th>GA4 — Data API</th><th>Meta — Insights API</th></tr></thead>
+        <tbody>
+          {METRIC_MAP.map((r, i) => r.grp
+            ? <tr className="grp" key={i}><td colSpan={3}>{r.grp}</td></tr>
+            : <tr key={i}>
+                <td>{r.el}</td>
+                <td>{r.ga4.map(f => <code key={f}>{f}</code>)}<div style={{ color: 'var(--dim)', fontSize: 11, marginTop: 3 }}>{r.ga4d}</div></td>
+                <td className="meta">{r.meta.map(f => <code key={f}>{f}</code>)}<div style={{ color: 'var(--dim)', fontSize: 11, marginTop: 3 }}>{r.metad}</div></td>
+              </tr>)}
+        </tbody>
+      </table>
+      <div style={{ color: 'var(--dim)', fontSize: 11, marginTop: 10, lineHeight: 1.5 }}>
+        GA4 note: there is no generic <code style={{ background: 'none', border: 'none', padding: 0, color: 'var(--muted)' }}>conversions</code> metric in the v1 API — it’s now <code style={{ background: 'none', border: 'none', padding: 0, color: 'var(--muted)' }}>keyEvents</code> (+ <code style={{ background: 'none', border: 'none', padding: 0, color: 'var(--muted)' }}>sessionKeyEventRate</code>).
+        Meta funnel steps come from the <code style={{ background: 'none', border: 'none', padding: 0, color: 'var(--muted)' }}>actions[]</code> array keyed by <code style={{ background: 'none', border: 'none', padding: 0, color: 'var(--muted)' }}>action_type</code>; pixel events may carry an <code style={{ background: 'none', border: 'none', padding: 0, color: 'var(--muted)' }}>offsite_conversion.fb_pixel_*</code> prefix.
+      </div>
+    </div>
+  )
+}
+
 /* ============================ LAYOUT ============================ */
-function LibCell({ lib, badge, children }) {
+// these libs animate natively on open (ECharts draw-on, Recharts, Nivo, Google Charts);
+// only the static SVG libs need a CSS opening animation
+const STATIC_LIBS = new Set(['visx', 'raw D3'])
+function LibCell({ lib, badge, anim, children }) {
+  const cls = anim && STATIC_LIBS.has(lib) ? `anim-${anim}` : undefined
   return (
     <div className="sc-cell">
       <div className="sc-cell-head">
         <span className="sc-lib">{lib}</span>
         {badge && <span className="sc-badge">{badge}</span>}
       </div>
-      {children}
+      <div className={cls}>{children}</div>
     </div>
   )
 }
 
-function Row({ title, sub, cells }) {
+function Row({ title, sub, cells, anim = 'wipe' }) {
   return (
     <div className="card sc-row">
       <div className="sc-row-head">
@@ -685,7 +736,7 @@ function Row({ title, sub, cells }) {
       </div>
       <div className="sc-grid">
         {cells.map((c, i) => (
-          <LibCell key={i} lib={c.lib} badge={c.badge}>{c.node}</LibCell>
+          <LibCell key={i} lib={c.lib} badge={c.badge} anim={anim}>{c.node}</LibCell>
         ))}
       </div>
     </div>
@@ -719,6 +770,15 @@ export default function ChartShowcase() {
         <DataRefTable />
       </div>
 
+      <div className="card sc-row">
+        <div className="sc-row-head">
+          <h3>Metric Mapping · GA4 &amp; Meta</h3>
+          <span className="sc-badge">real API fields</span>
+          <span className="sc-row-sub">the actual GA4 Data API &amp; Meta Insights field names that feed each element — for matching to live data</span>
+        </div>
+        <MetricMapTable />
+      </div>
+
       <Row
         title="Line / Area Trend"
         sub="Daily sessions · curved area with gradient fill"
@@ -744,6 +804,7 @@ export default function ChartShowcase() {
       />
 
       <Row
+        anim="pop"
         title="Donut / Pie"
         sub="Device split · 62% inner radius"
         cells={[
@@ -766,6 +827,7 @@ export default function ChartShowcase() {
       />
 
       <Row
+        anim="pop"
         title="Gauge"
         sub="Goal progress · ECharts gauge vs Recharts radial-bar vs hand-built D3 arc"
         cells={[
@@ -792,11 +854,11 @@ export default function ChartShowcase() {
           <span className="sc-row-sub">same metric, five card treatments — pick the look for the dashboard</span>
         </div>
         <div className="sc-grid">
-          <LibCell lib="Accent + spark"><CardAccent /></LibCell>
-          <LibCell lib="Gradient glass"><CardGlass /></LibCell>
-          <LibCell lib="Progress ring"><CardRing /></LibCell>
-          <LibCell lib="Sparkline fill"><CardSparkFill /></LibCell>
-          <LibCell lib="Icon tile"><CardIcon /></LibCell>
+          <LibCell lib="Accent + spark" anim="fade"><CardAccent /></LibCell>
+          <LibCell lib="Gradient glass" anim="fade"><CardGlass /></LibCell>
+          <LibCell lib="Progress ring" anim="fade"><CardRing /></LibCell>
+          <LibCell lib="Sparkline fill" anim="fade"><CardSparkFill /></LibCell>
+          <LibCell lib="Icon tile" anim="fade"><CardIcon /></LibCell>
         </div>
       </div>
 
@@ -812,7 +874,7 @@ export default function ChartShowcase() {
         <div className="sc-row-head">
           <h3>Smooth Horizontal Funnel</h3>
           <span className="sc-badge">Nivo</span>
-          <span className="sc-row-sub">horizontal + smooth interpolation · warm gradient · custom labels & separators · also live on the Meta page</span>
+          <span className="sc-row-sub">horizontal + smooth interpolation · GYA brand gradient · custom labels & separators · also live on the Meta page</span>
         </div>
         <HFunnel steps={HFUNNEL_STEPS} height={300} />
       </div>
@@ -830,15 +892,42 @@ export default function ChartShowcase() {
         <div className="sc-row-head">
           <h3>Conversion Journey</h3>
           <span className="sc-badge">custom · SVG + d3</span>
-          <span className="sc-row-sub">data-driven · donut-ring nodes joined by proportional flow ribbons · sizes & % derived from the stage values</span>
+          <span className="sc-row-sub">data-driven · gradient-ring nodes joined by smooth flow ribbons · hover a node or flow · sizes & % from the values</span>
         </div>
-        <JourneyFlow stages={[
+        <div className="anim-fade"><JourneyFlow stages={[
           { label: 'Site Visit', value: 186811 },
           { label: 'Blog View', value: 47266 },
           { label: 'Subscribe', value: 25061 },
           { label: 'Purchase Product', value: 509 },
-        ]} />
+        ]} /></div>
       </div>
+
+      <div className="card sc-row">
+        <div className="sc-row-head">
+          <h3>Conversion Journey · Variations</h3>
+          <span className="sc-badge">dynamic</span>
+          <span className="sc-row-sub">same component, different data — 2, 3 and 5 stages auto-layout & re-scale</span>
+        </div>
+        <div style={{ fontSize: 12, color: 'var(--muted)', margin: '2px 0 4px' }}>2 stages · Lead → Customer</div>
+        <JourneyFlow height={300} stages={[
+          { label: 'Leads', value: 8400 },
+          { label: 'Customers', value: 1260 },
+        ]} />
+        <div style={{ fontSize: 12, color: 'var(--muted)', margin: '10px 0 4px' }}>3 stages · Meta catalog</div>
+        <JourneyFlow height={340} stages={[
+          { label: 'Add to Cart', value: 28310 },
+          { label: 'Checkout', value: 12640 },
+          { label: 'Purchase', value: 7180 },
+        ]} />
+        <div style={{ fontSize: 12, color: 'var(--muted)', margin: '10px 0 4px' }}>5 stages · Webinar funnel</div>
+        <JourneyFlow height={420} stages={[
+          { label: 'Impressions', value: 184000 },
+          { label: 'Reg. Page', value: 9600 },
+          { label: 'Registered', value: 1240 },
+          { label: 'Attended', value: 512 },
+          { label: 'Converted', value: 96 },
+        ]} />
+        </div>
 
       <div className="card sc-row">
         <div className="sc-row-head">
@@ -846,12 +935,12 @@ export default function ChartShowcase() {
           <span className="sc-badge">custom · SVG</span>
           <span className="sc-row-sub">data-driven · segmented 3D funnel with perspective caps, glow, per-stage value + % and icons</span>
         </div>
-        <Funnel3D stages={[
+        <div className="anim-pop"><Funnel3D stages={[
           { key: 'Reach', value: 120000, icon: 'campaign', left: 'Attract the right audience through targeted campaigns and digital channels.', right: 'Increase brand visibility through data-driven campaigns and audience segmentation.' },
           { key: 'Act', value: 38400, icon: 'play_arrow', left: 'Drive meaningful interactions and capture qualified leads.', right: 'Track user behavior and encourage interactions across key touchpoints.' },
           { key: 'Convert', value: 9600, icon: 'shopping_cart', left: 'Turn prospects into paying customers and reduce buying friction.', right: 'Optimize the customer journey using insights to improve conversion rates.' },
           { key: 'Engage', value: 2840, icon: 'star', left: 'Strengthen relationships and deliver ongoing personalized value.', right: 'Leverage analytics and personalization to strengthen loyalty and lifetime value.' },
-        ]} />
+        ]} /></div>
       </div>
 
       <div className="foot-note">

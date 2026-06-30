@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { ResponsiveFunnel } from '@nivo/funnel'
-import { nivoTheme } from '../lib/nivoTheme.js'
+import { nivoTheme, FUNNEL_COLORS } from '../lib/nivoTheme.js'
 import { C } from '../lib/charts.js'
 
 const FONT = 'Montserrat, "Noto Sans", sans-serif'
-const COLORS = ['#F4A95E', '#EC7F84', '#E84B97', '#C7409A', '#9B3FB0'] // warm → magenta → violet
+const COLORS = FUNNEL_COLORS // GYA brand: blue → teal → green
 
 function useWidth() {
   const ref = useRef(null)
@@ -60,14 +60,14 @@ export default function HFunnel({ steps = [], height = 300 }) {
       {steps.map((_, i) => i > 0 && (
         <div key={'sep' + i} style={{
           position: 'absolute', left: bandLeft(i), top: 70, bottom: 14,
-          width: 1, background: 'rgba(149,138,235,.45)',
+          width: 1, background: 'rgba(90,175,242,.35)',
         }} />
       ))}
       {steps.map((s, i) => (
         <div key={s.name + i} style={{ position: 'absolute', left: bandLeft(i) + (i ? 12 : 0), top: 14, lineHeight: 1.25, maxWidth: plot / N - 14 }}>
           <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 24, color: '#fff', fontFeatureSettings: '"tnum" 1' }}>{fmtNum(s.value)}</div>
           <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 12, color: C.green, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</div>
-          {i > 0 && <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 12, color: '#958AEB' }}>{s.p || pctOf(s.value, base)}</div>}
+          {i > 0 && <div style={{ fontFamily: FONT, fontWeight: 700, fontSize: 12, color: C.blue2 }}>{s.p || pctOf(s.value, base)}</div>}
         </div>
       ))}
     </div>
