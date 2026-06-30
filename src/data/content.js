@@ -184,6 +184,23 @@ const ADS_CAMPAIGNS_LEAD=[
       {name:'Responsive display',fmt:'Display',spend:'$1,310',ctr:'0.7%',cpc:'$0.38',cpl:'$58',cpl_s:'good',leads:'23'}]}]},
 ]
 
+/* ---------------- AWARENESS data (Case Study 1) ---------------- */
+const AW_WK = WK
+const AW_VIDEO = { x:['Wk 1','Wk 2','Wk 3','Wk 4','Wk 5','Wk 6'], stack:true, series:[
+  {name:'25%',color:'#2B8FEA',data:[41,44,47,49,52,55]},
+  {name:'50%',color:'#28C3AE',data:[27,29,31,33,35,37]},
+  {name:'75%',color:'#25E29C',data:[15,17,18,20,22,24]},
+  {name:'100%',color:'#22FF88',data:[8,9,11,12,13,15]},
+] }
+const AW_IMPRSHARE = { x:AW_WK, series:[
+  {name:'Display impressions',color:BLUE,data:[182000,205000,221000,243000,268000,291000,305000,322000]},
+  {name:'Search top-of-page %',color:GREEN,data:[44,46,48,49,51,53,54,56]},
+] }
+const AW_NVR = [{name:'New users',value:64,color:BLUE},{name:'Returning users',value:36,color:GREEN}]
+const AW_ORGANIC = { x:AW_WK, series:[
+  {name:'Brand impressions',color:GREEN,data:[12000,14500,16800,19200,22100,24800,27400,30200],area:true},
+  {name:'Non-brand impressions',color:BLUE,data:[38000,41000,43500,46000,48800,51200,53600,56400],area:true},
+] }
 
 const C = {
   /* ---------------- OVERVIEW (ecommerce) ---------------- */
@@ -646,6 +663,34 @@ const C = {
   'settings/team':{ sub:'Who can access this workspace', blocks:[
     {type:'teamManager',w:12},
   ]},
+
+  /* ---------------- OVERVIEW (awareness) ---------------- */
+  'overview/awareness':{ sub:'Brand penetration & top-of-funnel engagement', blocks:[
+    {type:'kpis',w:12,items:[
+      k('Reach','1.84M','+22%',true,true,null), k('Impressions','4.21M','+18%',true,true,null),
+      k('Frequency','2.3','+0.2',true,'plain',null), k('Avg. session','1m 48s','+9%',true,true,null),
+      k('New users','64%','+4%',true,true,null), k('Video 100% plays','15%','+3%',true,true,null),
+    ]},
+    {type:'chart',kind:'stack',title:'Video engagement (play %)',src:'Meta Ads',w:6,...AW_VIDEO},
+    {type:'chart',kind:'donut',title:'New vs Returning',src:'GA4',w:6,legend:true,height:150,data:AW_NVR},
+    {type:'geo',title:'Geographic reach (heatmap)',w:6,data:GEO,height:230},
+    {type:'chart',kind:'line',title:'Cumulative brand awareness',src:'Blended',w:6,x:AW_WK,series:[{name:'Brand reach',color:GREEN,data:[180,410,690,1010,1360,1720,2090,2470],area:true}]},
+  ]},
+
+  /* ---------------- AWARENESS tabs ---------------- */
+  'awareness/reach':{ sub:'Reach, frequency & geographic penetration', blocks:[
+    {type:'kpis',w:12,items:[k('Reach','1.84M','+22%',true,true,null),k('Frequency','2.3','+0.2',true,'plain',null),k('Impressions','4.21M','+18%',true,true,null),k('CPM','€4.90','-6%',false,true,null)]},
+    {type:'geo',title:'Reach by country',w:7,data:GEO,height:300},
+    {type:'chart',kind:'hbar',title:'Reach by region',w:5,x:['Attica','Thessaloniki','Crete','Achaea','Larissa','Other'],data:[640,410,228,150,104,308],color:GREEN},
+  ]},
+  'awareness/video':{ sub:'Video view-through engagement', blocks:[
+    {type:'chart',kind:'stack',title:'Video play % (25 / 50 / 75 / 100)',src:'Meta Ads',w:12,...AW_VIDEO},
+    {type:'chart',kind:'line',title:'Impression share & top-of-page rate',src:'Google Ads',w:12,...AW_IMPRSHARE},
+  ]},
+  'awareness/organic':{ sub:'Brand vs non-brand organic visibility', blocks:[
+    {type:'chart',kind:'line',title:'Brand vs Non-brand impressions',src:'Search Console',w:12,...AW_ORGANIC},
+    {type:'insight',icon:'travel_explore',tone:'good',title:'Brand demand is climbing',text:'Brand impressions grew 2.5× over the period while non-brand stayed flat — paid reach is converting into organic brand search.'},
+  ]},
 }
 
 // Lead-gen clients see CPL-based campaign trees instead of the ROAS ones
@@ -658,9 +703,33 @@ const LEAD_OVERRIDE = {
   ]},
 }
 
+// Awareness clients see TOFU-focused source overviews
+const AWARENESS_OVERRIDE = {
+  'meta/overview':{ sub:'Reach, frequency & video engagement', blocks:[
+    {type:'chart',kind:'stack',title:'Video engagement (play %)',src:'Meta Ads',w:7,...AW_VIDEO},
+    {type:'chart',kind:'donut',title:'Reach by placement',w:5,legend:true,height:150,data:[{name:'Feed',value:48,color:BLUE},{name:'Reels',value:34,color:GREEN},{name:'Stories',value:18,color:GREY}]},
+  ]},
+  'ads/overview':{ sub:'Display reach & search visibility', blocks:[
+    {type:'chart',kind:'line',title:'Display impressions & top-of-page rate',src:'Google Ads',w:12,...AW_IMPRSHARE},
+  ]},
+  'ga4/overview':{ sub:'New vs returning & engagement', blocks:[
+    {type:'chart',kind:'donut',title:'New vs Returning',w:5,legend:true,height:150,data:AW_NVR},
+    {type:'chart',kind:'line',title:'Avg. session duration',w:7,x:AW_WK,series:[{name:'Seconds',color:GREEN,data:[92,98,101,108,112,118,121,128],area:true}]},
+  ]},
+  'search/overview':{ sub:'Brand vs non-brand organic visibility', blocks:[
+    {type:'chart',kind:'line',title:'Brand vs Non-brand impressions',src:'Search Console',w:12,...AW_ORGANIC},
+  ]},
+}
+
 export function getContent(source, tab, clientType = 'ecommerce') {
-  if (source === 'overview') return clientType === 'leadgen' ? C['overview/lead'] : C['overview/ecom']
+  if (source === 'overview') {
+    if (clientType === 'leadgen') return C['overview/lead']
+    if (clientType === 'awareness') return C['overview/awareness']
+    return C['overview/ecom']
+  }
   const key = `${source}/${tab}`
   if (clientType === 'leadgen' && LEAD_OVERRIDE[key]) return LEAD_OVERRIDE[key]
+  if (clientType === 'awareness' && AWARENESS_OVERRIDE[key]) return AWARENESS_OVERRIDE[key]
+  if (clientType === 'awareness' && key.startsWith('awareness/')) return C[key]
   return C[key] || { sub:'', blocks:[{ type:'note', title:'Coming soon', text:'This tab is part of the full build.' }] }
 }
