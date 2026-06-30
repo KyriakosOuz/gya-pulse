@@ -52,6 +52,16 @@ const PROD_COLS=[
 ]
 const PROD_CAT=[{name:'Apparel',value:42,color:BLUE},{name:'Footwear',value:30,color:GREEN},{name:'Gear',value:22,color:GREY},{name:'Tech',value:6,color:'#5AAFF2'}]
 
+/* ---------------- GOOGLE MERCHANT (Case Study 2) ---------------- */
+const MERCH_STATUS=[
+  {name:'Summit Trail Boot',cat:'Footwear',status:'Approved',status_s:'good',price:'€50',compete:'-8% vs market',compete_s:'good',clicks:'4,200'},
+  {name:'Alpine Down Jacket',cat:'Apparel',status:'Approved',status_s:'good',price:'€80',compete:'+3% vs market',compete_s:'plain',clicks:'2,900'},
+  {name:'Trek 40L Backpack',cat:'Gear',status:'Approved',status_s:'good',price:'€60',compete:'-2% vs market',compete_s:'good',clicks:'2,100'},
+  {name:'Glacier Shell Jacket',cat:'Apparel',status:'Disapproved',status_s:'bad',price:'€60',compete:'+12% vs market',compete_s:'bad',clicks:'0'},
+  {name:'Summit GPS Watch',cat:'Tech',status:'Pending',status_s:'plain',price:'€120',compete:'+18% vs market',compete_s:'bad',clicks:'320'},
+]
+const MERCH_COLS=[{k:'name',label:'Product'},{k:'cat',label:'Category'},{k:'status',label:'Status'},{k:'price',label:'Price',r:true},{k:'compete',label:'Price competitiveness'},{k:'clicks',label:'Clicks',r:true}]
+
 /* ---------------- LEAD-GEN data ---------------- */
 const LCHAN=['Paid Search','Paid Social','Organic','Email','Referral','Direct']
 const FUN_LEAD_FULL={ steps:[{name:'Impressions',value:1640000,p:'100%'},{name:'Clicks',value:48200,p:'2.9%'},{name:'Leads',value:2180,p:'0.13%'},{name:'Qualified (MQL)',value:1420,p:'0.087%'},{name:'Customers',value:184,p:'0.011%'}] }
@@ -306,29 +316,21 @@ const C = {
       {name:'Tech',rev:'$16,200',units:'135',share:'6%',roas:'2.4x',roas_s:'bad',trend:'-12%',trend_s:'bad'},
     ]},
   ]},
-  'products/shopping':{ sub:'Google Merchant Center · product feed health & Shopping performance', blocks:[
-    {type:'kpis',items:[
-      k('Products in feed','248','▲ 6',true,true,SP.up),
-      k('Approved','231','▲ 9',true,true,SP.up),
-      k('Disapproved','12','▼ 3',true,true,SP.dn),
-      k('Pending','5',null,null,null),
-      k('Feed health','93%','▲ 2.0%',true,true,SP.up),
-      k('Shopping ROAS','5.0x','▲ 0.3x',true,true,SP.up),
+  'products/shopping':{ sub:'Google Merchant Center — feed health & product status', blocks:[
+    {type:'healthScore',w:5,title:'Merchant Health Score',score:82,max:100,items:[
+      {label:'Approved products',status:'ok',note:'142 / 150'},
+      {label:'Disapproved',status:'bad',note:'1 (price mismatch)'},
+      {label:'Pending review',status:'warn',note:'7'},
+      {label:'Feed freshness',status:'ok',note:'updated 3h ago'},
     ]},
-    {type:'insight',w:12,tone:'warn',icon:'error',title:'12 products disapproved',text:'Most disapprovals are missing GTIN / brand attributes on footwear SKUs. Fixing them re-enables roughly $8.2k/mo of Shopping spend that’s currently paused.'},
-    {type:'chart',kind:'donut',title:'Feed status',w:4,legend:true,height:170,data:[{name:'Approved',value:93,color:GREEN},{name:'Disapproved',value:5,color:'#FF6B6B'},{name:'Pending',value:2,color:'#F2B45A'}]},
-    {type:'chart',kind:'line',title:'Shopping performance',src:'Merchant Center + Ads',w:8,x:WK,series:[{name:'Clicks (k)',color:GREEN,data:[2.1,2.4,2.3,2.8,2.6,3.0,3.2,3.4],area:true},{name:'Revenue ($k)',color:BLUE,data:[18,21,20,26,24,29,31,34],area:true}]},
-    {type:'table',title:'Product feed status',src:'Merchant Center',w:12,columns:[{k:'name',label:'Product'},{k:'status',label:'Status'},{k:'issue',label:'Issue'},{k:'price',label:'Price',r:true},{k:'avail',label:'Availability'},{k:'clicks',label:'Clicks',r:true},{k:'impr',label:'Impr.',r:true},{k:'roas',label:'ROAS',r:true}],rows:[
-      {name:'Summit Trail Boot',status:'Approved',issue:'—',price:'$190',avail:'In stock',clicks:'1,240',impr:'48,400',roas:'6.4x',roas_s:'good'},
-      {name:'Alpine Down Jacket',status:'Approved',issue:'—',price:'$280',avail:'In stock',clicks:'980',impr:'39,100',roas:'5.8x',roas_s:'good'},
-      {name:'Trek 40L Backpack',status:'Approved',issue:'—',price:'$160',avail:'In stock',clicks:'760',impr:'29,800',roas:'4.9x',roas_s:'good'},
-      {name:'Merino Base Layer',status:'Approved',issue:'—',price:'$60',avail:'In stock',clicks:'620',impr:'22,300',roas:'5.1x',roas_s:'good'},
-      {name:'Carbon Trek Poles',status:'Disapproved',issue:'Missing GTIN',issue_s:'bad',price:'$120',avail:'In stock',clicks:'0',impr:'0',roas:'—'},
-      {name:'Glacier Shell Jacket',status:'Disapproved',issue:'Missing brand',issue_s:'bad',price:'$240',avail:'In stock',clicks:'0',impr:'0',roas:'—'},
-      {name:'Summit GPS Watch',status:'Pending',issue:'In review',price:'$320',avail:'Out of stock',avail_s:'bad',clicks:'0',impr:'0',roas:'—'},
+    {type:'leaderboard',w:7,title:'Product leaderboard',rows:[
+      {name:'Summit Trail Boot',sub:'High sales · efficient spend',value:'6.4x ROAS',status:'good',trend:'+18%'},
+      {name:'Merino Base Layer',sub:'Top conversion rate',value:'16.3% CVR',status:'good',trend:'+22%'},
+      {name:'Summit GPS Watch',sub:'High spend · low conversion',value:'2.4x ROAS',status:'bad',trend:'-12%'},
+      {name:'Glacier Shell Jacket',sub:'Disapproved — not serving',value:'0 clicks',status:'bad',trend:'-9%'},
     ]},
-    {type:'chart',kind:'hbar',title:'Top Shopping products by clicks',w:7,x:['Summit Trail Boot','Alpine Down Jacket','Trek 40L Backpack','Merino Base Layer','Trailhead Daypack'],data:[1240,980,760,620,410],color:GREEN},
-    {type:'kbreak',title:'Feed details',w:5,rows:[{k:'Last fetched',v:'2h ago',s:'good'},{k:'Feed items',v:'248'},{k:'Warnings',v:'18'},{k:'Merchant account',v:'Northwind Store feed'}]},
+    {type:'producttable',w:12,title:'Product status & price competitiveness',columns:MERCH_COLS,rows:MERCH_STATUS},
+    {type:'insight',icon:'inventory',tone:'bad',title:'Glacier Shell Jacket disapproved',text:'Price mismatch between feed (€60) and landing page. Fix the structured data price to restore Shopping eligibility.'},
   ]},
   'products/inventory':{ sub:'Stock health (requires store / Shopify connection)', blocks:[
     {type:'note',icon:'inventory',title:'Inventory needs a store connection',text:'Stock levels, days-of-cover and reorder points come from your ecommerce platform (Shopify / WooCommerce). The figures below are illustrative until the store is connected.'},
