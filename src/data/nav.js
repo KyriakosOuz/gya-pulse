@@ -86,9 +86,19 @@ const LEADS = { key: 'leads', icon: 'person_add', label: 'Leads', eyebrow: 'Lead
   { key: 'quality', icon: 'verified', label: 'Lead quality' },
 ] }
 
+// Awareness-only section (TOFU brand reach)
+const AWARENESS = { key: 'awareness', icon: 'visibility', label: 'Brand reach', eyebrow: 'Awareness · top of funnel', title: 'BRAND REACH', tabs: [
+  { key: 'overview', icon: 'dashboard', label: 'Overview' },
+  { key: 'reach', icon: 'public', label: 'Reach & geo' },
+  { key: 'video', icon: 'play_circle', label: 'Video engagement' },
+  { key: 'organic', icon: 'travel_explore', label: 'Organic visibility' },
+] }
+
 export function buildNav(clientType = 'ecommerce') {
   const overview = { key: 'overview', icon: 'space_dashboard', label: 'Overview', eyebrow: 'Blended · all channels' }
-  const targeted = clientType === 'leadgen' ? [LEADS] : [PRODUCTS, CUSTOMERS]
+  const targeted = clientType === 'leadgen' ? [LEADS]
+    : clientType === 'awareness' ? [AWARENESS]
+    : [PRODUCTS, CUSTOMERS]
   return [
     overview,
     ...targeted,
