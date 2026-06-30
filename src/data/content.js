@@ -522,6 +522,17 @@ const C = {
     {type:'table',title:'Conversions by channel',w:12,columns:[{k:'name',label:'Channel'},{k:'conv',label:'Conversions',r:true},{k:'cr',label:'Conv. rate',r:true},{k:'val',label:'Value',r:true}],rows:[
       {name:'Paid Social',conv:'2,940',cr:'5.9%',cr_s:'good',val:'$128k'},{name:'Paid Search',conv:'2,510',cr:'6.1%',cr_s:'good',val:'$112k'},{name:'Organic Search',conv:'3,210',cr:'4.8%',cr_s:'plain',val:'$96k'},{name:'Email',conv:'1,460',cr:'7.2%',cr_s:'good',val:'$54k'},{name:'Direct',conv:'1,180',cr:'4.1%',cr_s:'bad',val:'$38k'},
     ]},
+    {type:'table',w:12,title:'In-page action events',columns:[{k:'ev',label:'Event'},{k:'count',label:'Count',r:true},{k:'rate',label:'Per session',r:true},{k:'val',label:'Value',r:true}],rows:[
+      {ev:'form_start',count:'4,820',rate:'3.8%',val:'—'},
+      {ev:'form_submit',count:'2,180',rate:'1.7%',val:'€96 CPL'},
+      {ev:'product_view',count:'74,900',rate:'58.3%',val:'—'},
+      {ev:'add_to_cart',count:'28,310',rate:'22.0%',val:'—'},
+      {ev:'begin_checkout',count:'12,640',rate:'9.8%',val:'—'},
+      {ev:'purchase',count:'7,180',rate:'5.6%',val:'€128,400'},
+      {ev:'button_click (book demo)',count:'1,920',rate:'1.5%',val:'—'},
+      {ev:'calendar_start',count:'860',rate:'0.7%',val:'—'},
+      {ev:'calendar_submit',count:'412',rate:'0.3%',val:'€22.30 CPL'},
+    ]},
   ]},
   'ga4/monetization':{ sub:'Ecommerce revenue & products', blocks:[
     {type:'kpis',items:[k('Total revenue','$312.4k','▲ 14%',true,true,SP.up),k('Purchases','7,180','▲ 11%',true,true,SP.up),k('AOV','$43.51','▲ 3%',true,true,SP.up),k('Purchaser rate','41.2%','▲ 1.4%',true,true,SP.up),k('Refunds','$4.1k','▼ 8%',true,true,SP.dn),k('Items / order','2.3',null,null,null)]},
@@ -542,6 +553,8 @@ const C = {
     {type:'chart',kind:'donut',title:'Gender',w:5,legend:true,height:150,data:[{name:'Female',value:54,color:GREEN},{name:'Male',value:43,color:BLUE},{name:'Unknown',value:3,color:GREY}]},
     {type:'chart',kind:'bar',title:'Users by age',w:6,x:AGE,data:[14,38,24,12,8,4]},
     {type:'chart',kind:'hbar',title:'Top interests',w:6,x:['Outdoor gear','Travel','Fitness','Camping','Photography','Running'],data:[42,31,24,18,12,9]},
+    {type:'chart',kind:'hbar',title:'Top cities',w:6,x:['Athens','Thessaloniki','Patras','Heraklion','Larissa','London'],data:[2280,556,317,260,232,901],color:GREEN},
+    {type:'chart',kind:'donut',title:'Economic status (proxy)',w:6,legend:true,height:150,data:[{name:'Top 10%',value:18,color:GREEN},{name:'Mid 40%',value:52,color:BLUE},{name:'Lower 50%',value:30,color:GREY}]},
   ]},
   'ga4/tech':{ sub:'Devices, browsers & platforms', blocks:[
     {type:'kpis',items:[k('Top device','Desktop · 62%',null,null,null),k('Top browser','Chrome · 68%',null,null,null),k('Top OS','Windows · 41%',null,null,null),k('Crash-free rate','99.4%',null,true,true)]},
