@@ -13,9 +13,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-si
 .num{font-feature-settings:"tnum" 1;letter-spacing:-.01em}
 .mono-label{letter-spacing:.14em;text-transform:uppercase}
 .ms{font-family:"Material Symbols Outlined";font-size:22px;line-height:1;user-select:none}
-h1,h2,h3{color:var(--white);margin:0;letter-spacing:-.02em;font-family:var(--font-title)}
-.kpi-value,.v,.eyebrow{font-family:var(--font-title)}
-button{font-family:inherit}
+h1,h2,h3,h4{color:var(--white);margin:0;letter-spacing:-.02em;font-family:var(--font-title)}
+.kpi-value,.v,.eyebrow,.ms+b{font-family:var(--font-title)}
+button,input,select,textarea,table{font-family:var(--font-body)}
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-thumb{background:#22335c;border-radius:8px}
 ::-webkit-scrollbar-track{background:transparent}
