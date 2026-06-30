@@ -854,6 +854,28 @@ function TrackingHealth({ title, rows = [] }) {
   )
 }
 
+function SignatureFunnel({ title = 'Funnel overview', spend, steps = [], side = [], footer }) {
+  const opt = useMemo(() => funnelOpt({ steps, big: true }), [steps])
+  return (
+    <div className="card">
+      <div className="cardhead"><h3>{title}</h3>{spend && <span className="tag-src">Ad spend {spend}</span>}</div>
+      <div style={{ display:'flex', gap:14, alignItems:'stretch' }}>
+        <div style={{ flex:'1 1 64%', minHeight:320 }}><EChart option={opt} height={320} /></div>
+        <div style={{ flex:'1 1 36%', display:'flex', flexDirection:'column', justifyContent:'center', gap:12 }}>
+          {side.map((s, i) => (
+            <div key={i} style={{ borderLeft:'2px solid var(--line)', paddingLeft:12 }}>
+              <small style={{ color:'var(--muted)', display:'block' }}>{s.label}</small>
+              <b style={{ fontFamily:'var(--font-title)', fontSize:20, color:'#fff' }}>{s.value}</b>
+              {s.delta && <small style={{ marginLeft:8, color: s.up ? 'var(--green)' : 'var(--red)' }}>{s.up ? '▲' : '▼'} {s.delta}</small>}
+            </div>
+          ))}
+        </div>
+      </div>
+      {footer && <div style={{ marginTop:10, color:'var(--green)', fontFamily:'var(--font-title)', fontWeight:600 }}>{footer}</div>}
+    </div>
+  )
+}
+
 export default function Widget({ spec, idx = 0 }) {
   const fil = useFilters()
   const span = { gridColumn: `span ${spec.w || 12}` }
@@ -884,5 +906,6 @@ export default function Widget({ spec, idx = 0 }) {
   if (spec.type === 'leaderboard') return <div style={span}><Leaderboard {...spec} /></div>
   if (spec.type === 'changelog') return <div style={span}><Changelog {...spec} /></div>
   if (spec.type === 'trackingHealth') return <div style={span}><TrackingHealth {...spec} /></div>
+  if (spec.type === 'signatureFunnel') return <div style={span}><SignatureFunnel {...spec} /></div>
   return null
 }
