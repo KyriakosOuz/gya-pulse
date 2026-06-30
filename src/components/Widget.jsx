@@ -893,15 +893,12 @@ function NivoFunnel({ data, height = 340 }) {
 }
 
 function SignatureFunnel({ title = 'Funnel overview', spend, steps = [], side = [], footer }) {
-  const nivoData = useMemo(
-    () => steps.map(step => ({ id: step.name, value: step.value, label: `${step.name}  ${step.p}` })),
-    [steps]
-  )
+  const opt = useMemo(() => funnelOpt({ steps, big: true }), [steps])
   return (
     <div className="card">
       <div className="cardhead"><h3>{title}</h3>{spend && <span className="tag-src">Ad spend {spend}</span>}</div>
       <div style={{ display:'flex', gap:14, alignItems:'stretch' }}>
-        <div style={{ flex:'1 1 64%', minHeight:340 }}><NivoFunnel data={nivoData} height={340} /></div>
+        <div style={{ flex:'1 1 64%', minHeight:340 }}><EChart option={opt} height={340} /></div>
         <div style={{ flex:'1 1 36%', display:'flex', flexDirection:'column', justifyContent:'center', gap:12 }}>
           {side.map((s, i) => (
             <div key={i} style={{ borderLeft:'2px solid var(--line)', paddingLeft:12 }}>
