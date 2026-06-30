@@ -88,6 +88,12 @@ const LEADS = { key: 'leads', icon: 'person_add', label: 'Leads', eyebrow: 'Lead
   { key: 'quality', icon: 'verified', label: 'Lead quality' },
 ] }
 
+const WEBINAR = { key: 'webinar', icon: 'co_present', label: 'Webinars', eyebrow: 'B2B · Zoom & webinars', title: 'WEBINARS', tabs: [
+  { key: 'overview', icon: 'dashboard', label: 'Overview' },
+  { key: 'attendance', icon: 'groups', label: 'Attendance' },
+  { key: 'funnel', icon: 'filter_alt', label: 'Webinar funnel', star: true },
+] }
+
 // Awareness-only section (TOFU brand reach)
 const AWARENESS = { key: 'awareness', icon: 'visibility', label: 'Brand reach', eyebrow: 'Awareness · top of funnel', title: 'BRAND REACH', tabs: [
   { key: 'overview', icon: 'dashboard', label: 'Overview' },
@@ -98,7 +104,7 @@ const AWARENESS = { key: 'awareness', icon: 'visibility', label: 'Brand reach', 
 
 export function buildNav(clientType = 'ecommerce') {
   const overview = { key: 'overview', icon: 'space_dashboard', label: 'Overview', eyebrow: 'Blended · all channels' }
-  const targeted = clientType === 'leadgen' ? [LEADS]
+  const targeted = clientType === 'leadgen' ? [LEADS, WEBINAR]
     : clientType === 'awareness' ? [AWARENESS]
     : [PRODUCTS, CUSTOMERS]
   return [

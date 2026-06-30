@@ -455,6 +455,23 @@ const C = {
     ]},
   ]},
 
+  /* ---------------- LEAD-GEN · WEBINAR ---------------- */
+  'webinar/overview':{ sub:'Zoom / webinar registration & attendance', blocks:[
+    {type:'kpis',w:12,items:[k('Registered','1,240','+16%',true,true,null),k('Attended','512','+9%',true,true,null),k('Attendance rate','41%','+2%',true,true,null),k('Avg. time on webinar','38m','+4m',true,true,null)]},
+    {type:'chart',kind:'donut',title:'Registration vs Attendance',src:'Zoom',w:5,legend:true,height:160,data:[{name:'Attended',value:41,color:GREEN},{name:'No-show',value:59,color:'#3a4f7a'}]},
+    {type:'chart',kind:'line',title:'Time-on-webinar distribution',src:'Zoom',w:7,x:['0-10m','10-20m','20-30m','30-40m','40-50m','50m+'],series:[{name:'Attendees',color:BLUE,data:[88,96,110,124,72,22],area:true}]},
+  ]},
+  'webinar/attendance':{ sub:'Attendance ratio & drop-off', blocks:[
+    {type:'chart',kind:'donut',title:'Attendance ratio',w:5,legend:true,height:160,data:[{name:'Attended',value:41,color:GREEN},{name:'No-show',value:59,color:'#3a4f7a'}]},
+    {type:'chart',kind:'hbar',title:'Registrations by source',w:7,x:['LinkedIn Ads','Email','Google Ads','Organic','Partner'],data:[420,360,240,140,80],color:GREEN},
+  ]},
+  'webinar/funnel':{ sub:'Ads → Registration → Attended → SQL → Conversion', blocks:[
+    {type:'signatureFunnel',w:12,title:'Webinar funnel',spend:'€2,140',
+      steps:[{name:'Impressions',value:184000,p:'100%'},{name:'Reg. page views',value:9600,p:'5.2%'},{name:'Registered',value:1240,p:'0.67%'},{name:'Attended',value:512,p:'0.28%'},{name:'SQL',value:96,p:'0.05%'},{name:'Conversion',value:24,p:'0.013%'}],
+      side:[{label:'Cost / registrant',value:'€1.73',delta:'8%',up:false},{label:'Attendance rate',value:'41%',delta:'2%',up:true},{label:'Reg → SQL',value:'7.7%'},{label:'Cost / SQL',value:'€22.30',delta:'5%',up:false}],
+      footer:'108% of previous webinar'},
+  ]},
+
   /* ---------------- GA4 ---------------- */
   'ga4/overview':{ sub:'Users, sessions, engagement & conversions', blocks:[
     {type:'kpis',items:[
