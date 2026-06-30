@@ -8,7 +8,7 @@ import Widget, { Skeleton } from './components/Widget.jsx'
 import ChartShowcase from './pages/ChartShowcase.jsx'
 
 const PROVIDER_LABEL = { google: 'Google', meta: 'Meta', shopify: 'Shopify', woocommerce: 'WooCommerce', merchant: 'Google Merchant Center' }
-import { FilterContext, DEFAULT_FILTERS, RANGES, CHANNELS, filterSig, transformContent } from './lib/filters.js'
+import { FilterContext, DEFAULT_FILTERS, RANGES, filterSig, transformContent } from './lib/filters.js'
 
 const reduceMotion = () => typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -99,7 +99,7 @@ export default function App() {
   const [client, setClient] = useState(() => clientStore.get()[0])
   const [source, setSource] = useState('overview')
   const [menuOpen, setMenuOpen] = useState(false)      // client switcher
-  const [openCtl, setOpenCtl] = useState(null)         // 'date' | 'filters' | null
+  const [openCtl, setOpenCtl] = useState(null)         // 'date' | null
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
   const [loading, setLoading] = useState(false)
   const [ai, setAi] = useState(null)   // AI drawer: null | { kind, name }
@@ -130,8 +130,6 @@ export default function App() {
 
   const pageKey = item.key === 'overview' ? `overview-${client.type}` : `${item.key}/${tab}`
   const sig = filterSig(filters)
-  // Compare only makes sense where there are trend lines or KPI scorecards
-  const canCompare = useMemo(() => (baseContent.blocks || []).some(b => b.type === 'kpis' || (b.type === 'chart' && b.kind === 'line')), [baseContent])
 
   // loading gate — flash skeletons, then mount charts fresh so they replay draw-on
   useEffect(() => {
@@ -152,16 +150,12 @@ export default function App() {
   const fil = {
     filters,
     setRange: r => { setFilters(f => ({ ...f, range: r })); setOpenCtl(null) },
-    toggleChannel: c => setFilters(f => ({ ...f, channels: f.channels.includes(c) ? f.channels.filter(x => x !== c) : [...f.channels, c] })),
-    setChannelsOnly: c => setFilters(f => ({ ...f, channels: f.channels.length === 1 && f.channels[0] === c ? [] : [c] })),
-    removeChannel: c => setFilters(f => ({ ...f, channels: f.channels.filter(x => x !== c) })),
-    toggleCompare: () => setFilters(f => ({ ...f, compare: !f.compare })),
     clear: () => setFilters(DEFAULT_FILTERS),
     openAI: ctx => setAi(ctx || { kind: 'report' }),
     createClient: c => { clientStore.add(c); switchClient(c) },
     clientId: client.id,
   }
-  const active = filters.range !== '28d' || filters.channels.length > 0 || filters.compare
+  const active = filters.range !== '28d'
 
   const eyebrow = item?.eyebrow || item?.title || ''
   const tabLabel = item?.tabs?.find(t => t.key === tab)?.label
@@ -241,31 +235,6 @@ export default function App() {
               )}
             </div>
 
-            {/* channel filter */}
-            <div className="ctl-wrap">
-              <button className={`pill-btn ${openCtl === 'filters' || filters.channels.length ? 'on' : ''}`} onClick={() => setOpenCtl(o => o === 'filters' ? null : 'filters')}>
-                <span className="ms">filter_list</span> Channels{filters.channels.length ? <span className="ctl-count">{filters.channels.length}</span> : ''} <span className="ms" style={{ fontSize: 16 }}>expand_more</span>
-              </button>
-              {openCtl === 'filters' && (
-                <div className="ctl-menu wide">
-                  <div className="cm-label">Filter by channel</div>
-                  {CHANNELS.map(c => (
-                    <button key={c} className={`ctl-item ${filters.channels.includes(c) ? 'on' : ''}`} onClick={() => fil.toggleChannel(c)}>
-                      <span className="ms" style={{ fontSize: 17 }}>{filters.channels.includes(c) ? 'check_box' : 'check_box_outline_blank'}</span>{c}
-                    </button>
-                  ))}
-                  {filters.channels.length > 0 && <button className="ctl-clear" onClick={() => setFilters(f => ({ ...f, channels: [] }))}>Clear channels</button>}
-                </div>
-              )}
-            </div>
-
-            {/* compare toggle — only where it has something to compare */}
-            {canCompare && (
-              <button className={`pill-btn ${filters.compare ? 'on' : ''}`} onClick={fil.toggleCompare} title="Compare to previous period">
-                <span className="ms">compare_arrows</span> Compare
-              </button>
-            )}
-
             <button className="cta" onClick={() => setAi({ kind: 'report' })}><span className="ms">auto_awesome</span> Generate AI Report</button>
           </div>
 
@@ -281,8 +250,6 @@ export default function App() {
           {active && (
             <div className="chips">
               {filters.range !== '28d' && <span className="chip" onClick={() => fil.setRange('28d')}><span className="ms">calendar_today</span>{RANGES[filters.range].label}<span className="ms x">close</span></span>}
-              {filters.channels.map(c => <span className="chip" key={c} onClick={() => fil.removeChannel(c)}><span className="ms">filter_list</span>{c}<span className="ms x">close</span></span>)}
-              {filters.compare && <span className="chip" onClick={fil.toggleCompare}><span className="ms">compare_arrows</span>vs previous period<span className="ms x">close</span></span>}
               <button className="chip-clear" onClick={fil.clear}>Clear all</button>
             </div>
           )}
