@@ -12,10 +12,10 @@ function animated(option, delay = 0) {
   if (reduceMotion()) return { ...option, animation: false }
   return {
     animation: true,
-    animationDuration: 780,
+    animationDuration: 900,
     animationEasing: 'cubicOut',
     animationDelay: delay,
-    animationDurationUpdate: 480,
+    animationDurationUpdate: 400,
     animationEasingUpdate: 'cubicOut',
     ...option,
   }

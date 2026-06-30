@@ -77,21 +77,26 @@ button,input,select,textarea,table{font-family:var(--font-body)}
 
 /* layout grid */
 .rowgrid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-bottom:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.card{background:linear-gradient(135deg,#0E1C35 0%,#0d1f3c 100%);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:18px;transition:box-shadow .2s ease,border-color .2s ease,transform .2s ease}
 .card.bordered{background:linear-gradient(180deg,var(--card),var(--bg2))}
 .cardhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}
 .cardhead h3{font-size:15px;font-weight:600}
 .cardhead .tag-src{color:var(--muted);font-size:11px}
 .chart{width:100%}
 
-/* kpi */
+/* kpi scorecards (research §3.1) */
+.kpi{border-left:4px solid var(--blue);padding-left:20px}
+.kpi.good{border-left-color:var(--green);box-shadow:inset 0 0 0 1px rgba(34,255,136,.12),0 0 24px -8px rgba(34,255,136,.3)}
+.kpi.bad{border-left-color:var(--red)}
+.kpi.neutral{border-left-color:var(--blue)}
+.kpi.good:hover{border-color:rgba(34,255,136,.4);box-shadow:inset 0 0 0 1px rgba(34,255,136,.18),0 0 28px -8px rgba(34,255,136,.4);transform:translateY(-2px)}
 .kpi .klabel{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.1em;text-transform:uppercase}
-.kpi .kval{font-size:25px;font-weight:600;color:var(--white);margin:7px 0 9px;line-height:1}
+.kpi .kval{font-family:var(--font-title);font-size:40px;font-weight:700;color:var(--white);margin:8px 0 11px;line-height:1.02;letter-spacing:-.02em}
 .kpi .krow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.tag{font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px}
-.tag.good{background:rgba(34,255,136,.14);color:var(--green)}
-.tag.bad{background:rgba(255,107,107,.14);color:var(--red)}
-.tag.neutral{background:rgba(138,155,187,.14);color:var(--muted)}
+.tag{font-family:var(--font-title);font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid transparent}
+.tag.good{background:rgba(34,255,136,.12);border-color:rgba(34,255,136,.4);color:#22FF88}
+.tag.bad{background:rgba(255,77,106,.12);border-color:rgba(255,77,106,.4);color:#FF4D6A}
+.tag.neutral{background:rgba(138,155,187,.12);border-color:rgba(138,155,187,.3);color:var(--muted)}
 .delta{font-size:11px;font-weight:600}
 .delta.up{color:var(--green)} .delta.down{color:var(--red)}
 .kprev{margin-top:8px;font-size:11px;color:var(--muted);font-weight:600}
@@ -151,9 +156,9 @@ tbody tr:hover{background:#13234a;border-left-color:var(--green)}
 .foot-note{margin-top:26px;color:var(--dim);font-size:11px;text-align:center}
 .demo-banner{background:linear-gradient(90deg,rgba(43,143,234,.16),rgba(34,255,136,.10));color:var(--blue2);text-align:center;font-size:12px;padding:7px;border-bottom:1px solid var(--line)}
 
-/* ---- subtle static hovers (no floating/lift) + entry ---- */
-.card{transition:border-color .16s ease}
-.card:hover{border-color:rgba(43,143,234,.28)}
+/* ---- premium card glow + lift on hover (research item 7) ---- */
+.card:hover{border-color:rgba(43,143,234,.25);box-shadow:0 0 28px -8px rgba(43,143,234,.25);transform:translateY(-2px)}
+@media(prefers-reduced-motion:reduce){.card:hover,.kpi.good:hover{transform:none}}
 .btn-connect{transition:filter .14s ease}
 .btn-connect:hover{filter:brightness(1.08)}
 .ask{transition:background .14s ease}

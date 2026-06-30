@@ -16,13 +16,14 @@ const fmt = v => {
   return v.toLocaleString(undefined, { maximumFractionDigits: 2 })
 }
 
-// shared tooltip look — rounded card, soft shadow, GYA surface
+// shared tooltip look — dark glass card, accent border, soft bloom (research §3.3)
 const tip = {
-  backgroundColor:'#0E1C35', borderColor:'#22335c', borderWidth:1, padding:[10,13],
+  backgroundColor:'rgba(9,18,34,0.96)', borderColor:'rgba(43,143,234,0.35)', borderWidth:1, padding:[12,16],
   textStyle:{ color:'#fff', fontFamily:FONT, fontSize:12 },
-  extraCssText:'border-radius:12px;box-shadow:0 16px 38px -14px rgba(0,0,0,.7);backdrop-filter:blur(2px)',
+  extraCssText:'border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.6);backdrop-filter:blur(8px)',
+  confine:true,
 }
-const axisPointer = { type:'line', lineStyle:{ color:'rgba(43,143,234,.45)', width:1, type:[4,3] }, z:0 }
+const axisPointer = { type:'line', lineStyle:{ color:'rgba(197,208,224,0.15)', width:1, type:'dashed' }, z:0 }
 
 // multi-series rows with colored dots + value (Databloo style)
 function rows(params, { total } = {}) {
@@ -41,10 +42,12 @@ function rows(params, { total } = {}) {
   return head + body + tot
 }
 
+// global axis treatment — faint axis line, no ticks, muted 11px labels,
+// very faint horizontal split lines only (research §3.5)
 const axisBase = {
-  axisLine:{ lineStyle:{ color:'#22335c' } }, axisTick:{ show:false },
-  axisLabel:{ color:C.dim, fontFamily:FONT, fontSize:10 },
-  splitLine:{ lineStyle:{ color:C.line } },
+  axisLine:{ lineStyle:{ color:'rgba(138,155,187,0.15)' } }, axisTick:{ show:false },
+  axisLabel:{ color:'#8A9BBB', fontFamily:FONT, fontSize:11 },
+  splitLine:{ lineStyle:{ color:'rgba(138,155,187,0.07)', type:'solid' } },
 }
 
 export function lineOpt({ x, series, total }) {
@@ -61,10 +64,11 @@ export function lineOpt({ x, series, total }) {
       lineStyle:{ color:s.color, width: s.dashed ? 2 : 3, type: s.dashed ? 'dashed' : 'solid', opacity: s.dashed ? .55 : 1 },
       itemStyle:{ color:s.color, borderColor:'#0B1628', borderWidth:2 },
       animationDelay: i * 180,           // stagger multiple lines (CGM "animationBegin" trick)
-      emphasis:{ focus:'series', scale:1.6 },
-      // growing active dot on hover (like Recharts activeDot)
+      // hover glow on the active series (research item 6)
+      emphasis:{ focus:'series', scale:1.6, itemStyle:{ shadowBlur:20, shadowColor:s.color+'66' } },
       emphasisDisabled:false,
-      areaStyle: s.dashed ? undefined : (s.area ? { color: grad(s.color+'44', s.color+'00', true) } : undefined),
+      // premium vertical gradient area fill for solid trend lines (research item 2): accent 0.30 → 0
+      areaStyle: s.dashed ? undefined : { color: grad(s.color+'4D', s.color+'00', true) },
     })),
   }
 }
@@ -80,8 +84,8 @@ export function barOpt({ x, data, color, horizontal }) {
     yAxis: horizontal ? { ...cat, inverse:true } : val,
     series:[{ type:'bar', name:'Value', data, barWidth:'56%',
       itemStyle:{ borderRadius: horizontal ? [0,4,4,0] : [4,4,0,0], color: grad(color||C.green, C.blue, !horizontal) },
-      animationDelay:(idx)=>idx*55,
-      emphasis:{ itemStyle:{ shadowBlur:14, shadowColor:'rgba(34,255,136,.4)' } } }],
+      animationDelay:(idx)=>idx*60,
+      emphasis:{ focus:'series', itemStyle:{ shadowBlur:20, shadowColor:(color||C.green)+'66' } } }],
   }
 }
 
@@ -153,7 +157,7 @@ export function scatterOpt({ points }) {
     xAxis:{ type:'value', ...axisBase }, yAxis:{ type:'value', ...axisBase },
     series:[{ type:'scatter', symbolSize:d=>Math.max(8, d[2]/30), data:points,
       itemStyle:{ color:'rgba(34,255,136,.6)', borderColor:C.green },
-      emphasis:{ scale:1.4, itemStyle:{ shadowBlur:14, shadowColor:'rgba(34,255,136,.6)' } } }],
+      emphasis:{ focus:'series', scale:1.4, itemStyle:{ shadowBlur:20, shadowColor:'rgba(34,255,136,.6)' } } }],
   }
 }
 
@@ -169,8 +173,8 @@ export function stackBarOpt({ x, series, stack = true, total }) {
       name:s.name, type:'bar', stack: stack ? 'total' : undefined,
       barWidth: stack ? '52%' : undefined, barGap: stack ? undefined : '12%',
       data:s.data, itemStyle:{ color:s.color, borderRadius: stack ? 0 : [3,3,0,0] },
-      animationDelay:(idx)=>idx*40 + i*60,
-      emphasis:{ itemStyle:{ shadowBlur:12, shadowColor:'rgba(34,255,136,.35)' } },
+      animationDelay:(idx)=>idx*60 + i*60,
+      emphasis:{ focus:'series', itemStyle:{ shadowBlur:20, shadowColor:'rgba(34,255,136,.45)' } },
     })),
   }
 }

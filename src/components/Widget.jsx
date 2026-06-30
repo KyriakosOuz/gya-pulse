@@ -31,10 +31,25 @@ function CountUp({ text }) {
   return <>{disp}</>
 }
 
+// Zero-chrome sparkline: line + trend-colored gradient fill, no axes/grid/labels (research §3.2)
 function Sparkline({ data, color }) {
   const w = 120, h = 30, min = Math.min(...data), max = Math.max(...data), r = (max - min) || 1
-  const pts = data.map((v, i) => `${(i / (data.length - 1) * w).toFixed(1)},${(h - ((v - min) / r) * (h - 4) - 2).toFixed(1)}`).join(' ')
-  return <svg className="spark" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none"><polyline points={pts} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+  const coords = data.map((v, i) => `${(i / (data.length - 1) * w).toFixed(1)},${(h - ((v - min) / r) * (h - 4) - 2).toFixed(1)}`)
+  const line = coords.join(' ')
+  const area = `0,${h} ${line} ${w},${h}`
+  const gid = 'spk-' + color.replace('#', '')
+  return (
+    <svg className="spark" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
+      <defs>
+        <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={color} stopOpacity="0.30" />
+          <stop offset="1" stopColor={color} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <polygon points={area} fill={`url(#${gid})`} stroke="none" />
+      <polyline points={line} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
 }
 
 function KpiCard({ l, v, delta, up, good, sp, i }) {
@@ -48,7 +63,7 @@ function KpiCard({ l, v, delta, up, good, sp, i }) {
     if (p && !isNaN(d)) prev = fmtMetric(p.n / (1 + (up ? d : -d) / 100), p.pre, p.unit)
   }
   return (
-    <div className="card kpi" style={{ '--d': `${(i || 0) * 45}ms` }}>
+    <div className={`card kpi ${tag}`} style={{ '--d': `${(i || 0) * 45}ms` }}>
       <div className="klabel">{l}</div>
       <div className="kval num" style={{ color }}><CountUp text={v} /></div>
       <div className="krow">
