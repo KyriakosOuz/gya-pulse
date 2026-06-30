@@ -55,11 +55,23 @@ function Sparkline({ data, color }) {
   )
 }
 
+// deterministic small trend (per card) used to fill cards that ship without sparkline data
+function synthSpark(seed, up) {
+  let h = 2166136261
+  for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619) }
+  const rnd = () => { h += 0x6D2B79F5; let t = h; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296 }
+  const n = 9
+  return Array.from({ length: n }, (_, i) => 20 + ((up ? i : n - 1 - i) / (n - 1)) * 24 + (rnd() - 0.5) * 7)
+}
+
 function KpiCard({ l, v, delta, up, good, sp, i }) {
   const fil = useFilters()
   const color = good ? 'var(--green)' : good === false ? 'var(--red)' : 'var(--white)'
   const tag = good ? 'good' : good === false ? 'bad' : 'neutral'
   const tagText = good ? 'On target' : good === false ? 'Off target' : '—'
+  const arrow = good === false ? '▼' : '▲'                                  // tone-based: bad points down
+  const deltaNum = delta ? String(delta).replace(/^[▲▼↑↓\s]+/, '') : ''
+  const sparkData = useMemo(() => (sp && sp.length ? sp : synthSpark(l + '|' + v, up)), [sp, l, v, up])
   let prev = null
   if (fil?.filters?.compare && delta && String(delta).includes('%')) {
     const p = parseMetric(v), d = parseFloat(String(delta).replace(/[^0-9.]/g, ''))
@@ -70,12 +82,12 @@ function KpiCard({ l, v, delta, up, good, sp, i }) {
       <div className="kpf-body">
         <div className="kpf-top">
           <span className="kpf-label">{l}</span>
-          {delta && <span className={`kpf-chip ${tag}`}>{delta}</span>}
+          {delta && <span className={`kpf-chip ${tag}`}>{arrow} {deltaNum}</span>}
         </div>
         <div className="kpf-val num" style={{ color }}><CountUp text={v} /></div>
         {prev && <div className="kpf-prev">vs prev · {prev}</div>}
       </div>
-      {sp && <div className="kpf-spark"><Sparkline data={sp} color={good === false ? C.red : C.green} /></div>}
+      <div className="kpf-spark"><Sparkline data={sparkData} color={good === false ? C.red : C.green} /></div>
     </div>
   )
 }
@@ -876,11 +888,27 @@ function TrackingHealth({ title, rows = [] }) {
 }
 
 function NivoFunnel({ data, height = 340 }) {
+  // Extreme funnels (e.g. 9,598 → 8) collapse to an unreadable spike. Compress the band-width
+  // scale (sqrt + 18% floor) so lower steps stay readable, but show the REAL values as labels.
+  const { fdata, fmt } = useMemo(() => {
+    const max = Math.max(...data.map(d => d.value)) || 1
+    const FLOOR = 0.18
+    const real = new Map()
+    const fdata = data.map(d => {
+      const comp = Math.round(max * (FLOOR + (1 - FLOOR) * Math.sqrt(d.value / max)))
+      real.set(comp, d.value)
+      return { ...d, value: comp }
+    })
+    const fmt = v => (real.get(Math.round(v)) ?? v).toLocaleString()
+    return { fdata, fmt }
+  }, [data])
   return (
     <div style={{ height }}>
       <ResponsiveFunnel
-        data={data}
+        data={fdata}
         direction="vertical"
+        interpolation="smooth"
+        shapeBlending={0.45}
         theme={nivoTheme}
         colors={FUNNEL_COLORS}
         borderWidth={0}
@@ -890,19 +918,19 @@ function NivoFunnel({ data, height = 340 }) {
         currentPartSizeExtension={0}
         currentBorderWidth={0}
         motionConfig="gentle"
-        valueFormat={(v) => v.toLocaleString()}
+        valueFormat={fmt}
       />
     </div>
   )
 }
 
 function SignatureFunnel({ title = 'Funnel overview', spend, steps = [], side = [], footer }) {
-  const opt = useMemo(() => funnelOpt({ steps, big: true }), [steps])
+  const data = useMemo(() => steps.map(s => ({ id: s.name, label: s.name, value: s.value })), [steps])
   return (
     <div className="card">
       <div className="cardhead"><h3>{title}</h3>{spend && <span className="tag-src">Ad spend {spend}</span>}</div>
       <div style={{ display:'flex', gap:14, alignItems:'stretch' }}>
-        <div style={{ flex:'1 1 64%', minHeight:340 }}><EChart option={opt} height={340} /></div>
+        <div style={{ flex:'1 1 64%', minHeight:340 }}><NivoFunnel data={data} height={340} /></div>
         <div style={{ flex:'1 1 36%', display:'flex', flexDirection:'column', justifyContent:'center', gap:12 }}>
           {side.map((s, i) => (
             <div key={i} style={{ borderLeft:'2px solid var(--line)', paddingLeft:12 }}>
