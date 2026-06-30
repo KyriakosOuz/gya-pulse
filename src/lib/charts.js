@@ -55,12 +55,16 @@ export function lineOpt({ x, series, total }) {
     legend:{ show:false },
     xAxis:{ type:'category', boundaryGap:false, data:x, ...axisBase, splitLine:{ show:false } },
     yAxis:{ type:'value', ...axisBase, axisLine:{ show:false } },
-    series: series.map(s => ({
-      name:s.name, type:'line', smooth:true, symbol:'circle', showSymbol:false, symbolSize:8,
-      data:s.data, lineStyle:{ color:s.color, width:3 },
+    series: series.map((s, i) => ({
+      name:s.name, type:'line', smooth:true, symbol:'circle', showSymbol:false, symbolSize:9,
+      data:s.data,
+      lineStyle:{ color:s.color, width: s.dashed ? 2 : 3, type: s.dashed ? 'dashed' : 'solid', opacity: s.dashed ? .55 : 1 },
       itemStyle:{ color:s.color, borderColor:'#0B1628', borderWidth:2 },
+      animationDelay: i * 180,           // stagger multiple lines (CGM "animationBegin" trick)
       emphasis:{ focus:'series', scale:1.6 },
-      areaStyle: s.area ? { color: grad(s.color+'44', s.color+'00', true) } : undefined,
+      // growing active dot on hover (like Recharts activeDot)
+      emphasisDisabled:false,
+      areaStyle: s.dashed ? undefined : (s.area ? { color: grad(s.color+'44', s.color+'00', true) } : undefined),
     })),
   }
 }
@@ -76,6 +80,7 @@ export function barOpt({ x, data, color, horizontal }) {
     yAxis: horizontal ? { ...cat, inverse:true } : val,
     series:[{ type:'bar', name:'Value', data, barWidth:'56%',
       itemStyle:{ borderRadius: horizontal ? [0,4,4,0] : [4,4,0,0], color: grad(color||C.green, C.blue, !horizontal) },
+      animationDelay:(idx)=>idx*55,
       emphasis:{ itemStyle:{ shadowBlur:14, shadowColor:'rgba(34,255,136,.4)' } } }],
   }
 }

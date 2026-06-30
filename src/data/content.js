@@ -22,38 +22,214 @@ const HEAT={
   yLabels:['Wk of Aug 4','Aug 11','Aug 18','Aug 25','Sep 1','Sep 8'],
   matrix:[[100,42,31,26,22,19,17],[100,45,33,28,24,21],[100,40,30,25,22],[100,48,36,30],[100,44,34],[100,51]],
 }
+// Monthly acquisition cohorts (triangular — recent cohorts have fewer months elapsed)
+const MCOHORT={
+  xLabels:['M0','M1','M2','M3','M4','M5'],
+  yLabels:['Jan','Feb','Mar','Apr','May','Jun'],
+  matrix:[[100,48,39,33,29,26],[100,46,37,31,27],[100,51,42,35],[100,49,40],[100,53],[100]],
+}
 const k=(l,v,delta,up,good,sp)=>({l,v,delta,up,good,sp})
 const lineSV=()=>({type:'chart',kind:'line',title:'Performance over time',src:'GA4 + Ads',w:8,x:WK,series:[{name:'Revenue',color:GREEN,data:SP.rev,area:true},{name:'Ad spend',color:BLUE,data:SP.spend,area:true}]})
 const donutDev=(w=4)=>({type:'chart',kind:'donut',title:'Devices',w,legend:true,height:150,data:DEV})
 const geoBlock=(w=6,title='Performance by country')=>({type:'geo',title,w,data:GEO,height:210})
 const chanHbar=(w=6,title='Spend by channel')=>({type:'chart',kind:'hbar',title,w,x:CHAN,data:[78,52,40,30,24,17,11],color:GREEN})
 
+/* ---------------- ECOMMERCE · PRODUCTS ---------------- */
+const PRODUCTS=[
+  {name:'Summit Trail Boot',cat:'Footwear',rev:'$92,000',rev_n:92,units:'1,840',views:'18,400',cart:'4,200',cvr:'10.0%',cvr_s:'good',price:'$50',roas:'6.4x',roas_s:'good',trend:'+18%',up:true},
+  {name:'Alpine Down Jacket',cat:'Apparel',rev:'$78,400',rev_n:78.4,units:'980',views:'12,100',cart:'2,900',cvr:'8.1%',cvr_s:'good',price:'$80',roas:'5.8x',roas_s:'good',trend:'+12%',up:true},
+  {name:'Trek 40L Backpack',cat:'Gear',rev:'$45,600',rev_n:45.6,units:'760',views:'9,800',cart:'2,100',cvr:'7.8%',cvr_s:'plain',price:'$60',roas:'4.9x',roas_s:'good',trend:'+6%',up:true},
+  {name:'Merino Base Layer',cat:'Apparel',rev:'$31,000',rev_n:31,units:'1,240',views:'7,600',cart:'1,800',cvr:'16.3%',cvr_s:'good',price:'$25',roas:'5.1x',roas_s:'good',trend:'+22%',up:true},
+  {name:'Carbon Trek Poles',cat:'Gear',rev:'$26,000',rev_n:26,units:'520',views:'5,400',cart:'1,100',cvr:'9.6%',cvr_s:'plain',price:'$50',roas:'3.6x',roas_s:'plain',trend:'-4%',up:false},
+  {name:'Glacier Shell Jacket',cat:'Apparel',rev:'$22,800',rev_n:22.8,units:'380',views:'6,200',cart:'1,300',cvr:'6.1%',cvr_s:'plain',price:'$60',roas:'3.1x',roas_s:'plain',trend:'-9%',up:false},
+  {name:'Trailhead Daypack',cat:'Gear',rev:'$18,400',rev_n:18.4,units:'610',views:'4,900',cart:'980',cvr:'12.4%',cvr_s:'good',price:'$30',roas:'4.2x',roas_s:'good',trend:'+15%',up:true},
+  {name:'Summit GPS Watch',cat:'Tech',rev:'$16,200',rev_n:16.2,units:'135',views:'3,800',cart:'520',cvr:'3.6%',cvr_s:'bad',price:'$120',roas:'2.4x',roas_s:'bad',trend:'-12%',up:false},
+]
+const PROD_COLS=[
+  {k:'name',label:'Product'},{k:'cat',label:'Category'},{k:'rev',label:'Revenue',r:true,strong:true,n:'rev_n'},
+  {k:'units',label:'Units',r:true},{k:'views',label:'Views',r:true},{k:'cart',label:'Add to cart',r:true},
+  {k:'cvr',label:'CVR',r:true},{k:'price',label:'Avg price',r:true},{k:'roas',label:'ROAS',r:true},{k:'trend',label:'Trend',r:true},
+]
+const PROD_CAT=[{name:'Apparel',value:42,color:BLUE},{name:'Footwear',value:30,color:GREEN},{name:'Gear',value:22,color:GREY},{name:'Tech',value:6,color:'#5AAFF2'}]
+
+/* ---------------- LEAD-GEN data ---------------- */
+const LCHAN=['Paid Search','Paid Social','Organic','Email','Referral','Direct']
+const FUN_LEAD_FULL={ steps:[{name:'Impressions',value:1640000,p:'100%'},{name:'Clicks',value:48200,p:'2.9%'},{name:'Leads',value:2180,p:'0.13%'},{name:'Qualified (MQL)',value:1420,p:'0.087%'},{name:'Customers',value:184,p:'0.011%'}] }
+
+/* ---------------- CAMPAIGN TREES (Campaign → set → ad) ---------------- */
+const fmtIconList=['Reel','Carousel','Image','Video','DPA','Catalog','Shopping','RSA','Asset group','Display']
+const META_TREE_COLS=[{k:'spend',label:'Spend',r:true},{k:'ctr',label:'CTR',r:true},{k:'roas',label:'ROAS',r:true},{k:'conv',label:'Conv.',r:true}]
+const META_CAMPAIGNS=[
+  {name:'Retargeting · 30d',status:'Active',spend:'$6,930',ctr:'2.61%',ctr_s:'good',cpc:'$0.98',cpc_s:'good',roas:'7.8x',roas_s:'good',conv:'540',sets:[
+    {name:'Cart abandoners',spend:'$3,900',ctr:'3.1%',ctr_s:'good',roas:'9.2x',roas_s:'good',conv:'320',ads:[
+      {name:'UGC — “Still in your cart?”',fmt:'Reel',spend:'$2,300',ctr:'3.6%',ctr_s:'good',roas:'10.1x',roas_s:'good',conv:'210'},
+      {name:'Carousel — top picks',fmt:'Carousel',spend:'$1,600',ctr:'2.5%',roas:'7.9x',roas_s:'good',conv:'110'}]},
+    {name:'Viewed product 14d',spend:'$3,030',ctr:'2.4%',ctr_s:'good',roas:'6.4x',roas_s:'good',conv:'220',ads:[
+      {name:'Dynamic product ad',fmt:'DPA',spend:'$3,030',ctr:'2.4%',roas:'6.4x',roas_s:'good',conv:'220'}]}]},
+  {name:'Prospecting · Broad',status:'Active',spend:'$12,480',ctr:'1.84%',ctr_s:'good',cpc:'$1.42',cpc_s:'good',roas:'4.2x',roas_s:'good',conv:'612',sets:[
+    {name:'Lookalike 1% — Feed',spend:'$5,200',ctr:'1.9%',roas:'4.6x',roas_s:'good',conv:'280',ads:[
+      {name:'UGC — trail run',fmt:'Reel',spend:'$3,000',ctr:'2.1%',roas:'5.0x',roas_s:'good',conv:'170'},
+      {name:'Static — new arrivals',fmt:'Image',spend:'$2,200',ctr:'1.5%',roas:'3.9x',roas_s:'plain',conv:'110'}]},
+    {name:'Interest: Hiking',spend:'$4,100',ctr:'1.6%',roas:'3.8x',roas_s:'plain',conv:'210',ads:[
+      {name:'Video — brand story',fmt:'Video',spend:'$4,100',ctr:'1.6%',roas:'3.8x',roas_s:'plain',conv:'210'}]},
+    {name:'Broad — Advantage',spend:'$3,180',ctr:'1.7%',roas:'3.5x',roas_s:'plain',conv:'122',ads:[
+      {name:'Carousel — bestsellers',fmt:'Carousel',spend:'$3,180',ctr:'1.7%',roas:'3.5x',roas_s:'plain',conv:'122'}]}]},
+  {name:'Advantage+ Shopping',status:'Active',spend:'$9,210',ctr:'1.55%',ctr_s:'good',cpc:'$1.21',cpc_s:'good',roas:'5.1x',roas_s:'good',conv:'470',sets:[
+    {name:'ASC — Existing customers',spend:'$3,600',ctr:'1.8%',roas:'6.2x',roas_s:'good',conv:'210',ads:[
+      {name:'Catalog — winter range',fmt:'Catalog',spend:'$3,600',ctr:'1.8%',roas:'6.2x',roas_s:'good',conv:'210'}]},
+    {name:'ASC — Prospects',spend:'$5,610',ctr:'1.4%',roas:'4.5x',roas_s:'good',conv:'260',ads:[
+      {name:'Catalog — bestsellers',fmt:'Catalog',spend:'$5,610',ctr:'1.4%',roas:'4.5x',roas_s:'good',conv:'260'}]}]},
+  {name:'Catalog · DPA',status:'Active',spend:'$4,760',ctr:'2.10%',ctr_s:'good',cpc:'$1.05',cpc_s:'good',roas:'6.4x',roas_s:'good',conv:'388',sets:[
+    {name:'Cross-sell',spend:'$2,400',ctr:'2.2%',roas:'6.9x',roas_s:'good',conv:'210',ads:[
+      {name:'DPA — complete the look',fmt:'DPA',spend:'$2,400',ctr:'2.2%',roas:'6.9x',roas_s:'good',conv:'210'}]},
+    {name:'Upsell',spend:'$2,360',ctr:'2.0%',roas:'5.9x',roas_s:'good',conv:'178',ads:[
+      {name:'DPA — premium picks',fmt:'DPA',spend:'$2,360',ctr:'2.0%',roas:'5.9x',roas_s:'good',conv:'178'}]}]},
+  {name:'Lookalike 3%',status:'Paused',spend:'$3,140',ctr:'0.92%',ctr_s:'bad',cpc:'$1.88',cpc_s:'plain',roas:'2.3x',roas_s:'bad',conv:'96',sets:[
+    {name:'LAL 3% — Feed',spend:'$3,140',ctr:'0.92%',ctr_s:'bad',roas:'2.3x',roas_s:'bad',conv:'96',ads:[
+      {name:'Static — sale 20%',fmt:'Image',spend:'$3,140',ctr:'0.92%',ctr_s:'bad',roas:'2.3x',roas_s:'bad',conv:'96'}]}]},
+  {name:'Brand Awareness',status:'Paused',spend:'$1,980',ctr:'0.74%',ctr_s:'bad',cpc:'$0.61',cpc_s:'good',roas:'1.1x',roas_s:'bad',conv:'41',sets:[
+    {name:'Reach — Broad',spend:'$1,980',ctr:'0.74%',ctr_s:'bad',roas:'1.1x',roas_s:'bad',conv:'41',ads:[
+      {name:'Video — brand film',fmt:'Video',spend:'$1,980',ctr:'0.74%',ctr_s:'bad',roas:'1.1x',roas_s:'bad',conv:'41'}]}]},
+]
+const ADS_TREE_COLS=[{k:'spend',label:'Spend',r:true},{k:'ctr',label:'CTR',r:true},{k:'cpc',label:'CPC',r:true},{k:'conv',label:'Conv.',r:true},{k:'roas',label:'ROAS',r:true}]
+const ADS_CAMPAIGNS=[
+  {name:'Brand — Search',status:'Active',spend:'$3,210',ctr:'8.4%',ctr_s:'good',cpc:'$0.42',cpc_s:'good',conv:'640',roas:'9.1x',roas_s:'good',sets:[
+    {name:'Brand terms — exact',spend:'$1,900',ctr:'9.2%',cpc:'$0.38',conv:'420',roas:'10.2x',roas_s:'good',ads:[
+      {name:'RSA — “Official store”',fmt:'RSA',spend:'$1,900',ctr:'9.2%',cpc:'$0.38',conv:'420',roas:'10.2x',roas_s:'good'}]},
+    {name:'Brand + product',spend:'$1,310',ctr:'7.3%',cpc:'$0.48',conv:'220',roas:'7.8x',roas_s:'good',ads:[
+      {name:'RSA — boots & jackets',fmt:'RSA',spend:'$1,310',ctr:'7.3%',cpc:'$0.48',conv:'220',roas:'7.8x',roas_s:'good'}]}]},
+  {name:'Shopping — All products',status:'Active',spend:'$8,940',ctr:'2.1%',ctr_s:'plain',cpc:'$0.81',cpc_s:'plain',conv:'710',roas:'5.4x',roas_s:'good',sets:[
+    {name:'Footwear',spend:'$3,120',ctr:'2.4%',cpc:'$0.78',conv:'280',roas:'6.1x',roas_s:'good',ads:[
+      {name:'PLA — trail boots',fmt:'Shopping',spend:'$3,120',ctr:'2.4%',cpc:'$0.78',conv:'280',roas:'6.1x',roas_s:'good'}]},
+    {name:'Apparel',spend:'$2,480',ctr:'2.0%',cpc:'$0.84',conv:'190',roas:'4.9x',roas_s:'good',ads:[
+      {name:'PLA — jackets',fmt:'Shopping',spend:'$2,480',ctr:'2.0%',cpc:'$0.84',conv:'190',roas:'4.9x',roas_s:'good'}]},
+    {name:'Gear',spend:'$3,340',ctr:'1.9%',cpc:'$0.82',conv:'240',roas:'5.0x',roas_s:'good',ads:[
+      {name:'PLA — backpacks',fmt:'Shopping',spend:'$3,340',ctr:'1.9%',cpc:'$0.82',conv:'240',roas:'5.0x',roas_s:'good'}]}]},
+  {name:'Performance Max',status:'Active',spend:'$6,120',ctr:'1.9%',ctr_s:'plain',cpc:'$0.76',cpc_s:'plain',conv:'520',roas:'4.8x',roas_s:'good',sets:[
+    {name:'Asset group — Bestsellers',spend:'$3,600',ctr:'2.0%',cpc:'$0.74',conv:'320',roas:'5.2x',roas_s:'good',ads:[
+      {name:'PMax — bestsellers',fmt:'Asset group',spend:'$3,600',ctr:'2.0%',cpc:'$0.74',conv:'320',roas:'5.2x',roas_s:'good'}]},
+    {name:'Asset group — New season',spend:'$2,520',ctr:'1.7%',cpc:'$0.79',conv:'200',roas:'4.2x',roas_s:'good',ads:[
+      {name:'PMax — new season',fmt:'Asset group',spend:'$2,520',ctr:'1.7%',cpc:'$0.79',conv:'200',roas:'4.2x',roas_s:'good'}]}]},
+  {name:'Non-brand — Search',status:'Active',spend:'$5,380',ctr:'3.6%',ctr_s:'good',cpc:'$0.92',cpc_s:'plain',conv:'380',roas:'3.9x',roas_s:'good',sets:[
+    {name:'Hiking gear',spend:'$2,900',ctr:'3.1%',cpc:'$0.95',conv:'210',roas:'3.6x',roas_s:'plain',ads:[
+      {name:'RSA — hiking gear',fmt:'RSA',spend:'$2,900',ctr:'3.1%',cpc:'$0.95',conv:'210',roas:'3.6x',roas_s:'plain'}]},
+    {name:'Trail running',spend:'$2,480',ctr:'4.2%',cpc:'$0.88',conv:'170',roas:'4.3x',roas_s:'good',ads:[
+      {name:'RSA — trail running',fmt:'RSA',spend:'$2,480',ctr:'4.2%',cpc:'$0.88',conv:'170',roas:'4.3x',roas_s:'good'}]}]},
+  {name:'Competitor — Search',status:'Paused',spend:'$2,140',ctr:'2.8%',ctr_s:'plain',cpc:'$1.64',cpc_s:'bad',conv:'88',roas:'2.1x',roas_s:'bad',sets:[
+    {name:'Competitor terms',spend:'$2,140',ctr:'2.8%',cpc:'$1.64',cpc_s:'bad',conv:'88',roas:'2.1x',roas_s:'bad',ads:[
+      {name:'RSA — switch & save',fmt:'RSA',spend:'$2,140',ctr:'2.8%',cpc:'$1.64',conv:'88',roas:'2.1x',roas_s:'bad'}]}]},
+  {name:'Display — Remarketing',status:'Active',spend:'$1,310',ctr:'0.7%',ctr_s:'bad',cpc:'$0.38',cpc_s:'good',conv:'72',roas:'3.1x',roas_s:'plain',sets:[
+    {name:'Cart abandoners — Display',spend:'$1,310',ctr:'0.7%',ctr_s:'bad',cpc:'$0.38',cpc_s:'good',conv:'72',roas:'3.1x',roas_s:'plain',ads:[
+      {name:'Responsive display',fmt:'Display',spend:'$1,310',ctr:'0.7%',cpc:'$0.38',conv:'72',roas:'3.1x',roas_s:'plain'}]}]},
+]
+
+/* ---------------- CAMPAIGN TREES · LEAD-GEN (CPL-based) ---------------- */
+const META_TREE_COLS_LEAD=[{k:'spend',label:'Spend',r:true},{k:'ctr',label:'CTR',r:true},{k:'cpl',label:'CPL',r:true},{k:'leads',label:'Leads',r:true}]
+const META_CAMPAIGNS_LEAD=[
+  {name:'Lead Gen · Broad',status:'Active',spend:'$12,480',ctr:'1.84%',ctr_s:'good',cpl:'$28',cpl_s:'good',leads:'446',sets:[
+    {name:'Lookalike 1% — Feed',spend:'$5,200',ctr:'1.9%',cpl:'$26',cpl_s:'good',leads:'200',ads:[
+      {name:'Instant form — Free consult',fmt:'Instant Form',spend:'$3,000',ctr:'2.1%',cpl:'$24',cpl_s:'good',leads:'125'},
+      {name:'Static — “Talk to a lawyer”',fmt:'Image',spend:'$2,200',ctr:'1.5%',cpl:'$29',cpl_s:'good',leads:'75'}]},
+    {name:'Interest: Legal help',spend:'$4,100',ctr:'1.6%',cpl:'$31',cpl_s:'good',leads:'132',ads:[
+      {name:'Video — case results',fmt:'Video',spend:'$4,100',ctr:'1.6%',cpl:'$31',cpl_s:'good',leads:'132'}]},
+    {name:'Broad — Advantage',spend:'$3,180',ctr:'1.7%',cpl:'$28',cpl_s:'good',leads:'114',ads:[
+      {name:'Carousel — practice areas',fmt:'Carousel',spend:'$3,180',ctr:'1.7%',cpl:'$28',cpl_s:'good',leads:'114'}]}]},
+  {name:'Retargeting · Site visitors',status:'Active',spend:'$6,930',ctr:'2.61%',ctr_s:'good',cpl:'$22',cpl_s:'good',leads:'315',sets:[
+    {name:'Form abandoners',spend:'$3,900',ctr:'3.1%',cpl:'$19',cpl_s:'good',leads:'205',ads:[
+      {name:'Instant form — “Finish your request”',fmt:'Instant Form',spend:'$2,300',ctr:'3.6%',cpl:'$18',cpl_s:'good',leads:'128'},
+      {name:'Carousel — why choose us',fmt:'Carousel',spend:'$1,600',ctr:'2.5%',cpl:'$21',cpl_s:'good',leads:'77'}]},
+    {name:'Viewed pricing 14d',spend:'$3,030',ctr:'2.4%',cpl:'$28',cpl_s:'good',leads:'110',ads:[
+      {name:'Static — book a call',fmt:'Image',spend:'$3,030',ctr:'2.4%',cpl:'$28',cpl_s:'good',leads:'110'}]}]},
+  {name:'Lookalike · Past clients',status:'Active',spend:'$9,210',ctr:'1.55%',ctr_s:'good',cpl:'$34',cpl_s:'good',leads:'271',sets:[
+    {name:'LAL 1% — Past clients',spend:'$5,610',ctr:'1.6%',cpl:'$32',cpl_s:'good',leads:'176',ads:[
+      {name:'Video — testimonials',fmt:'Video',spend:'$5,610',ctr:'1.6%',cpl:'$32',cpl_s:'good',leads:'176'}]},
+    {name:'LAL 3% — Past clients',spend:'$3,600',ctr:'1.5%',cpl:'$38',cpl_s:'plain',leads:'95',ads:[
+      {name:'Static — free case review',fmt:'Image',spend:'$3,600',ctr:'1.5%',cpl:'$38',cpl_s:'plain',leads:'95'}]}]},
+  {name:'Instant Forms · Mobile',status:'Active',spend:'$4,760',ctr:'2.10%',ctr_s:'good',cpl:'$26',cpl_s:'good',leads:'183',sets:[
+    {name:'Mobile feed',spend:'$2,400',ctr:'2.2%',cpl:'$24',cpl_s:'good',leads:'100',ads:[
+      {name:'Instant form — quick quote',fmt:'Instant Form',spend:'$2,400',ctr:'2.2%',cpl:'$24',cpl_s:'good',leads:'100'}]},
+    {name:'Reels',spend:'$2,360',ctr:'2.0%',cpl:'$29',cpl_s:'good',leads:'83',ads:[
+      {name:'Reel — 15s explainer',fmt:'Reel',spend:'$2,360',ctr:'2.0%',cpl:'$29',cpl_s:'good',leads:'83'}]}]},
+  {name:'Lookalike 3%',status:'Paused',spend:'$3,140',ctr:'0.92%',ctr_s:'bad',cpl:'$142',cpl_s:'bad',leads:'22',sets:[
+    {name:'LAL 3% — Feed',spend:'$3,140',ctr:'0.92%',ctr_s:'bad',cpl:'$142',cpl_s:'bad',leads:'22',ads:[
+      {name:'Static — generic offer',fmt:'Image',spend:'$3,140',ctr:'0.92%',cpl:'$142',cpl_s:'bad',leads:'22'}]}]},
+  {name:'Brand Awareness',status:'Paused',spend:'$1,980',ctr:'0.74%',ctr_s:'bad',cpl:'$198',cpl_s:'bad',leads:'10',sets:[
+    {name:'Reach — Broad',spend:'$1,980',ctr:'0.74%',ctr_s:'bad',cpl:'$198',cpl_s:'bad',leads:'10',ads:[
+      {name:'Video — brand film',fmt:'Video',spend:'$1,980',ctr:'0.74%',cpl:'$198',cpl_s:'bad',leads:'10'}]}]},
+]
+const ADS_TREE_COLS_LEAD=[{k:'spend',label:'Spend',r:true},{k:'ctr',label:'CTR',r:true},{k:'cpc',label:'CPC',r:true},{k:'cpl',label:'CPL',r:true},{k:'leads',label:'Leads',r:true}]
+const ADS_CAMPAIGNS_LEAD=[
+  {name:'Brand — Search',status:'Active',spend:'$3,210',ctr:'8.4%',ctr_s:'good',cpc:'$0.42',cpc_s:'good',cpl:'$16',cpl_s:'good',leads:'201',sets:[
+    {name:'Brand terms — exact',spend:'$1,900',ctr:'9.2%',cpc:'$0.38',cpl:'$14',cpl_s:'good',leads:'136',ads:[
+      {name:'RSA — “Official firm site”',fmt:'RSA',spend:'$1,900',ctr:'9.2%',cpc:'$0.38',cpl:'$14',cpl_s:'good',leads:'136'}]},
+    {name:'Brand + service',spend:'$1,310',ctr:'7.3%',cpc:'$0.48',cpl:'$20',cpl_s:'good',leads:'65',ads:[
+      {name:'RSA — free consultation',fmt:'RSA',spend:'$1,310',ctr:'7.3%',cpc:'$0.48',cpl:'$20',cpl_s:'good',leads:'65'}]}]},
+  {name:'Non-brand — Search',status:'Active',spend:'$8,940',ctr:'2.1%',ctr_s:'plain',cpc:'$0.81',cpc_s:'plain',cpl:'$38',cpl_s:'good',leads:'235',sets:[
+    {name:'Personal injury',spend:'$3,120',ctr:'2.4%',cpc:'$0.78',cpl:'$34',cpl_s:'good',leads:'92',ads:[
+      {name:'RSA — injury claim',fmt:'RSA',spend:'$3,120',ctr:'2.4%',cpc:'$0.78',cpl:'$34',cpl_s:'good',leads:'92'}]},
+    {name:'Family law',spend:'$2,480',ctr:'2.0%',cpc:'$0.84',cpl:'$41',cpl_s:'good',leads:'60',ads:[
+      {name:'RSA — family law help',fmt:'RSA',spend:'$2,480',ctr:'2.0%',cpc:'$0.84',cpl:'$41',cpl_s:'good',leads:'60'}]},
+    {name:'Employment law',spend:'$3,340',ctr:'1.9%',cpc:'$0.82',cpl:'$41',cpl_s:'good',leads:'83',ads:[
+      {name:'RSA — workplace claims',fmt:'RSA',spend:'$3,340',ctr:'1.9%',cpc:'$0.82',cpl:'$41',cpl_s:'good',leads:'83'}]}]},
+  {name:'Local Services',status:'Active',spend:'$6,120',ctr:'1.9%',ctr_s:'plain',cpc:'$0.76',cpc_s:'plain',cpl:'$44',cpl_s:'good',leads:'139',sets:[
+    {name:'LSA — Personal injury',spend:'$3,600',ctr:'2.0%',cpc:'$0.74',cpl:'$42',cpl_s:'good',leads:'86',ads:[
+      {name:'Local Services ad',fmt:'LSA',spend:'$3,600',ctr:'2.0%',cpc:'$0.74',cpl:'$42',cpl_s:'good',leads:'86'}]},
+    {name:'LSA — Family',spend:'$2,520',ctr:'1.7%',cpc:'$0.79',cpl:'$47',cpl_s:'good',leads:'53',ads:[
+      {name:'Local Services ad',fmt:'LSA',spend:'$2,520',ctr:'1.7%',cpc:'$0.79',cpl:'$47',cpl_s:'good',leads:'53'}]}]},
+  {name:'Competitor — Search',status:'Paused',spend:'$2,140',ctr:'2.8%',ctr_s:'plain',cpc:'$1.64',cpc_s:'bad',cpl:'$134',cpl_s:'bad',leads:'16',sets:[
+    {name:'Competitor terms',spend:'$2,140',ctr:'2.8%',cpc:'$1.64',cpc_s:'bad',cpl:'$134',cpl_s:'bad',leads:'16',ads:[
+      {name:'RSA — switch firms',fmt:'RSA',spend:'$2,140',ctr:'2.8%',cpc:'$1.64',cpl:'$134',cpl_s:'bad',leads:'16'}]}]},
+  {name:'Display — Remarketing',status:'Active',spend:'$1,310',ctr:'0.7%',ctr_s:'bad',cpc:'$0.38',cpc_s:'good',cpl:'$58',cpl_s:'good',leads:'23',sets:[
+    {name:'Form abandoners — Display',spend:'$1,310',ctr:'0.7%',ctr_s:'bad',cpc:'$0.38',cpc_s:'good',cpl:'$58',cpl_s:'good',leads:'23',ads:[
+      {name:'Responsive display',fmt:'Display',spend:'$1,310',ctr:'0.7%',cpc:'$0.38',cpl:'$58',cpl_s:'good',leads:'23'}]}]},
+]
+
+
 const C = {
-  /* ---------------- OVERVIEW ---------------- */
-  overview:{ sub:'Meta Ads + Google Ads + GA4 + Search Console · vs previous 28 days', blocks:[
+  /* ---------------- OVERVIEW (ecommerce) ---------------- */
+  'overview/ecom':{ sub:'Meta Ads + Google Ads + GA4 + Search Console · vs previous 28 days', blocks:[
     {type:'kpis',items:[
-      k('Ad spend','$65.6k','▲ 8.2%',true,true,SP.up),
       k('Revenue','$312.4k','▲ 14.0%',true,true,SP.up),
-      k('ROAS','4.76x','▲ 0.4x',true,true,SP.up),
-      k('Conversions','7,180','▲ 11.4%',true,true,SP.up),
+      k('Ad spend','$65.6k','▲ 8.2%',true,true,SP.up),
+      k('Blended ROAS','4.76x','▲ 0.4x',true,true,SP.up),
+      k('AOV','$43.51','▲ 3.0%',true,true,SP.up),
       k('Conv. rate','5.59%','▼ 2.7%',false,false,SP.dn),
-      k('Blended CPA','$9.14','▼ 6.0%',true,true,SP.dn),
+      k('CAC','$9.14','▼ 6.0%',true,true,SP.dn),
     ]},
+    {type:'insight',w:12,tone:'good',icon:'auto_awesome',title:'AI summary',text:'Revenue is up 14% on just 8% more spend — efficiency is improving and blended ROAS held at 4.76x. The one watch-out: conversion rate slipped 2.7%, concentrated on mobile checkout. Recovering it is the biggest lever this period.'},
     lineSV(), donutDev(4),
-    {type:'chart',kind:'funnel',title:'Conversion funnel',src:'GA4',w:6,steps:FUN_ECOM.steps,height:250},
+    {type:'chart',kind:'funnel',title:'Purchase funnel',src:'GA4',w:6,steps:FUN_ECOM.steps,height:250},
     geoBlock(6),
-    chanHbar(6), {type:'chart',kind:'bar',title:'Performance by channel',w:6,x:CHAN,data:[78,52,40,30,24,17,11]},
-    {type:'chart',kind:'heat',title:'User retention — weekly cohorts',src:'GA4 cohort exploration',w:12,height:236,...HEAT},
+    chanHbar(6,'Revenue by channel'), {type:'chart',kind:'bar',title:'Conversions by channel',w:6,x:CHAN,data:[78,52,40,30,24,17,11]},
+    {type:'chart',kind:'heat',title:'Customer retention — weekly cohorts',src:'GA4 cohort exploration',w:12,height:236,...HEAT},
+    {type:'insight',w:6,tone:'good',icon:'trending_up',title:'Footwear is carrying growth',text:'Footwear revenue is up 18% and holds the best category ROAS (6.4x). Shifting budget toward Summit Trail Boot creative should compound.'},
+    {type:'insight',w:6,tone:'warn',icon:'remove_shopping_cart',title:'Cart abandonment is the leak',text:'62% of product viewers never add to cart, and mobile checkout completion (3.1%) lags desktop (7.9%). A one-page mobile checkout is the highest-ROI fix.'},
+  ]},
+
+  /* ---------------- OVERVIEW (lead-gen) ---------------- */
+  'overview/lead':{ sub:'Meta Ads + Google Ads + GA4 + Search Console · vs previous 28 days', blocks:[
+    {type:'kpis',items:[
+      k('Total leads','2,180','▲ 12.4%',true,true,SP.up),
+      k('Ad spend','$65.6k','▲ 8.2%',true,true,SP.up),
+      k('Blended CPL','$30.10','▼ 6.0%',true,true,SP.dn),
+      k('Cost / acquisition','$112','▼ 4.2%',true,true,SP.dn),
+      k('Conv. rate','5.2%','▲ 0.4%',true,true,SP.up),
+      k('Qualified rate','65%','▲ 3.0%',true,true,SP.up),
+    ]},
+    {type:'insight',w:12,tone:'good',icon:'auto_awesome',title:'AI summary',text:'Lead volume is up 12% while CPL dropped 6% to $30 — you are buying more, cheaper leads. Quality held too (65% qualified). Paid Search delivers the highest-quality leads; Paid Social is cheapest but converts lower.'},
+    {type:'chart',kind:'line',title:'Leads vs ad spend',src:'GA4 + Ads',w:8,x:WK,series:[{name:'Leads',color:GREEN,data:[58,62,60,68,66,72,75,78],area:true},{name:'Spend ($k)',color:BLUE,data:SP.spend,area:true}]},
+    {type:'chart',kind:'donut',title:'Leads by source',w:4,legend:true,height:150,data:[{name:'Paid Search',value:38,color:GREEN},{name:'Paid Social',value:31,color:BLUE},{name:'Organic',value:19,color:GREY},{name:'Other',value:12,color:'#5AAFF2'}]},
+    {type:'chart',kind:'funnel',title:'Acquisition funnel',src:'GA4 + Meta',w:6,steps:FUN_LEAD_FULL.steps,height:250},
+    {type:'chart',kind:'hbar',title:'Leads by channel',w:6,x:LCHAN,data:[820,640,310,210,110,90],color:GREEN},
+    geoBlock(12,'Leads by country'),
   ]},
 
   /* ---------------- FUNNELS ---------------- */
-  'funnels/builder':{ sub:'Build any path from your GA4 events. See where users drop, and which channels convert.', blocks:[
+  'funnels/builder':{ sub:'Build any path from your GA4 events — add or remove steps and the funnel updates live. Save it to reuse.', blocks:[
     {type:'builder',steps:['session_start','view_item','add_to_cart','begin_checkout','purchase']},
-    {type:'chart',kind:'funnel',title:'Funnel',w:8,big:true,height:360,steps:FUN_ECOM.steps},
-    {type:'leak',w:4,big:'View → Cart',text:'62.2% of product viewers leave before adding to cart — that’s 46,590 users. The single biggest revenue lever.'},
     {type:'chart',kind:'sankey',title:'User journey — channel → outcome',src:'Sankey',w:12,height:280,...SANKEY},
     {type:'kbreak',title:'By device',w:6,rows:[{k:'Desktop completion',v:'7.9%',s:'good'},{k:'Mobile completion',v:'3.1%',s:'bad'},{k:'Avg. time to purchase',v:'2d 4h'},{k:'Best channel',v:'Retargeting · 11.2%',s:'good'}]},
-    {type:'chart',kind:'bar',title:'Completion rate by step',w:6,x:['Session','View','Cart','Checkout','Purchase'],data:[100,58,22,10,6]},
+    {type:'chart',kind:'bar',title:'Conversions by channel',w:6,x:CHAN,data:[78,52,40,30,24,17,11]},
   ]},
   'funnels/ecommerce':{ sub:'Standard ecommerce purchase funnel.', blocks:[
     {type:'chart',kind:'funnel',title:'Ecommerce funnel',w:8,big:true,height:360,steps:FUN_ECOM.steps},
@@ -71,12 +247,184 @@ const C = {
     {type:'kbreak',title:'Top converting paths',w:6,rows:[{k:'Paid Social → Purchase',v:'3,200',s:'good'},{k:'Paid Search → Purchase',v:'2,600',s:'good'},{k:'Organic → Purchase',v:'1,380'},{k:'Multi-touch (3+)',v:'41%'}]},
     {type:'chart',kind:'bar',title:'Assisted conversions',w:6,x:CHAN,data:[420,380,260,120,300,90,40]},
   ]},
-  'funnels/saved':{ sub:'Your saved funnel templates.', blocks:[
-    {type:'table',title:'Saved funnels',w:12,columns:[{k:'name',label:'Funnel'},{k:'type',label:'Type'},{k:'steps',label:'Steps',r:true},{k:'cr',label:'Completion',r:true},{k:'updated',label:'Updated',r:true}],rows:[
-      {name:'Ecommerce purchase',type:'Ecommerce',steps:'5',cr:'5.6%',cr_s:'plain',updated:'2d ago'},
-      {name:'Lead generation',type:'Leads',steps:'5',cr:'5.2%',cr_s:'plain',updated:'5d ago'},
-      {name:'Newsletter signup',type:'Leads',steps:'3',cr:'12.1%',cr_s:'good',updated:'1w ago'},
-      {name:'App install → activate',type:'App',steps:'4',cr:'31.4%',cr_s:'good',updated:'2w ago'},
+  'funnels/saved':{ sub:'Starter templates plus any funnels you save from the Builder.', blocks:[
+    {type:'savedFunnels',w:12},
+  ]},
+
+  /* ---------------- ECOMMERCE · PRODUCTS ---------------- */
+  'products/overview':{ sub:'SKU-level performance · revenue, units & product ROAS · vs previous 28 days', blocks:[
+    {type:'kpis',items:[
+      k('Units sold','6,465','▲ 12.0%',true,true,SP.up),
+      k('Top product','$92.0k',null,null,true),
+      k('Active products','248','+6',true,true,SP.up),
+      k('Avg item revenue','$43.51','▲ 3.0%',true,true,SP.up),
+      k('Product ROAS','4.9x','▲ 0.3x',true,true,SP.up),
+      k('Return rate','3.1%','▼ 0.4%',true,true,SP.dn),
+    ]},
+    {type:'producttable',title:'Top products',src:'GA4 items + Ads',w:12,columns:PROD_COLS,rows:PRODUCTS},
+    {type:'chart',kind:'hbar',title:'Top products by revenue',src:'GA4',w:7,x:PRODUCTS.map(p=>p.name),data:PRODUCTS.map(p=>p.rev_n),color:GREEN},
+    {type:'chart',kind:'donut',title:'Revenue by category',w:5,legend:true,height:170,data:PROD_CAT},
+    {type:'table',title:'Rising products',w:6,columns:[{k:'name',label:'Product'},{k:'rev',label:'Revenue',r:true},{k:'trend',label:'vs prev',r:true}],rows:[
+      {name:'Merino Base Layer',rev:'$31,000',trend:'+22%',trend_s:'good'},{name:'Summit Trail Boot',rev:'$92,000',trend:'+18%',trend_s:'good'},{name:'Trailhead Daypack',rev:'$18,400',trend:'+15%',trend_s:'good'},{name:'Alpine Down Jacket',rev:'$78,400',trend:'+12%',trend_s:'good'},
+    ]},
+    {type:'table',title:'Falling products',w:6,columns:[{k:'name',label:'Product'},{k:'rev',label:'Revenue',r:true},{k:'trend',label:'vs prev',r:true}],rows:[
+      {name:'Summit GPS Watch',rev:'$16,200',trend:'-12%',trend_s:'bad'},{name:'Glacier Shell Jacket',rev:'$22,800',trend:'-9%',trend_s:'bad'},{name:'Carbon Trek Poles',rev:'$26,000',trend:'-4%',trend_s:'bad'},
+    ]},
+  ]},
+  'products/categories':{ sub:'Revenue & demand by collection', blocks:[
+    {type:'chart',kind:'donut',title:'Revenue by category',w:5,legend:true,height:200,data:PROD_CAT},
+    {type:'chart',kind:'bar',title:'Units by category',w:7,x:['Apparel','Footwear','Gear','Tech'],data:[2600,1975,1890,135]},
+    {type:'table',title:'Category performance',w:12,columns:[{k:'name',label:'Category'},{k:'rev',label:'Revenue',r:true},{k:'units',label:'Units',r:true},{k:'share',label:'Rev share',r:true},{k:'roas',label:'ROAS',r:true},{k:'trend',label:'Trend',r:true}],rows:[
+      {name:'Apparel',rev:'$132,200',units:'2,600',share:'42%',roas:'5.0x',roas_s:'good',trend:'+11%',trend_s:'good'},
+      {name:'Footwear',rev:'$92,000',units:'1,975',share:'30%',roas:'6.4x',roas_s:'good',trend:'+18%',trend_s:'good'},
+      {name:'Gear',rev:'$90,000',units:'1,890',share:'22%',roas:'4.2x',roas_s:'plain',trend:'+4%',trend_s:'good'},
+      {name:'Tech',rev:'$16,200',units:'135',share:'6%',roas:'2.4x',roas_s:'bad',trend:'-12%',trend_s:'bad'},
+    ]},
+  ]},
+  'products/shopping':{ sub:'Google Merchant Center · product feed health & Shopping performance', blocks:[
+    {type:'kpis',items:[
+      k('Products in feed','248','▲ 6',true,true,SP.up),
+      k('Approved','231','▲ 9',true,true,SP.up),
+      k('Disapproved','12','▼ 3',true,true,SP.dn),
+      k('Pending','5',null,null,null),
+      k('Feed health','93%','▲ 2.0%',true,true,SP.up),
+      k('Shopping ROAS','5.0x','▲ 0.3x',true,true,SP.up),
+    ]},
+    {type:'insight',w:12,tone:'warn',icon:'error',title:'12 products disapproved',text:'Most disapprovals are missing GTIN / brand attributes on footwear SKUs. Fixing them re-enables roughly $8.2k/mo of Shopping spend that’s currently paused.'},
+    {type:'chart',kind:'donut',title:'Feed status',w:4,legend:true,height:170,data:[{name:'Approved',value:93,color:GREEN},{name:'Disapproved',value:5,color:'#FF6B6B'},{name:'Pending',value:2,color:'#F2B45A'}]},
+    {type:'chart',kind:'line',title:'Shopping performance',src:'Merchant Center + Ads',w:8,x:WK,series:[{name:'Clicks (k)',color:GREEN,data:[2.1,2.4,2.3,2.8,2.6,3.0,3.2,3.4],area:true},{name:'Revenue ($k)',color:BLUE,data:[18,21,20,26,24,29,31,34],area:true}]},
+    {type:'table',title:'Product feed status',src:'Merchant Center',w:12,columns:[{k:'name',label:'Product'},{k:'status',label:'Status'},{k:'issue',label:'Issue'},{k:'price',label:'Price',r:true},{k:'avail',label:'Availability'},{k:'clicks',label:'Clicks',r:true},{k:'impr',label:'Impr.',r:true},{k:'roas',label:'ROAS',r:true}],rows:[
+      {name:'Summit Trail Boot',status:'Approved',issue:'—',price:'$190',avail:'In stock',clicks:'1,240',impr:'48,400',roas:'6.4x',roas_s:'good'},
+      {name:'Alpine Down Jacket',status:'Approved',issue:'—',price:'$280',avail:'In stock',clicks:'980',impr:'39,100',roas:'5.8x',roas_s:'good'},
+      {name:'Trek 40L Backpack',status:'Approved',issue:'—',price:'$160',avail:'In stock',clicks:'760',impr:'29,800',roas:'4.9x',roas_s:'good'},
+      {name:'Merino Base Layer',status:'Approved',issue:'—',price:'$60',avail:'In stock',clicks:'620',impr:'22,300',roas:'5.1x',roas_s:'good'},
+      {name:'Carbon Trek Poles',status:'Disapproved',issue:'Missing GTIN',issue_s:'bad',price:'$120',avail:'In stock',clicks:'0',impr:'0',roas:'—'},
+      {name:'Glacier Shell Jacket',status:'Disapproved',issue:'Missing brand',issue_s:'bad',price:'$240',avail:'In stock',clicks:'0',impr:'0',roas:'—'},
+      {name:'Summit GPS Watch',status:'Pending',issue:'In review',price:'$320',avail:'Out of stock',avail_s:'bad',clicks:'0',impr:'0',roas:'—'},
+    ]},
+    {type:'chart',kind:'hbar',title:'Top Shopping products by clicks',w:7,x:['Summit Trail Boot','Alpine Down Jacket','Trek 40L Backpack','Merino Base Layer','Trailhead Daypack'],data:[1240,980,760,620,410],color:GREEN},
+    {type:'kbreak',title:'Feed details',w:5,rows:[{k:'Last fetched',v:'2h ago',s:'good'},{k:'Feed items',v:'248'},{k:'Warnings',v:'18'},{k:'Merchant account',v:'Northwind Store feed'}]},
+  ]},
+  'products/inventory':{ sub:'Stock health (requires store / Shopify connection)', blocks:[
+    {type:'note',icon:'inventory',title:'Inventory needs a store connection',text:'Stock levels, days-of-cover and reorder points come from your ecommerce platform (Shopify / WooCommerce). The figures below are illustrative until the store is connected.'},
+    {type:'table',title:'Stock & reorder',w:12,columns:[{k:'name',label:'Product'},{k:'stock',label:'In stock',r:true},{k:'cover',label:'Days of cover',r:true},{k:'velocity',label:'Units / day',r:true},{k:'status',label:'Status'}],rows:[
+      {name:'Summit Trail Boot',stock:'1,240',cover:'19',velocity:'66',status:'Active'},
+      {name:'Merino Base Layer',stock:'310',cover:'7',velocity:'44',cover_s:'bad',status:'Active'},
+      {name:'Alpine Down Jacket',stock:'880',cover:'25',velocity:'35',status:'Active'},
+      {name:'Summit GPS Watch',stock:'0',cover:'0',velocity:'5',cover_s:'bad',status:'Paused'},
+    ]},
+  ]},
+
+  /* ---------------- ECOMMERCE · CUSTOMERS ---------------- */
+  'customers/retention':{ sub:'New vs returning, repeat purchase & churn', blocks:[
+    {type:'kpis',items:[
+      k('Returning revenue','38%','▲ 2.0%',true,true,SP.up),
+      k('Repeat purchase rate','27%','▲ 1.4%',true,true,SP.up),
+      k('New customers','4,120','▲ 9.1%',true,true,SP.up),
+      k('Returning customers','3,060','▲ 6.0%',true,true,SP.up),
+      k('Avg orders / customer','1.6',null,null,null),
+      k('Churn (90d)','58%','▼ 1.2%',true,true,SP.dn),
+    ]},
+    {type:'chart',kind:'line',title:'New vs returning revenue',src:'GA4',w:8,x:WK,series:[{name:'New',color:BLUE,data:[112,120,116,132,128,140,146,152],area:true},{name:'Returning',color:GREEN,data:[70,85,82,98,95,108,114,120],area:true}]},
+    {type:'chart',kind:'donut',title:'Revenue split',w:4,legend:true,height:150,data:[{name:'Returning',value:38,color:GREEN},{name:'New',value:62,color:BLUE}]},
+    {type:'chart',kind:'heat',title:'Customer retention — weekly cohorts',src:'GA4',w:12,height:236,...HEAT},
+  ]},
+  'customers/cohorts':{ sub:'Monthly acquisition cohorts — retention, revenue & repeat behaviour', blocks:[
+    {type:'kpis',items:[
+      k('Avg cohort size','1,080','▲ 6.0%',true,true,SP.up),
+      k('M1 retention','49%','▲ 2.0%',true,true,SP.up),
+      k('M3 retention','34%','▲ 1.4%',true,true,SP.up),
+      k('M5 retention','26%','▲ 1.0%',true,true,SP.up),
+      k('Best cohort','March',null,null,true),
+      k('Repeat rate','27%','▲ 1.4%',true,true,SP.up),
+    ]},
+    {type:'chart',kind:'heat',title:'Retention by monthly cohort',src:'GA4 cohort exploration',w:12,height:260,...MCOHORT},
+    {type:'chart',kind:'line',title:'Cumulative LTV by cohort',src:'GA4 + store',w:6,x:MCOHORT.xLabels,series:[
+      {name:'Jan cohort',color:GREEN,data:[48,71,89,104,116,127],area:true},
+      {name:'Feb cohort',color:BLUE,data:[50,72,90,106,118,129]},
+      {name:'Mar cohort',color:'#5AAFF2',data:[52,78,98,118,131,141]},
+    ]},
+    {type:'chart',kind:'line',title:'Retention curve by acquisition channel',src:'GA4',w:6,x:MCOHORT.xLabels,series:[
+      {name:'Email',color:GREEN,data:[100,58,46,39,34,31]},
+      {name:'Organic',color:GREY,data:[100,52,41,35,30,27]},
+      {name:'Paid Search',color:BLUE,data:[100,49,38,32,28,25]},
+      {name:'Paid Social',color:'#5AAFF2',data:[100,44,33,27,23,20]},
+    ]},
+    {type:'chart',kind:'bar',title:'Cohort size by month',w:6,x:MCOHORT.yLabels,data:[980,1020,1240,1080,1160,1010]},
+    {type:'chart',kind:'line',title:'Repeat-purchase curve',w:6,x:['Order 1','2','3','4','5','6'],series:[{name:'% who reorder',color:GREEN,data:[100,27,14,9,6,4],area:true}]},
+    {type:'table',title:'Cohort detail',src:'GA4 + store',w:12,columns:[{k:'name',label:'Cohort'},{k:'size',label:'Customers',r:true},{k:'m1',label:'M1',r:true},{k:'m3',label:'M3',r:true},{k:'m5',label:'M5',r:true},{k:'ltv',label:'LTV',r:true},{k:'repeat',label:'Repeat rate',r:true}],rows:[
+      {name:'January',size:'980',m1:'48%',m3:'33%',m5:'26%',ltv:'$127',repeat:'26%'},
+      {name:'February',size:'1,020',m1:'46%',m3:'31%',m5:'—',ltv:'$129',repeat:'24%'},
+      {name:'March',size:'1,240',m1:'51%',m1_s:'good',m3:'35%',m3_s:'good',m5:'—',ltv:'$141',ltv_s:'good',repeat:'29%',repeat_s:'good'},
+      {name:'April',size:'1,080',m1:'49%',m3:'—',m5:'—',ltv:'$104',repeat:'22%'},
+      {name:'May',size:'1,160',m1:'53%',m1_s:'good',m3:'—',m5:'—',ltv:'$82',repeat:'—'},
+      {name:'June',size:'1,010',m1:'—',m3:'—',m5:'—',ltv:'—',repeat:'—'},
+    ]},
+  ]},
+  'customers/ltv':{ sub:'Lifetime value & acquisition economics', blocks:[
+    {type:'note',icon:'savings',title:'LTV uses blended store + ad data',text:'LTV and payback combine ecommerce revenue (GA4 / store) with ad spend (Meta + Ads). Connect the store for exact margin-based LTV.'},
+    {type:'kpis',items:[
+      k('Customer LTV','$118','▲ 5.0%',true,true,SP.up),
+      k('CAC','$28.40','▼ 4.2%',true,true,SP.dn),
+      k('LTV : CAC','4.2 : 1',null,true,true),
+      k('Payback','1.4 mo',null,true,true),
+    ]},
+    {type:'chart',kind:'bar',title:'LTV by acquisition channel',w:6,x:['Email','Organic','Paid Social','Paid Search','Direct'],data:[164,142,118,104,96]},
+    {type:'chart',kind:'bar',title:'CAC by channel',w:6,x:['Organic','Email','Paid Search','Paid Social','Direct'],data:[6,12,31,34,9]},
+  ]},
+
+  /* ---------------- LEAD-GEN · LEADS ---------------- */
+  'leads/overview':{ sub:'Lead volume, cost & quality · vs previous 28 days', blocks:[
+    {type:'kpis',items:[
+      k('Total leads','2,180','▲ 12.4%',true,true,SP.up),
+      k('Cost per lead','$30.10','▼ 6.0%',true,true,SP.dn),
+      k('Cost / acquisition','$112','▼ 4.2%',true,true,SP.dn),
+      k('Conv. rate','5.2%','▲ 0.4%',true,true,SP.up),
+      k('Qualified rate','65%','▲ 3.0%',true,true,SP.up),
+      k('Lead → customer','8.4%','▲ 0.6%',true,true,SP.up),
+    ]},
+    {type:'chart',kind:'line',title:'Leads over time',src:'GA4',w:8,x:WK,series:[{name:'Leads',color:GREEN,data:[58,62,60,68,66,72,75,78],area:true}]},
+    {type:'chart',kind:'hbar',title:'Leads by channel',w:4,x:LCHAN,data:[820,640,310,210,110,90],color:GREEN},
+    {type:'table',title:'Top landing pages',src:'GA4',w:12,columns:[{k:'name',label:'Landing page'},{k:'sessions',label:'Sessions',r:true},{k:'leads',label:'Leads',r:true},{k:'cr',label:'Conv. rate',r:true},{k:'cpl',label:'CPL',r:true}],rows:[
+      {name:'/free-consultation',sessions:'14,200',leads:'820',cr:'5.8%',cr_s:'good',cpl:'$24',cpl_s:'good'},
+      {name:'/services/personal-injury',sessions:'9,800',leads:'540',cr:'5.5%',cr_s:'good',cpl:'$28',cpl_s:'good'},
+      {name:'/contact',sessions:'7,100',leads:'310',cr:'4.4%',cr_s:'plain',cpl:'$36',cpl_s:'plain'},
+      {name:'/landing/google-ads',sessions:'6,400',leads:'410',cr:'6.4%',cr_s:'good',cpl:'$22',cpl_s:'good'},
+      {name:'/blog/do-i-have-a-case',sessions:'5,200',leads:'100',cr:'1.9%',cr_s:'bad',cpl:'$74',cpl_s:'bad'},
+    ]},
+  ]},
+  'leads/funnel':{ sub:'Impression → click → lead → qualified → customer', blocks:[
+    {type:'chart',kind:'funnel',title:'Acquisition funnel',src:'GA4 + Meta',w:8,big:true,height:360,steps:FUN_LEAD_FULL.steps},
+    {type:'leak',w:4,big:'Click → Lead',text:'95.5% of clicks never become a lead — landing-page and form experience is the single biggest lever.'},
+    {type:'kbreak',title:'Stage conversion',w:6,rows:[{k:'Impr → Click (CTR)',v:'2.9%'},{k:'Click → Lead',v:'4.5%',s:'plain'},{k:'Lead → Qualified',v:'65.1%',s:'good'},{k:'Qualified → Customer',v:'13.0%',s:'good'}]},
+    {type:'chart',kind:'bar',title:'Volume by stage',w:6,x:['Impr.','Clicks','Leads','Qualified','Customers'],data:[100,2.9,0.13,0.087,0.011]},
+  ]},
+  'leads/channels':{ sub:'Which channels bring cheap — and good — leads', blocks:[
+    {type:'table',title:'Channel performance',src:'GA4 + Ads',w:12,columns:[{k:'name',label:'Channel'},{k:'sessions',label:'Sessions',r:true},{k:'leads',label:'Leads',r:true},{k:'cr',label:'Conv. rate',r:true},{k:'cpl',label:'CPL',r:true},{k:'sql',label:'Qualified %',r:true}],rows:[
+      {name:'Paid Search',sessions:'31,400',leads:'820',cr:'2.6%',cr_s:'plain',cpl:'$28',cpl_s:'good',sql:'71%',sql_s:'good'},
+      {name:'Paid Social',sessions:'24,800',leads:'640',cr:'2.6%',cr_s:'plain',cpl:'$22',cpl_s:'good',sql:'54%',sql_s:'plain'},
+      {name:'Organic',sessions:'28,100',leads:'310',cr:'1.1%',cr_s:'bad',cpl:'—',sql:'78%',sql_s:'good'},
+      {name:'Email',sessions:'8,900',leads:'210',cr:'2.4%',cr_s:'plain',cpl:'$9',cpl_s:'good',sql:'69%',sql_s:'good'},
+      {name:'Referral',sessions:'4,200',leads:'110',cr:'2.6%',cr_s:'plain',cpl:'—',sql:'82%',sql_s:'good'},
+    ]},
+    {type:'chart',kind:'hbar',title:'CPL by channel',w:6,x:['Email','Paid Social','Paid Search'],data:[9,22,28],color:GREEN},
+    {type:'chart',kind:'hbar',title:'Qualified % by channel',w:6,x:['Referral','Organic','Paid Search','Email','Paid Social'],data:[82,78,71,69,54]},
+  ]},
+  'leads/quality':{ sub:'Lead quality & pipeline (requires CRM connection)', blocks:[
+    {type:'note',icon:'verified',title:'Quality metrics need a CRM',text:'MQL / SQL, pipeline value and closed revenue come from your CRM (HubSpot / Salesforce / Pipedrive). GA4 + Meta measure lead volume and cost; quality below is shown once CRM is connected.'},
+    {type:'kpis',items:[
+      k('MQL','1,420','▲ 8.0%',true,true,SP.up),
+      k('SQL','612','▲ 5.0%',true,true,SP.up),
+      k('Qualified rate','65%','▲ 3.0%',true,true,SP.up),
+      k('Lead → customer','8.4%','▲ 0.6%',true,true,SP.up),
+      k('Pipeline value','$1.2M','▲ 11%',true,true,SP.up),
+    ]},
+    {type:'chart',kind:'bar',title:'Qualified leads by channel',w:6,x:['Paid Search','Paid Social','Organic','Email','Referral'],data:[582,346,242,145,90]},
+    {type:'table',title:'Quality by channel',w:6,columns:[{k:'name',label:'Channel'},{k:'leads',label:'Leads',r:true},{k:'mql',label:'MQL',r:true},{k:'close',label:'Close rate',r:true}],rows:[
+      {name:'Paid Search',leads:'820',mql:'582',close:'11.2%',close_s:'good'},
+      {name:'Paid Social',leads:'640',mql:'346',close:'6.1%',close_s:'plain'},
+      {name:'Email',leads:'210',mql:'145',close:'14.0%',close_s:'good'},
+      {name:'Organic',leads:'310',mql:'242',close:'9.4%',close_s:'good'},
     ]},
   ]},
 
@@ -159,10 +507,7 @@ const C = {
     ]},
   ]},
   'ga4/explore':{ sub:'Build a custom report from any dimensions & metrics', blocks:[
-    {type:'note',icon:'tune',title:'Free-form explore',text:'Drag any GA4 dimension and metric to build a custom table or chart — the full API catalog is available here (custom dimensions, cohorts, comparisons, segments).'},
-    {type:'table',title:'Sample exploration · landing page × channel',w:12,columns:[{k:'name',label:'Landing page'},{k:'chan',label:'Channel'},{k:'sessions',label:'Sessions',r:true},{k:'cr',label:'Conv. rate',r:true},{k:'rev',label:'Revenue',r:true}],rows:[
-      {name:'/products/trail-boots',chan:'Paid Social',sessions:'12,400',cr:'6.8%',cr_s:'good',rev:'$48k'},{name:'/collections/new',chan:'Paid Search',sessions:'9,100',cr:'5.4%',cr_s:'plain',rev:'$31k'},{name:'/',chan:'Organic',sessions:'18,900',cr:'3.2%',cr_s:'bad',rev:'$22k'},
-    ]},
+    {type:'explore',w:12},
   ]},
 
   /* ---------------- GOOGLE ADS ---------------- */
@@ -172,15 +517,8 @@ const C = {
     {type:'chart',kind:'donut',title:'Spend by campaign type',w:4,legend:true,height:150,data:[{name:'Search',value:52,color:GREEN},{name:'Shopping',value:31,color:BLUE},{name:'PMax',value:17,color:GREY}]},
     geoBlock(12,'Conversions by country'),
   ]},
-  'ads/campaigns':{ sub:'8 campaigns · 6 active', pills:[['campaign','8','Campaigns','var(--blue2)'],['play_circle','6','Active','var(--green)'],['pause_circle','2','Paused','var(--muted)'],['warning','1','Off target','var(--red)']], blocks:[
-    {type:'table',w:12,columns:[{k:'name',label:'Campaign'},{k:'status',label:'Status'},{k:'spend',label:'Spend',r:true},{k:'impr',label:'Impr.',r:true},{k:'ctr',label:'CTR',r:true},{k:'cpc',label:'CPC',r:true},{k:'conv',label:'Conv.',r:true},{k:'roas',label:'ROAS',r:true}],rows:[
-      {name:'Brand — Search',status:'Active',spend:'$3,210',impr:'180K',ctr:'8.4%',ctr_s:'good',cpc:'$0.42',cpc_s:'good',conv:'640',roas:'9.1x',roas_s:'good'},
-      {name:'Shopping — All products',status:'Active',spend:'$8,940',impr:'620K',ctr:'2.1%',ctr_s:'plain',cpc:'$0.81',cpc_s:'plain',conv:'710',roas:'5.4x',roas_s:'good'},
-      {name:'Performance Max',status:'Active',spend:'$6,120',impr:'540K',ctr:'1.9%',ctr_s:'plain',cpc:'$0.76',cpc_s:'plain',conv:'520',roas:'4.8x',roas_s:'good'},
-      {name:'Non-brand — Search',status:'Active',spend:'$5,380',impr:'310K',ctr:'3.6%',ctr_s:'good',cpc:'$0.92',cpc_s:'plain',conv:'380',roas:'3.9x',roas_s:'good'},
-      {name:'Competitor — Search',status:'Paused',spend:'$2,140',impr:'90K',ctr:'2.8%',ctr_s:'plain',cpc:'$1.64',cpc_s:'bad',conv:'88',roas:'2.1x',roas_s:'bad'},
-      {name:'Display — Remarketing',status:'Active',spend:'$1,310',impr:'160K',ctr:'0.7%',ctr_s:'bad',cpc:'$0.38',cpc_s:'good',conv:'72',roas:'3.1x',roas_s:'plain'},
-    ]},
+  'ads/campaigns':{ sub:'6 campaigns · click a row to drill into ad groups & ads', pills:[['campaign','6','Campaigns','var(--blue2)'],['play_circle','5','Active','var(--green)'],['pause_circle','1','Paused','var(--muted)'],['warning','1','Off target','var(--red)']], blocks:[
+    {type:'campaignTree',w:12,setLabel:'Ad groups',columns:ADS_TREE_COLS,rows:ADS_CAMPAIGNS},
   ]},
   'ads/adgroups':{ sub:'Ad groups & ads', blocks:[
     {type:'table',title:'Ad groups',w:12,columns:[{k:'name',label:'Ad group'},{k:'camp',label:'Campaign'},{k:'spend',label:'Spend',r:true},{k:'ctr',label:'CTR',r:true},{k:'conv',label:'Conv.',r:true},{k:'cpa',label:'CPA',r:true}],rows:[
@@ -243,15 +581,8 @@ const C = {
     {type:'chart',kind:'donut',title:'Spend by placement',w:4,legend:true,height:150,data:[{name:'Feed',value:46,color:GREEN},{name:'Reels',value:34,color:BLUE},{name:'Stories',value:20,color:GREY}]},
     chanHbar(12,'Spend by campaign'),
   ]},
-  'meta/campaigns':{ sub:'6 campaigns · 4 active · synced 14 min ago', pills:[['campaign','6','Campaigns','var(--blue2)'],['play_circle','4','Active','var(--green)'],['pause_circle','2','Paused','var(--muted)'],['warning','2','Off target','var(--red)']], blocks:[
-    {type:'table',w:12,columns:[{k:'name',label:'Campaign'},{k:'status',label:'Status'},{k:'spend',label:'Spend',r:true},{k:'impr',label:'Impr.',r:true},{k:'ctr',label:'CTR',r:true},{k:'cpc',label:'CPC',r:true},{k:'roas',label:'ROAS',r:true},{k:'conv',label:'Conv.',r:true}],rows:[
-      {name:'Retargeting · 30d',status:'Active',spend:'$6,930',impr:'420K',ctr:'2.61%',ctr_s:'good',cpc:'$0.98',cpc_s:'good',roas:'7.8x',roas_s:'good',conv:'540'},
-      {name:'Prospecting · Broad',status:'Active',spend:'$12,480',impr:'1.2M',ctr:'1.84%',ctr_s:'good',cpc:'$1.42',cpc_s:'good',roas:'4.2x',roas_s:'good',conv:'612'},
-      {name:'Advantage+ Shopping',status:'Active',spend:'$9,210',impr:'880K',ctr:'1.55%',ctr_s:'good',cpc:'$1.21',cpc_s:'good',roas:'5.1x',roas_s:'good',conv:'470'},
-      {name:'Catalog · DPA',status:'Active',spend:'$4,760',impr:'310K',ctr:'2.10%',ctr_s:'good',cpc:'$1.05',cpc_s:'good',roas:'6.4x',roas_s:'good',conv:'388'},
-      {name:'Lookalike 3%',status:'Paused',spend:'$3,140',impr:'260K',ctr:'0.92%',ctr_s:'bad',cpc:'$1.88',cpc_s:'bad',roas:'2.3x',roas_s:'bad',conv:'96'},
-      {name:'Brand Awareness',status:'Paused',spend:'$1,980',impr:'540K',ctr:'0.74%',ctr_s:'bad',cpc:'$0.61',cpc_s:'good',roas:'1.1x',roas_s:'bad',conv:'41'},
-    ]},
+  'meta/campaigns':{ sub:'6 campaigns · click a row to drill into ad sets & ads · synced 14 min ago', pills:[['campaign','6','Campaigns','var(--blue2)'],['play_circle','4','Active','var(--green)'],['pause_circle','2','Paused','var(--muted)'],['warning','2','Off target','var(--red)']], blocks:[
+    {type:'campaignTree',w:12,setLabel:'Ad sets',columns:META_TREE_COLS,rows:META_CAMPAIGNS},
   ]},
   'meta/adsets':{ sub:'Ad sets & ads', blocks:[
     {type:'table',title:'Ad sets',w:12,columns:[{k:'name',label:'Ad set'},{k:'camp',label:'Campaign'},{k:'spend',label:'Spend',r:true},{k:'ctr',label:'CTR',r:true},{k:'roas',label:'ROAS',r:true},{k:'conv',label:'Conv.',r:true}],rows:[
@@ -297,33 +628,39 @@ const C = {
     ]},
   ]},
   'clients/add':{ sub:'Onboard a new client', blocks:[
-    {type:'note',icon:'person_add',title:'Add a new client',text:'Create a client workspace, pick their type (leads / ecommerce), then send them a one-time link to connect Google and Meta. Their dashboard builds itself once data syncs.'},
+    {type:'addClient',w:7},
   ]},
 
   /* ---------------- SETTINGS ---------------- */
   'settings/connections':{ sub:'Connect data sources for this client', blocks:[ {type:'connections'} ]},
-  'settings/targets':{ sub:'KPI targets drive the green / red coloring', blocks:[
-    {type:'table',title:'KPI targets',w:12,columns:[{k:'name',label:'Metric'},{k:'src',label:'Source'},{k:'target',label:'Target'},{k:'cur',label:'Current',r:true},{k:'status',label:'Status'}],rows:[
-      {name:'ROAS',src:'Meta + Ads',target:'> 3.0x',cur:'4.8x',cur_s:'good',status:'Active'},{name:'CPL',src:'Ads',target:'< $120',cur:'$96',cur_s:'good',status:'Active'},{name:'Conv. rate',src:'GA4',target:'> 6.0%',cur:'5.6%',cur_s:'bad',status:'Active'},{name:'CTR',src:'Meta',target:'> 1.5%',cur:'1.84%',cur_s:'good',status:'Active'},
-    ]},
+  'settings/targets':{ sub:'These targets drive the green / red coloring across campaigns, KPIs & the detail panel', blocks:[
+    {type:'note',icon:'target',title:'One source of truth',text:'Edit a target below and it updates everywhere instantly — the campaign detail panel’s KPI breakdown and on-target pills all read these same definitions.'},
+    {type:'kpiTargets',w:12},
   ]},
   'settings/alerts':{ sub:'Get notified when KPIs cross a threshold', blocks:[
-    {type:'note',icon:'notifications',title:'Alert rules',text:'Set thresholds per metric and route alerts to email or Slack. Example: notify when ROAS < 3x or CPL > $120.'},
-    {type:'table',title:'Rules',w:12,columns:[{k:'name',label:'Rule'},{k:'channel',label:'Channel'},{k:'status',label:'Status'}],rows:[
-      {name:'ROAS below 3x',channel:'Email + Slack',status:'Active'},{name:'CPL above $120',channel:'Email',status:'Active'},{name:'Spend pacing > 110%',channel:'Slack',status:'Paused'},
-    ]},
+    {type:'alertsManager',w:12},
   ]},
   'settings/branding':{ sub:'White-label this client dashboard', blocks:[
-    {type:'note',icon:'palette',title:'Branding',text:'Upload the client logo, set accent colors, and choose a custom domain. GYA Media branding is applied by default; per-client white-labeling is available.'},
+    {type:'branding',w:12},
   ]},
   'settings/team':{ sub:'Who can access this workspace', blocks:[
-    {type:'table',title:'Team & access',w:12,columns:[{k:'name',label:'User'},{k:'role',label:'Role'},{k:'access',label:'Access'},{k:'status',label:'Status'}],rows:[
-      {name:'Apollo (you)',role:'Agency admin',access:'All clients',status:'Active'},{name:'Maria K.',role:'Analyst',access:'All clients',status:'Active'},{name:'Northwind — client',role:'Client',access:'Northwind only',status:'Active'},{name:'Lumen — client',role:'Client',access:'Lumen only',status:'Active'},
-    ]},
+    {type:'teamManager',w:12},
   ]},
 }
 
-export function getContent(source, tab) {
-  if (source === 'overview') return C.overview
-  return C[`${source}/${tab}`] || { sub:'', blocks:[{ type:'note', title:'Coming soon', text:'This tab is part of the full build.' }] }
+// Lead-gen clients see CPL-based campaign trees instead of the ROAS ones
+const LEAD_OVERRIDE = {
+  'meta/campaigns':{ sub:'6 campaigns · click a row to drill into ad sets & ads · synced 14 min ago', pills:[['campaign','6','Campaigns','var(--blue2)'],['play_circle','4','Active','var(--green)'],['pause_circle','2','Paused','var(--muted)'],['warning','2','Off target','var(--red)']], blocks:[
+    {type:'campaignTree',w:12,setLabel:'Ad sets',columns:META_TREE_COLS_LEAD,rows:META_CAMPAIGNS_LEAD},
+  ]},
+  'ads/campaigns':{ sub:'5 campaigns · click a row to drill into ad groups & ads', pills:[['campaign','5','Campaigns','var(--blue2)'],['play_circle','4','Active','var(--green)'],['pause_circle','1','Paused','var(--muted)'],['warning','1','Off target','var(--red)']], blocks:[
+    {type:'campaignTree',w:12,setLabel:'Ad groups',columns:ADS_TREE_COLS_LEAD,rows:ADS_CAMPAIGNS_LEAD},
+  ]},
+}
+
+export function getContent(source, tab, clientType = 'ecommerce') {
+  if (source === 'overview') return clientType === 'leadgen' ? C['overview/lead'] : C['overview/ecom']
+  const key = `${source}/${tab}`
+  if (clientType === 'leadgen' && LEAD_OVERRIDE[key]) return LEAD_OVERRIDE[key]
+  return C[key] || { sub:'', blocks:[{ type:'note', title:'Coming soon', text:'This tab is part of the full build.' }] }
 }
