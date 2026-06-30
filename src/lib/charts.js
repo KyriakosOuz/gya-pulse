@@ -157,6 +157,24 @@ export function scatterOpt({ points }) {
   }
 }
 
+export function stackBarOpt({ x, series, stack = true, total }) {
+  return {
+    backgroundColor:'transparent',
+    grid:{ left:6, right:14, top:18, bottom:6, containLabel:true },
+    tooltip:{ trigger:'axis', axisPointer:{ type:'shadow', shadowStyle:{ color:'rgba(43,143,234,.10)' } }, ...tip, formatter:p => rows(p, { total }) },
+    legend:{ show:true, top:0, textStyle:{ color:C.text, fontFamily:FONT, fontSize:11 }, itemWidth:10, itemHeight:10, icon:'roundRect' },
+    xAxis:{ type:'category', data:x, ...axisBase, splitLine:{ show:false } },
+    yAxis:{ type:'value', ...axisBase, axisLine:{ show:false } },
+    series: series.map((s, i) => ({
+      name:s.name, type:'bar', stack: stack ? 'total' : undefined,
+      barWidth: stack ? '52%' : undefined, barGap: stack ? undefined : '12%',
+      data:s.data, itemStyle:{ color:s.color, borderRadius: stack ? 0 : [3,3,0,0] },
+      animationDelay:(idx)=>idx*40 + i*60,
+      emphasis:{ itemStyle:{ shadowBlur:12, shadowColor:'rgba(34,255,136,.35)' } },
+    })),
+  }
+}
+
 export function gaugeOpt({ value, max = value * 1.5, goal, unit = '' }) {
   const onTarget = goal == null || value >= goal
   const col = onTarget ? C.green : C.red
