@@ -57,7 +57,9 @@ button,input,select,textarea,table{font-family:var(--font-body)}
 /* topbar */
 .topbar{display:flex;align-items:center;gap:14px;margin-bottom:24px;flex-wrap:wrap}
 .client{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--line2);padding:8px 14px;border-radius:13px;cursor:pointer}
-.client .avatar{width:30px;height:30px;border-radius:9px;background:linear-gradient(150deg,var(--blue),var(--green));display:grid;place-items:center;color:#04122b;font-weight:800}
+.client .avatar{width:30px;height:30px;border-radius:9px;background:linear-gradient(150deg,var(--blue),var(--green));display:grid;place-items:center;color:#04122b;font-weight:800;overflow:hidden}
+.client .avatar.has-logo{background:none}
+.client .avatar img{width:100%;height:100%;object-fit:cover}
 .client b{color:var(--white);font-weight:600;font-size:13px}
 .client small{display:block;color:var(--muted);font-size:11px}
 .client .ms{color:var(--muted);font-size:20px}
@@ -76,9 +78,14 @@ button,input,select,textarea,table{font-family:var(--font-body)}
 .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
 
 /* layout grid */
-.rowgrid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-bottom:14px}
+.rowgrid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-bottom:14px;align-items:start}
 .card{background:linear-gradient(135deg,#0E1C35 0%,#0d1f3c 100%);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:18px;transition:box-shadow .2s ease,border-color .2s ease,transform .2s ease}
 .card.bordered{background:linear-gradient(180deg,var(--card),var(--bg2))}
+/* sparse cards read as deliberate: fill height, center their content */
+.donutcard{display:flex;flex-direction:column;min-height:272px}
+.donutcard .donut-body{flex:1;justify-content:center}
+.healthcard{min-height:272px;display:flex;flex-direction:column}
+.healthcard .cardhead{flex:0 0 auto}
 .cardhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}
 .cardhead h3{font-size:15px;font-weight:600}
 .cardhead .tag-src{color:var(--muted);font-size:11px}
@@ -204,6 +211,7 @@ tbody tr:hover{background:#13234a;border-left-color:var(--green)}
 .type-badge{font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px}
 .type-badge.ecommerce{background:rgba(34,255,136,.15);color:var(--green)}
 .type-badge.leadgen{background:rgba(43,143,234,.18);color:var(--blue2)}
+.type-badge.awareness{background:rgba(167,139,245,.20);color:#B9A6F5}
 .client-menu{position:absolute;top:calc(100% + 8px);left:0;z-index:40;width:312px;background:var(--card);border:1px solid var(--line2);border-radius:14px;padding:8px;box-shadow:0 24px 60px -18px rgba(0,0,0,.7);animation:popIn .18s ease both}
 .cm-label{font-size:10px;color:var(--dim);font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:7px 9px 6px}
 .cm-item{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:transparent;border:0;border-radius:10px;padding:9px;cursor:pointer;transition:.12s}
@@ -212,7 +220,6 @@ tbody tr:hover{background:#13234a;border-left-color:var(--green)}
 .cm-item .cm-text{flex:1;min-width:0}
 .cm-item .cm-text b{display:block;color:var(--white);font-size:13px;font-weight:600}
 .cm-item .cm-text small{color:var(--muted);font-size:11px}
-.avatar.sm{width:28px;height:28px;border-radius:8px;font-size:13px;flex:0 0 28px}
 
 /* ---- product table ---- */
 .ptable th.sortable{cursor:pointer;user-select:none;transition:color .12s}
@@ -283,7 +290,17 @@ tbody tr:hover{background:#13234a;border-left-color:var(--green)}
 .pill-btn.on{border-color:var(--blue);color:#fff;background:rgba(43,143,234,.12)}
 .ctl-wrap{position:relative}
 .ctl-count{display:inline-grid;place-items:center;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:var(--blue);color:#04122b;font-size:10px;font-weight:800;margin:0 2px}
-.ctl-menu{position:absolute;top:calc(100% + 8px);right:0;z-index:40;width:210px;background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:7px;box-shadow:0 24px 60px -18px rgba(0,0,0,.7);animation:popIn .16s ease both}
+.ctl-menu{position:absolute;top:calc(100% + 8px);right:0;z-index:40;width:238px;background:var(--card);border:1px solid var(--line2);border-radius:13px;padding:7px;box-shadow:0 24px 60px -18px rgba(0,0,0,.7);animation:popIn .16s ease both}
+.ctl-custom{border-top:1px solid var(--line);margin-top:5px;padding:10px 4px 3px}
+.ctl-custom-head{display:flex;align-items:center;gap:9px;color:var(--text);font-size:13px;margin-bottom:10px}
+.ctl-custom-head .ms{color:var(--muted)}
+.ctl-dates{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
+.ctl-dates input{background:var(--card2);border:1px solid var(--line2);color:#fff;border-radius:8px;padding:7px 9px;font-size:12.5px;font-family:inherit;color-scheme:dark}
+.ctl-dates input:focus{outline:none;border-color:var(--blue)}
+.ctl-dash{display:none}
+.ctl-apply{width:100%;background:rgba(43,143,234,.16);border:1px solid rgba(43,143,234,.4);color:var(--blue2);border-radius:9px;padding:8px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:.12s}
+.ctl-apply:hover:not(:disabled){background:rgba(43,143,234,.26)}
+.ctl-apply:disabled{opacity:.45;cursor:not-allowed}
 .ctl-menu.wide{width:230px}
 .ctl-item{display:flex;align-items:center;gap:9px;width:100%;text-align:left;background:transparent;border:0;border-radius:9px;padding:9px 10px;cursor:pointer;color:var(--text);font-size:13px;transition:.12s}
 .ctl-item:hover{background:rgba(255,255,255,.05);color:#fff}
@@ -307,10 +324,10 @@ tbody tr:hover{background:#13234a;border-left-color:var(--green)}
 .leg-row:hover{background:rgba(43,143,234,.1)}
 tr.clickrow{cursor:pointer}
 
-/* ---- geo panel: map banner on top, clean ranked list below ---- */
-.geo-wrap{display:flex;flex-direction:column;gap:14px}
-.geo-map{width:100%}
-.geo-rank{display:flex;flex-direction:column}
+/* ---- geo panel: map left, ranked list right (side by side) ---- */
+.geo-wrap{display:flex;flex-wrap:wrap;gap:24px;align-items:center}
+.geo-map{flex:1 1 300px;min-width:260px}
+.geo-rank{flex:2 1 360px;display:flex;flex-direction:column}
 .geo-row{display:grid;grid-template-columns:26px minmax(120px,1.4fr) 3fr 92px 50px;align-items:center;gap:16px;padding:11px 8px;border-radius:9px;border-bottom:1px solid var(--line);transition:background .12s}
 .geo-row:last-child{border-bottom:0}
 .geo-row:hover{background:rgba(255,255,255,.035)}
@@ -320,6 +337,7 @@ tr.clickrow{cursor:pointer}
 .geo-bar{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .6s cubic-bezier(.22,.61,.36,1)}
 .geo-val{color:#fff;font-weight:700;font-size:14px;text-align:right}
 .geo-share{color:var(--muted);font-size:12px;text-align:right}
+@media(max-width:900px){.geo-wrap{flex-direction:column;align-items:stretch}.geo-map{max-width:520px;margin:0 auto;width:100%}}
 @media(max-width:680px){.geo-row{grid-template-columns:22px 1fr 64px 44px}.geo-bartrack{display:none}}
 
 /* ---- brand logo chip (settings connections) ---- */
@@ -331,8 +349,6 @@ tr.clickrow{cursor:pointer}
 .res-pick select{background:var(--card2);border:1px solid var(--line2);color:#fff;border-radius:8px;padding:6px 10px;font-size:12.5px;font-family:inherit;cursor:pointer;max-width:240px}
 .res-pick select:focus{outline:none;border-color:var(--blue)}
 
-/* cap the geo map so it doesn't stretch edge-to-edge */
-.geo-map{max-width:480px;margin:0 auto}
 
 /* ---- interactive funnel builder ---- */
 .step-chip .ms.x{cursor:pointer;border-radius:5px;transition:.12s}
@@ -427,6 +443,15 @@ tr.clickrow{cursor:pointer}
 /* branding */
 .brand-colors{display:flex;gap:16px;flex-wrap:wrap}
 .color-row{display:flex;align-items:center;gap:10px}
+.logo-upload{display:flex;align-items:center;gap:14px}
+.logo-thumb{width:56px;height:56px;flex:0 0 56px;border-radius:12px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line2);background:var(--card2)}
+.logo-thumb img{width:100%;height:100%;object-fit:cover}
+.logo-actions{display:flex;flex-direction:column;gap:7px;align-items:flex-start}
+.logo-btn{display:inline-flex;align-items:center;gap:7px;background:rgba(43,143,234,.16);border:1px solid rgba(43,143,234,.4);color:var(--blue2);padding:8px 13px;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;transition:.12s}
+.logo-btn:hover{background:rgba(43,143,234,.26)}
+.logo-remove{display:inline-flex;align-items:center;gap:6px;background:transparent;border:0;color:var(--red);font-size:12px;font-weight:600;cursor:pointer;padding:0}
+.logo-remove .ms,.logo-btn .ms{font-size:17px}
+.logo-actions small{font-size:11px}
 .color-row input[type=color]{width:42px;height:34px;border:1px solid var(--line2);border-radius:9px;background:transparent;cursor:pointer;padding:2px}
 .color-row span{color:var(--muted);font-size:13px;font-family:monospace}
 .brand-preview{margin:18px 0 6px;background:var(--bg2);border:1px solid var(--line);border-radius:13px;padding:14px}
@@ -500,3 +525,69 @@ tr.clickrow{cursor:pointer}
 .anim-pop{animation:chartPop .7s cubic-bezier(.22,.61,.36,1) both;transform-origin:center}
 .anim-fade{animation:chartFade .7s cubic-bezier(.22,.61,.36,1) both}
 @media(prefers-reduced-motion:reduce){.anim-wipe,.anim-pop,.anim-fade{animation:none}}
+
+/* ---- daily digest automation: email + slack template previews ---- */
+.digest-head{display:flex;align-items:center;gap:13px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin-bottom:16px}
+.digest-ic{color:var(--blue2);font-size:22px}
+.digest-meta{flex:1;min-width:0}
+.digest-meta b{display:block;color:#fff;font-size:13.5px}
+.digest-meta small{color:var(--muted);font-size:12px}
+.digest-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(34,255,136,.14);color:var(--green);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:5px 11px;border-radius:999px}
+.digest-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.digest-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:1080px){.digest-grid{grid-template-columns:1fr}}
+.tpl-cap{display:flex;align-items:center;gap:7px;color:var(--dim);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:9px}
+.tpl-cap .ms{font-size:16px}
+
+/* email — light, like a real inbox message */
+.mail{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 18px 46px -20px rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.08);color:#1b2333}
+.mail-chrome{padding:14px 16px 12px;border-bottom:1px solid #eef1f6}
+.mail-from{display:flex;align-items:center;gap:10px}
+.mail-from b{font-size:13px;color:#111826;display:block}
+.mail-from small{font-size:11.5px;color:#8a93a6}
+.mail-time{margin-left:auto;font-size:11.5px;color:#98a1b2}
+.mail-subj{margin-top:9px;font-size:14px;font-weight:700;color:#0f1626}
+.mail-brandbar{background:linear-gradient(120deg,#2B8FEA,#22FF88);padding:11px 16px;display:flex;align-items:center;justify-content:space-between;color:#04122b}
+.mail-brandbar b{font-size:14px;letter-spacing:.14em;font-weight:800}
+.mail-brandbar span{font-size:10.5px;font-weight:700;letter-spacing:.16em;opacity:.8}
+.mail-body{padding:16px}
+.mail-hi{font-size:15px;font-weight:700;color:#0f1626}
+.mail-sub{margin:4px 0 14px;font-size:12.5px;color:#5a6478;line-height:1.5}
+.mail-kpis{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.mail-kpi{background:#f4f7fb;border:1px solid #e7ecf3;border-radius:10px;padding:10px 12px}
+.mail-kpi span{display:block;font-size:11px;color:#8a93a6;font-weight:600}
+.mail-kpi b{font-size:19px;color:#0f1626;font-family:var(--font-title);letter-spacing:-.01em}
+.mail-kpi em{font-style:normal;font-size:11.5px;font-weight:700;margin-left:7px}
+.mail-kpi em.up{color:#12a150}.mail-kpi em.down{color:#e5484d}
+.mail-sec{margin:15px 0 8px;font-size:12px;font-weight:800;color:#b4451c;letter-spacing:.02em}
+.mail-alert{background:#fff4f2;border:1px solid #ffd9d1;border-left:3px solid #f0603a;border-radius:8px;padding:9px 11px;font-size:12px;color:#8a3320;margin-bottom:7px}
+.mail-win{margin-top:10px;background:#effaf2;border:1px solid #c8ecd4;border-radius:8px;padding:9px 11px;font-size:12px;color:#166534}
+.mail-cta{display:block;text-align:center;margin:16px 0 6px;background:linear-gradient(120deg,#2B8FEA,#22FF88);color:#04122b;font-weight:800;font-size:13px;padding:12px;border-radius:10px;cursor:pointer}
+.mail-foot{font-size:10.5px;color:#a7afbe;text-align:center;line-height:1.6}
+.mail-foot u{cursor:pointer}
+
+/* slack — dark, like the Slack app */
+.slack{background:#1a1d21;border:1px solid #2b2f36;border-radius:14px;overflow:hidden;color:#d1d2d3}
+.slack-head{padding:11px 15px;border-bottom:1px solid #2b2f36;font-weight:800;color:#fff;font-size:13.5px;display:flex;align-items:center;gap:4px}
+.slack-hash{color:#8d8f95;font-weight:700}
+.slack-msg{display:flex;gap:10px;padding:13px 15px}
+.slack-b{flex:1;min-width:0}
+.slack-name{font-size:13px;color:#fff;font-weight:800}
+.slack-app{background:#3f3f46;color:#cfd0d2;font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;margin-left:3px;vertical-align:middle;letter-spacing:.04em}
+.slack-time{color:#8d8f95;font-size:11px;font-weight:500;margin-left:6px}
+.slack-text{font-size:13px;margin:3px 0 9px;color:#d1d2d3}
+.slack-att{border-left:3px solid #3a3f47;background:#222528;border-radius:6px;padding:11px 13px;margin-bottom:8px}
+.slack-att.green{border-left-color:#2eb67d}
+.slack-att.red{border-left-color:#e01e5a}
+.slack-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px}
+.slack-fields span{display:block;font-size:11px;color:#9a9ca1}
+.slack-fields b{font-size:14px;color:#fff;font-weight:700}
+.slack-fields em{font-style:normal;font-size:11px;color:#2eb67d;font-weight:700;margin-left:5px}
+.slack-att-t{font-size:12.5px;font-weight:700;color:#fff;margin-bottom:7px}
+.slack-line{font-size:12px;color:#c6a2ac;margin:3px 0}
+.slack-btns{display:flex;gap:8px;margin-top:4px}
+.slack-btns button{background:#222528;border:1px solid #3a3f47;color:#d1d2d3;font-size:12px;font-weight:700;padding:7px 13px;border-radius:7px;cursor:pointer;font-family:inherit}
+.slack-btns button.on{background:#fff;border-color:#fff;color:#1a1d21}
+.slack-react{display:flex;gap:7px;margin-top:10px;align-items:center}
+.slack-react span{background:#222528;border:1px solid #3a3f47;border-radius:11px;padding:2px 9px;font-size:11px;color:#c9cacd}
+.slack-thread{background:none!important;border:0!important;color:#4393e6!important;font-weight:700;cursor:pointer}

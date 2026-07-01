@@ -21,7 +21,7 @@ function animated(option, delay = 0) {
   }
 }
 
-export default function EChart({ option, height = 240, delay = 0, onSelect }) {
+export default function EChart({ option, height = 240, delay = 0, onSelect, renderer = 'svg' }) {
   const ref = useRef(null)
   const inst = useRef(null)
   const cb = useRef(onSelect)
@@ -29,7 +29,7 @@ export default function EChart({ option, height = 240, delay = 0, onSelect }) {
 
   useEffect(() => {
     if (!ref.current) return
-    inst.current = echarts.init(ref.current, null, { renderer: 'svg' })
+    inst.current = echarts.init(ref.current, null, { renderer })
     inst.current.setOption(animated(option, delay))
     inst.current.on('click', p => { if (cb.current && p && p.name) cb.current(p.name) })
     const ro = new ResizeObserver(() => inst.current && inst.current.resize())

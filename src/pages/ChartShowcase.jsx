@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import EChart from '../components/EChart.jsx'
-import { lineOpt, barOpt, donutOpt, funnelOpt, heatOpt, gaugeOpt, C } from '../lib/charts.js'
+import { lineOpt, barOpt, donutOpt, funnelOpt, heatOpt, gaugeOpt, sankeyOpt, C } from '../lib/charts.js'
 import { nivoTheme, FUNNEL_COLORS } from '../lib/nivoTheme.js'
 
 // existing project libs
 import { ResponsiveFunnel } from '@nivo/funnel'
+import { ResponsiveSankey } from '@nivo/sankey'
 import { Chart as GoogleChart } from 'react-google-charts'
 import HFunnel from '../components/HFunnel.jsx'
 import JourneyFlow from '../components/JourneyFlow.jsx'
@@ -424,21 +425,44 @@ function StreamGraph() {
 /* ============================ HEATMAP ============================ */
 const HEAT_X = ['W0', 'W1', 'W2', 'W3', 'W4', 'W5']
 const HEAT_Y = ['Jan', 'Feb', 'Mar', 'Apr']
-const HEAT_MATRIX = [
-  [100, 68, 52, 41, 33, 28],
-  [100, 72, 58, 46, 38, 31],
-  [100, 65, 49, 37, 30, 24],
-  [100, 70, 55, 44, 36, 30],
-]
+// cohort retention by country — same structure, different curves, so you can see how each renders
+const COUNTRY_HEAT = {
+  'United States': [
+    [100, 68, 52, 41, 33, 28],
+    [100, 72, 58, 46, 38, 31],
+    [100, 65, 49, 37, 30, 24],
+    [100, 70, 55, 44, 36, 30],
+  ],
+  'United Kingdom': [
+    [100, 74, 60, 50, 42, 37],
+    [100, 71, 57, 47, 40, 34],
+    [100, 76, 63, 53, 45, 39],
+    [100, 69, 54, 44, 37, 32],
+  ],
+  'Germany': [
+    [100, 61, 44, 33, 26, 21],
+    [100, 64, 47, 36, 28, 23],
+    [100, 58, 41, 30, 24, 19],
+    [100, 66, 49, 38, 31, 26],
+  ],
+  'Japan': [
+    [100, 82, 60, 42, 30, 22],
+    [100, 79, 57, 40, 28, 20],
+    [100, 85, 63, 45, 32, 24],
+    [100, 77, 55, 38, 27, 19],
+  ],
+}
+const HEAT_COUNTRIES = Object.keys(COUNTRY_HEAT)
+const HEAT_MATRIX = COUNTRY_HEAT['United States']
 const heatColor = d3.scaleLinear().domain([0, 50, 100]).range(['#15203b', '#2563a8', '#57a8f0'])
 
-function VisxHeat() {
+function VisxHeat({ matrix = HEAT_MATRIX }) {
   const [ref, w] = useWidth()
   const m = { top: 6, right: 8, bottom: 20, left: 34 }
   const nx = HEAT_X.length, ny = HEAT_Y.length
   const iw = Math.max(10, w - m.left - m.right), ih = H - m.top - m.bottom
   const binW = iw / nx, binH = ih / ny
-  const bins = HEAT_X.map((_, xi) => ({ bin: xi, bins: HEAT_Y.map((_, yi) => ({ bin: yi, count: HEAT_MATRIX[yi][xi] })) }))
+  const bins = HEAT_X.map((_, xi) => ({ bin: xi, bins: HEAT_Y.map((_, yi) => ({ bin: yi, count: matrix[yi][xi] })) }))
   const xScale = scaleLinear({ domain: [0, nx], range: [0, iw] })
   const yScale = scaleLinear({ domain: [0, ny], range: [0, ih] })
   const colorScale = scaleLinear({ domain: [0, 100], range: ['#15203b', '#57a8f0'] })
@@ -450,7 +474,7 @@ function VisxHeat() {
             {heatmap => heatmap.map(cols => cols.map(bin => (
               <g key={`${bin.row}-${bin.column}`}>
                 <rect x={bin.x} y={bin.y} width={bin.width} height={bin.height} rx={4} fill={bin.color} />
-                <text x={bin.x + bin.width / 2} y={bin.y + bin.height / 2 + 3} textAnchor="middle" fontFamily={FONT} fontSize={9} fill="#dCe7f7">{HEAT_MATRIX[bin.row][bin.column]}</text>
+                <text x={bin.x + bin.width / 2} y={bin.y + bin.height / 2 + 3} textAnchor="middle" fontFamily={FONT} fontSize={9} fill="#dCe7f7">{matrix[bin.row][bin.column]}</text>
               </g>
             )))}
           </HeatmapRect>
@@ -461,7 +485,7 @@ function VisxHeat() {
     </div>
   )
 }
-function D3Heat() {
+function D3Heat({ matrix = HEAT_MATRIX }) {
   const [ref, w] = useWidth()
   const svgRef = useRef(null)
   useEffect(() => {
@@ -473,7 +497,7 @@ function D3Heat() {
     const x = d3.scaleBand().domain(HEAT_X).range([0, iw]).padding(0.06)
     const y = d3.scaleBand().domain(HEAT_Y).range([0, ih]).padding(0.06)
     HEAT_Y.forEach((ry, yi) => HEAT_X.forEach((rx, xi) => {
-      const v = HEAT_MATRIX[yi][xi]
+      const v = matrix[yi][xi]
       g.append('rect').attr('x', x(rx)).attr('y', y(ry)).attr('width', x.bandwidth()).attr('height', y.bandwidth())
         .attr('rx', 4).attr('fill', heatColor(v))
       g.append('text').attr('x', x(rx) + x.bandwidth() / 2).attr('y', y(ry) + y.bandwidth() / 2 + 3)
@@ -481,8 +505,43 @@ function D3Heat() {
     }))
     g.append('g').call(d3.axisLeft(y).tickSize(0)).call(s => { s.selectAll('text').attr('fill', AXIS).attr('font-family', FONT).attr('font-size', 10); s.select('.domain').remove() })
     g.append('g').attr('transform', `translate(0,${ih})`).call(d3.axisBottom(x).tickSize(0)).call(s => { s.selectAll('text').attr('fill', AXIS).attr('font-family', FONT).attr('font-size', 10); s.select('.domain').remove() })
-  }, [w])
+  }, [w, matrix])
   return <div ref={ref} style={{ width: '100%' }}><svg ref={svgRef} width={w} height={H} /></div>
+}
+
+/* ============================= SANKEY ============================= */
+const SANKEY_NODES = ['Paid Search', 'Paid Social', 'Organic', 'Home', 'Product', 'Checkout', 'Purchase', 'Exit']
+const SANKEY_LINKS = [
+  { source: 'Paid Search', target: 'Home', value: 420 },
+  { source: 'Paid Search', target: 'Product', value: 280 },
+  { source: 'Paid Social', target: 'Home', value: 360 },
+  { source: 'Organic', target: 'Product', value: 300 },
+  { source: 'Organic', target: 'Home', value: 180 },
+  { source: 'Home', target: 'Product', value: 520 },
+  { source: 'Home', target: 'Exit', value: 260 },
+  { source: 'Product', target: 'Checkout', value: 640 },
+  { source: 'Product', target: 'Exit', value: 460 },
+  { source: 'Checkout', target: 'Purchase', value: 410 },
+  { source: 'Checkout', target: 'Exit', value: 230 },
+]
+const SANKEY_COLORS = ['#2B8FEA', '#5AAFF2', '#28C3AE', '#2AAAD6', '#25E29C', '#22FF88', '#22FF88', '#3a4f7a']
+function NivoSankey() {
+  return (
+    <div style={{ height: H }}>
+      <ResponsiveSankey
+        data={{ nodes: SANKEY_NODES.map(id => ({ id })), links: SANKEY_LINKS }}
+        margin={{ top: 6, right: 96, bottom: 6, left: 8 }}
+        align="justify"
+        colors={SANKEY_COLORS}
+        nodeThickness={13} nodeSpacing={16} nodeBorderWidth={0} nodeBorderRadius={3} nodeOpacity={1}
+        linkOpacity={0.45} linkHoverOpacity={0.7} linkHoverOthersOpacity={0.12} linkContract={1}
+        linkBlendMode="normal"
+        enableLinkGradient
+        labelPosition="outside" labelPadding={8} labelTextColor="#C5D0E0"
+        theme={nivoTheme}
+      />
+    </div>
+  )
 }
 
 /* ============================= GAUGE ============================= */
@@ -746,6 +805,8 @@ function Row({ title, sub, cells, anim = 'wipe' }) {
 const IN_PROJECT = 'in project'
 
 export default function ChartShowcase() {
+  const [heatCountry, setHeatCountry] = useState(HEAT_COUNTRIES[0])
+  const heatMatrix = COUNTRY_HEAT[heatCountry]
   return (
     <div className="wrap">
       <div className="ph">
@@ -816,15 +877,28 @@ export default function ChartShowcase() {
         ]}
       />
 
-      <Row
-        title="Heatmap"
-        sub="Cohort retention · ECharts is strong here; visx/D3 give full control (Recharts has no native heatmap)"
-        cells={[
-          { lib: 'ECharts', badge: IN_PROJECT, node: <EChart option={heatOpt({ xLabels: HEAT_X, yLabels: HEAT_Y, matrix: HEAT_MATRIX })} height={H} /> },
-          { lib: 'visx', node: <VisxHeat /> },
-          { lib: 'raw D3', node: <D3Heat /> },
-        ]}
-      />
+      <div className="card sc-row">
+        <div className="sc-row-head">
+          <h3>Heatmap</h3>
+          <span className="sc-row-sub">Cohort retention by country · switch country to see how each library renders different curves</span>
+        </div>
+        <div style={{ display: 'flex', gap: 8, margin: '2px 0 14px', flexWrap: 'wrap' }}>
+          {HEAT_COUNTRIES.map(c => {
+            const on = heatCountry === c
+            return <button key={c} onClick={() => setHeatCountry(c)} style={{
+              background: on ? 'rgba(43,143,234,.18)' : 'var(--card2)',
+              border: `1px solid ${on ? 'rgba(43,143,234,.5)' : 'var(--line2)'}`,
+              color: on ? 'var(--blue2)' : 'var(--muted)',
+              padding: '6px 13px', borderRadius: 999, fontSize: 12.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit',
+            }}>{c}</button>
+          })}
+        </div>
+        <div className="sc-grid">
+          <LibCell lib="ECharts" badge={IN_PROJECT}><EChart option={heatOpt({ xLabels: HEAT_X, yLabels: HEAT_Y, matrix: heatMatrix })} height={H} /></LibCell>
+          <LibCell lib="visx" anim="wipe"><VisxHeat matrix={heatMatrix} /></LibCell>
+          <LibCell lib="raw D3" anim="wipe"><D3Heat matrix={heatMatrix} /></LibCell>
+        </div>
+      </div>
 
       <Row
         anim="pop"
@@ -844,6 +918,15 @@ export default function ChartShowcase() {
           { lib: 'Nivo', badge: IN_PROJECT, node: <NivoFunnel /> },
           { lib: 'ECharts', badge: IN_PROJECT, node: <EChart option={funnelOpt({ steps: FUNNEL_STEPS, big: true })} height={H} /> },
           { lib: 'raw D3', node: <D3Funnel /> },
+        ]}
+      />
+
+      <Row
+        title="Sankey Flow"
+        sub="Channel → page → conversion · ECharts (in project) vs Nivo — hover nodes & links for tooltips"
+        cells={[
+          { lib: 'ECharts', badge: IN_PROJECT, node: <EChart option={sankeyOpt({ nodes: SANKEY_NODES.map(name => ({ name })), links: SANKEY_LINKS })} height={H} renderer="canvas" /> },
+          { lib: 'Nivo', node: <NivoSankey /> },
         ]}
       />
 

@@ -8,7 +8,7 @@ import Widget, { Skeleton } from './components/Widget.jsx'
 import ChartShowcase from './pages/ChartShowcase.jsx'
 
 const PROVIDER_LABEL = { google: 'Google', meta: 'Meta', shopify: 'Shopify', woocommerce: 'WooCommerce', merchant: 'Google Merchant Center' }
-import { FilterContext, DEFAULT_FILTERS, RANGES, filterSig, transformContent } from './lib/filters.js'
+import { FilterContext, DEFAULT_FILTERS, RANGES, rangeInfo, filterSig, transformContent, TODAY_ISO, daysAgoISO } from './lib/filters.js'
 
 const reduceMotion = () => typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -97,10 +97,13 @@ function AIDrawer({ ai, client, page, source, onClose }) {
 export default function App() {
   const clients = useSyncExternalStore(clientStore.subscribe, clientStore.get)
   const [client, setClient] = useState(() => clientStore.get()[0])
+  const clientLogo = clients.find(c => c.id === client.id)?.logo || null
   const [source, setSource] = useState('overview')
   const [menuOpen, setMenuOpen] = useState(false)      // client switcher
   const [openCtl, setOpenCtl] = useState(null)         // 'date' | null
   const [filters, setFilters] = useState(DEFAULT_FILTERS)
+  const [cStart, setCStart] = useState(daysAgoISO(27))  // custom range draft — last 28 days ending today
+  const [cEnd, setCEnd] = useState(TODAY_ISO)
   const [loading, setLoading] = useState(false)
   const [ai, setAi] = useState(null)   // AI drawer: null | { kind, name }
   const [toast, setToast] = useState(null)
@@ -150,6 +153,7 @@ export default function App() {
   const fil = {
     filters,
     setRange: r => { setFilters(f => ({ ...f, range: r })); setOpenCtl(null) },
+    setCustom: (start, end) => { setFilters(f => ({ ...f, range: 'custom', customStart: start, customEnd: end })); setOpenCtl(null) },
     clear: () => setFilters(DEFAULT_FILTERS),
     openAI: ctx => setAi(ctx || { kind: 'report' }),
     createClient: c => { clientStore.add(c); switchClient(c) },
@@ -181,7 +185,7 @@ export default function App() {
         </div>
       </nav>
 
-      {source !== '__showcase' && item?.tabs && (
+      {source !== '__showcase' && item?.tabs && item.tabs.length > 1 && (
         <aside className="sub">
           <div className="sub-title">{item.title}</div>
           {item.tabs.map(t => (
@@ -199,7 +203,7 @@ export default function App() {
           <div className="topbar">
             <div className="client-wrap">
               <div className="client" onClick={() => setMenuOpen(o => !o)}>
-                <div className="avatar">{client.initial}</div>
+                <div className={`avatar${clientLogo ? ' has-logo' : ''}`}>{clientLogo ? <img src={clientLogo} alt="" /> : client.initial}</div>
                 <div><b>{client.name}</b><small>{client.sub}</small></div>
                 <span className={`type-badge ${client.type}`}>{TYPE_LABEL[client.type]}</span>
                 <span className="ms">unfold_more</span>
@@ -209,7 +213,6 @@ export default function App() {
                   <div className="cm-label">Switch client</div>
                   {clients.map(c => (
                     <button key={c.id} className={`cm-item ${c.id === client.id ? 'on' : ''}`} onClick={() => switchClient(c)}>
-                      <div className="avatar sm">{c.initial}</div>
                       <div className="cm-text"><b>{c.name}</b><small>{c.sub}</small></div>
                       <span className={`type-badge ${c.type}`}>{TYPE_LABEL[c.type]}</span>
                     </button>
@@ -222,7 +225,7 @@ export default function App() {
             {/* date range */}
             <div className="ctl-wrap">
               <button className={`pill-btn ${openCtl === 'date' ? 'on' : ''}`} onClick={() => setOpenCtl(o => o === 'date' ? null : 'date')}>
-                <span className="ms">calendar_today</span> {RANGES[filters.range].label} <span className="ms" style={{ fontSize: 16 }}>expand_more</span>
+                <span className="ms">calendar_today</span> {rangeInfo(filters).label} <span className="ms" style={{ fontSize: 16 }}>expand_more</span>
               </button>
               {openCtl === 'date' && (
                 <div className="ctl-menu">
@@ -231,6 +234,15 @@ export default function App() {
                       <span className="ms" style={{ fontSize: 17 }}>{filters.range === k ? 'radio_button_checked' : 'radio_button_unchecked'}</span>{r.label}
                     </button>
                   ))}
+                  <div className="ctl-custom">
+                    <div className="ctl-custom-head"><span className="ms" style={{ fontSize: 17 }}>{filters.range === 'custom' ? 'radio_button_checked' : 'radio_button_unchecked'}</span>Custom range</div>
+                    <div className="ctl-dates">
+                      <input type="date" value={cStart} max={cEnd || TODAY_ISO} onChange={e => setCStart(e.target.value)} />
+                      <span className="ctl-dash">→</span>
+                      <input type="date" value={cEnd} min={cStart} max={TODAY_ISO} onChange={e => setCEnd(e.target.value)} />
+                    </div>
+                    <button className="ctl-apply" disabled={!cStart || !cEnd || cStart > cEnd || cEnd > TODAY_ISO} onClick={() => fil.setCustom(cStart, cEnd)}>Apply range</button>
+                  </div>
                 </div>
               )}
             </div>
@@ -249,7 +261,7 @@ export default function App() {
           {/* active filter chips */}
           {active && (
             <div className="chips">
-              {filters.range !== '28d' && <span className="chip" onClick={() => fil.setRange('28d')}><span className="ms">calendar_today</span>{RANGES[filters.range].label}<span className="ms x">close</span></span>}
+              {filters.range !== '28d' && <span className="chip" onClick={() => fil.setRange('28d')}><span className="ms">calendar_today</span>{rangeInfo(filters).label}<span className="ms x">close</span></span>}
               <button className="chip-clear" onClick={fil.clear}>Clear all</button>
             </div>
           )}

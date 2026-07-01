@@ -3,14 +3,20 @@ import EChart from './EChart.jsx'
 import GeoMap from './GeoMap.jsx'
 import { ResponsiveFunnel } from '@nivo/funnel'
 import HFunnel from './HFunnel.jsx'
+import JourneyFlow from './JourneyFlow.jsx'
+import MorningDigest from './AlertTemplates.jsx'
 import { lineOpt, barOpt, donutOpt, funnelOpt, sankeyOpt, heatOpt, scatterOpt, gaugeOpt, stackBarOpt, ringOpt, C } from '../lib/charts.js'
 import { nivoTheme, FUNNEL_COLORS } from '../lib/nivoTheme.js'
-import { CHANNELS, parseMetric, fmtMetric, useFilters } from '../lib/filters.js'
+import { CHANNELS, parseMetric, fmtMetric, useFilters, rangeInfo, videoWeeks, DEFAULT_FILTERS } from '../lib/filters.js'
 import { funnelStore } from '../lib/funnelStore.js'
 import { targetsStore } from '../lib/targetsStore.js'
+import { clientStore } from '../lib/clientStore.js'
 import { isConnected, getResource, saveResource } from '../lib/connections.js'
 
 const reduceMotion = () => typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+// balanced KPI columns: max 6 per row, split evenly across rows (8→4+4, 11→6+5, 12→6+6)
+const kpiCols = n => Math.ceil(n / Math.ceil(n / 6))
 
 // Animated count-up for KPI values (counts from 0 → value on mount / data change)
 function CountUp({ text }) {
@@ -108,21 +114,22 @@ function ChartCard({ spec, delay, onSelect }) {
     return {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spec])
+  const isLegendDonut = kind === 'donut' && rest.legend
   return (
-    <div className="card">
+    <div className={`card${isLegendDonut ? ' donutcard' : ''}`}>
       <div className="cardhead"><h3>{title}</h3>{src && <span className="tag-src">{src}</span>}</div>
       {kind === 'hfunnel'
         ? <HFunnel steps={rest.steps} height={height || 300} />
-        : kind === 'donut' && rest.legend
-        ? <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{ width: 130 }}><EChart option={opt} height={height || 150} delay={delay} onSelect={onSelect} /></div>
-            <div style={{ flex: 1, fontSize: 12.5 }}>
+        : isLegendDonut
+        ? <div className="donut-body" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 150, flex: '0 0 150px' }}><EChart option={opt} height={height || 170} delay={delay} onSelect={onSelect} /></div>
+            <div style={{ flex: 1, fontSize: 13 }}>
               {rest.data.map(d => <div key={d.name} className={onSelect ? 'leg-row' : ''} onClick={() => onSelect && onSelect(d.name)} style={{ display: 'flex', justifyContent: 'space-between', margin: '9px 0' }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}><i style={{ width: 9, height: 9, borderRadius: 3, background: d.color, display: 'inline-block' }} />{d.name}</span>
                 <b style={{ color: '#fff' }}>{d.value}%</b></div>)}
             </div>
           </div>
-        : <EChart option={opt} height={height || 220} delay={delay} onSelect={onSelect} />}
+        : <EChart option={opt} height={height || 220} delay={delay} onSelect={onSelect} renderer={kind === 'sankey' ? 'canvas' : 'svg'} />}
     </div>
   )
 }
@@ -188,11 +195,7 @@ function ProductTable({ title, columns, rows, src }) {
           {sorted.map((row, i) => (
             <tr key={i} style={{ '--d': `${i * 28}ms` }}>{columns.map(c => {
               if (c.k === 'name') {
-                const [col] = CAT[row.cat] || CAT.default
-                const initials = row.name.split(' ').filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase()
-                return <td key={c.k}><div className="prod">
-                  <span className="thumb" style={{ background: `linear-gradient(150deg,${col}, #0B1628)` }}>{initials}</span>
-                  <span className="cname">{row.name}</span></div></td>
+                return <td key={c.k}><span className="cname">{row.name}</span></td>
               }
               if (c.k === 'cat') return <td key={c.k}><span className="catpill">{row.cat}</span></td>
               if (c.k === 'trend') return <td key={c.k} className="r"><span className={`trend ${row.up ? 'up' : 'down'}`}>{row.up ? '▲' : '▼'} {row.trend.replace(/^[+-]/, '')}</span></td>
@@ -685,7 +688,7 @@ function Insight({ icon, tone = 'good', title, text }) {
 export function Skeleton({ spec }) {
   const span = { gridColumn: `span ${spec.w || 12}` }
   if (spec.type === 'kpis')
-    return <div className="kgrid" style={{ ...span, display: 'grid', gridTemplateColumns: `repeat(auto-fit,minmax(150px,1fr))`, gap: 14 }}>{spec.items.map((_, i) => <div key={i} className="card sk" style={{ height: 118 }}><div className="sk-bar" style={{ width: '55%' }} /><div className="sk-bar lg" style={{ width: '72%' }} /><div className="sk-bar" style={{ width: '40%' }} /></div>)}</div>
+    return <div className="kgrid" style={{ ...span, display: 'grid', gridTemplateColumns: `repeat(${kpiCols(spec.items.length)},minmax(150px,1fr))`, gap: 14 }}>{spec.items.map((_, i) => <div key={i} className="card sk" style={{ height: 118 }}><div className="sk-bar" style={{ width: '55%' }} /><div className="sk-bar lg" style={{ width: '72%' }} /><div className="sk-bar" style={{ width: '40%' }} /></div>)}</div>
   const h = spec.type === 'note' ? 150 : spec.kind === 'funnel' || spec.big ? 320 : spec.type === 'table' || spec.type === 'producttable' || spec.type === 'campaignTree' ? 260 : 230
   return <div style={span}><div className="card sk" style={{ height: h }}><div className="sk-bar" style={{ width: '40%' }} /><div className="sk-fill" /></div></div>
 }
@@ -789,12 +792,38 @@ function TeamManager() {
 }
 
 function Branding() {
-  const [c1, setC1] = useState('#2B8FEA'); const [c2, setC2] = useState('#22FF88'); const [brand, setBrand] = useState('GYA Media')
+  const fil = useFilters()
+  const clients = useSyncExternalStore(clientStore.subscribe, clientStore.get)
+  const clientId = fil?.clientId
+  const current = clients.find(c => c.id === clientId)
+  const logo = current?.logo || null
+  const initial = (current?.initial || 'G').toUpperCase()
+  const [c1, setC1] = useState('#2B8FEA'); const [c2, setC2] = useState('#22FF88'); const [brand, setBrand] = useState(current?.name || 'GYA Media')
   const [saved, setSaved] = useState(false)
+  const onLogo = e => {
+    const file = e.target.files && e.target.files[0]
+    if (!file || !clientId) return
+    const reader = new FileReader()
+    reader.onload = () => clientStore.setLogo(clientId, reader.result)
+    reader.readAsDataURL(file)
+    e.target.value = ''
+  }
   return (
     <div className="card form-card">
       <h3 style={{ marginBottom: 6 }}>White-label branding</h3>
-      <p className="muted" style={{ marginTop: 0, fontSize: 13 }}>Set the client-facing brand name and accent colors. The preview updates live.</p>
+      <p className="muted" style={{ marginTop: 0, fontSize: 13 }}>Set the client-facing logo, brand name and accent colors. The preview updates live.</p>
+      <div className="fld"><label>Client logo</label>
+        <div className="logo-upload">
+          <div className="logo-thumb" style={logo ? undefined : { background: `linear-gradient(150deg,${c1},${c2})` }}>
+            {logo ? <img src={logo} alt="Client logo" /> : <span style={{ color: '#04122b', fontWeight: 800, fontSize: 20 }}>{initial}</span>}
+          </div>
+          <div className="logo-actions">
+            <label className="logo-btn"><span className="ms">upload</span>{logo ? 'Replace logo' : 'Upload logo'}<input type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" onChange={onLogo} hidden /></label>
+            {logo && <button className="logo-remove" onClick={() => clientStore.setLogo(clientId, null)}><span className="ms">delete</span>Remove</button>}
+            <small className="muted">PNG, JPG, SVG or WebP · shown in the sidebar and reports</small>
+          </div>
+        </div>
+      </div>
       <div className="fld"><label>Brand name</label><input value={brand} onChange={e => setBrand(e.target.value)} /></div>
       <div className="brand-colors">
         <div className="fld"><label>Primary</label><div className="color-row"><input type="color" value={c1} onChange={e => setC1(e.target.value)} /><span>{c1}</span></div></div>
@@ -803,7 +832,9 @@ function Branding() {
       <div className="brand-preview">
         <div className="bp-label">Live preview</div>
         <div className="bp-row">
-          <div className="bp-logo" style={{ background: `linear-gradient(150deg,${c1},${c2})` }}>{(brand[0] || 'G').toUpperCase()}</div>
+          <div className="bp-logo" style={logo ? { padding: 0, overflow: 'hidden' } : { background: `linear-gradient(150deg,${c1},${c2})` }}>
+            {logo ? <img src={logo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : (brand[0] || 'G').toUpperCase()}
+          </div>
           <b style={{ color: '#fff', flex: 1 }}>{brand || 'Brand name'}</b>
           <button className="bp-btn" style={{ background: `linear-gradient(120deg,${c1},${c2})` }}>Generate AI Report</button>
         </div>
@@ -818,9 +849,9 @@ function HealthScore({ title, score, max = 100, items = [] }) {
   const col = pct >= 80 ? 'var(--green)' : pct >= 60 ? 'var(--blue2)' : 'var(--red)'
   const dot = s => s === 'ok' ? 'var(--green)' : s === 'warn' ? '#F2B84B' : 'var(--red)'
   return (
-    <div className="card">
+    <div className="card healthcard">
       <div className="cardhead"><h3>{title}</h3></div>
-      <div style={{ display:'flex', alignItems:'center', gap:18, padding:'4px 2px 12px' }}>
+      <div style={{ display:'flex', alignItems:'center', gap:18, padding:'4px 2px 12px', flex:1 }}>
         <div style={{ fontFamily:'var(--font-title)', fontWeight:800, fontSize:42, color:col, lineHeight:1 }}>{score}<span style={{ fontSize:18, color:'var(--muted)' }}>/{max}</span></div>
         <div style={{ flex:1 }}>
           {items.map((it, i) => (
@@ -924,6 +955,30 @@ function NivoFunnel({ data, height = 340 }) {
   )
 }
 
+// small-multiples: one mini completion funnel per week, so weeks can be compared at a glance
+const WK_FUNNEL_STAGES = ['25%', '50%', '75%', '100%']
+function WeekFunnels({ weeks = [], height = 150 }) {
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 8 }}>
+        {weeks.map(wk => (
+          <div key={wk.label} style={{ flex: '1 1 0', minWidth: 0 }}>
+            <div style={{ textAlign: 'center', color: 'var(--muted)', fontSize: 11.5, fontWeight: 600, marginBottom: 4 }}>{wk.label}</div>
+            <NivoFunnel data={wk.data.map((v, i) => ({ id: WK_FUNNEL_STAGES[i], label: WK_FUNNEL_STAGES[i], value: v }))} height={height} />
+          </div>
+        ))}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 14, marginTop: 8 }}>
+        {WK_FUNNEL_STAGES.map((s, i) => (
+          <span key={s} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--muted)' }}>
+            <i style={{ width: 9, height: 9, borderRadius: 2, background: FUNNEL_COLORS[i], display: 'inline-block' }} />{s} played
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function SignatureFunnel({ title = 'Funnel overview', spend, steps = [], side = [], footer }) {
   const data = useMemo(() => steps.map(s => ({ id: s.name, label: s.name, value: s.value })), [steps])
   return (
@@ -977,7 +1032,7 @@ export default function Widget({ spec, idx = 0 }) {
   const delay = idx * 70
   const onSelect = fil ? (name => { if (CHANNELS.includes(name)) fil.setChannelsOnly(name) }) : undefined
   if (spec.type === 'kpis')
-    return <div className="kgrid" style={{ ...span, display: 'grid', gridTemplateColumns: `repeat(auto-fit,minmax(150px,1fr))`, gap: 14 }}>{spec.items.map((k, i) => <KpiCard key={i} {...k} i={i} />)}</div>
+    return <div className="kgrid" style={{ ...span, display: 'grid', gridTemplateColumns: `repeat(${kpiCols(spec.items.length)},minmax(150px,1fr))`, gap: 14 }}>{spec.items.map((k, i) => <KpiCard key={i} {...k} i={i} />)}</div>
   if (spec.type === 'pills') return <div style={span}><Pills items={spec.items} /></div>
   if (spec.type === 'chart') return <div style={span}><ChartCard spec={spec} delay={delay} onSelect={onSelect} /></div>
   if (spec.type === 'geo') return <div style={span}><GeoPanel {...spec} /></div>
@@ -990,6 +1045,7 @@ export default function Widget({ spec, idx = 0 }) {
   if (spec.type === 'kpiTargets') return <div style={span}><KpiTargets /></div>
   if (spec.type === 'addClient') return <div style={span}><AddClient /></div>
   if (spec.type === 'alertsManager') return <div style={span}><AlertsManager /></div>
+  if (spec.type === 'digest') return <div style={span}><MorningDigest /></div>
   if (spec.type === 'teamManager') return <div style={span}><TeamManager /></div>
   if (spec.type === 'branding') return <div style={span}><Branding /></div>
   if (spec.type === 'builder') return <div style={span}><FunnelBuilder steps={spec.steps} /></div>
@@ -1003,5 +1059,20 @@ export default function Widget({ spec, idx = 0 }) {
   if (spec.type === 'trackingHealth') return <div style={span}><TrackingHealth {...spec} /></div>
   if (spec.type === 'signatureFunnel') return <div style={span}><SignatureFunnel {...spec} /></div>
   if (spec.type === 'perfFunnel') return <div style={span}><PerformanceFunnel {...spec} /></div>
+  if (spec.type === 'journey') return <div style={span}><div className="card">
+    <div className="cardhead"><h3>{spec.title}</h3>{spec.spend && <span className="tag-src">Ad spend {spec.spend}</span>}</div>
+    <JourneyFlow stages={spec.stages} stats={spec.stats} />
+  </div></div>
+  if (spec.type === 'nivoFunnel') return <div style={span}><div className="card">
+    <div className="cardhead"><h3>{spec.title}</h3>{spec.src && <span className="tag-src">{spec.src}</span>}</div>
+    <NivoFunnel data={spec.data} height={spec.height || 300} />
+  </div></div>
+  if (spec.type === 'weekFunnels') {
+    const weeks = spec.weeks || videoWeeks(rangeInfo(fil?.filters || DEFAULT_FILTERS)).map(w => ({ label: w.label, data: w.vals }))
+    return <div style={span}><div className="card">
+      <div className="cardhead"><h3>{spec.title}</h3>{spec.src && <span className="tag-src">{spec.src}</span>}</div>
+      <WeekFunnels weeks={weeks} height={spec.height || 150} />
+    </div></div>
+  }
   return null
 }

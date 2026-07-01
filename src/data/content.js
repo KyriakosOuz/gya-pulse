@@ -13,7 +13,7 @@ const LCHAN=['Paid Search','Paid Social','Organic','Email','Referral','Direct']
 
 const k=(l,v,delta,up,good,sp)=>({l,v,delta,up,good,sp})
 const donut=(title,data,w=6)=>({type:'chart',kind:'donut',title,w,legend:true,height:210,data})
-const geoBlock=(w=6,title='Performance by country')=>({type:'geo',title,w,data:GEO,height:210})
+const geoBlock=(w=12,title='Performance by country')=>({type:'geo',title,w,data:GEO,height:210})
 const chanHbar=(w=6,title='Spend by channel')=>({type:'chart',kind:'hbar',title,w,x:CHAN,data:[78,52,40,30,24,17,11],color:GREEN})
 
 /* ---------- AWARENESS (Case Study 1) signature data ---------- */
@@ -70,7 +70,8 @@ const OVERVIEW = {
       steps:[{name:'Impressions',value:9598,p:'100%'},{name:'Clicks',value:954,p:'9.9%'},{name:'All conversions',value:155,p:'1.6%'},{name:'Conversions',value:143,p:'1.5%'},{name:'Value',value:8,p:'0.08%'}],
       side:[{label:'Avg. CPM',value:'€90.67',delta:'22%',up:true},{label:'Avg. CPC',value:'€0.91',delta:'18%',up:true},{label:'Cost / conv.',value:'€5.62',delta:'7%',up:true},{label:'Conversion rate',value:'0.79%'}],
       footer:'114.3% of previous month'},
-    donut('Devices',DEV,6), geoBlock(6,'Revenue by country'),
+    donut('Devices',DEV,6), chanHbar(6,'Revenue by channel'),
+    geoBlock(12,'Revenue by country'),
   ]},
   leadgen:{ sub:'Meta Ads + Google Ads + GA4 + Search Console · vs previous 28 days', blocks:[
     {type:'kpis',items:[
@@ -84,7 +85,8 @@ const OVERVIEW = {
       side:[{label:'Avg. CPM',value:'€12.77',delta:'9%',up:true},{label:'Avg. CPC',value:'€0.43',delta:'6%',up:false},{label:'Cost / lead',value:'€9.60',delta:'6%',up:false},{label:'Lead → customer',value:'8.4%'}],
       footer:'106% of previous month'},
     donut('Leads by source',[{name:'Paid Search',value:38,color:GREEN},{name:'Paid Social',value:31,color:BLUE},{name:'Organic',value:19,color:GREY},{name:'Other',value:12,color:'#5AAFF2'}],6),
-    geoBlock(6,'Leads by country'),
+    donut('Devices',DEV,6),
+    geoBlock(12,'Leads by country'),
   ]},
   awareness:{ sub:'Brand penetration & top-of-funnel engagement · vs previous 28 days', blocks:[
     {type:'kpis',items:[
@@ -97,7 +99,8 @@ const OVERVIEW = {
       steps:[{name:'Impressions',value:4210000,p:'100%'},{name:'Reach',value:1840000,p:'43.7%'},{name:'Engaged',value:512000,p:'12.2%'},{name:'Video 100% plays',value:138000,p:'3.3%'},{name:'Brand searches',value:24600,p:'0.58%'}],
       side:[{label:'Avg. CPM',value:'€4.90',delta:'6%',up:false},{label:'Frequency',value:'2.3',delta:'0.2',up:true},{label:'Engagement rate',value:'12.2%',delta:'1.4%',up:true},{label:'Cost / engaged',value:'€0.36'}],
       footer:'118% of previous month'},
-    donut('New vs Returning',AW_NVR,6), geoBlock(6,'Geographic reach'),
+    donut('New vs Returning',AW_NVR,6), donut('Devices',DEV,6),
+    geoBlock(12,'Geographic reach'),
   ]},
 }
 
@@ -172,17 +175,17 @@ const TYPED = {
       {type:'chart',kind:'hbar',title:'Registrations by source',src:'Zoom',w:12,x:['LinkedIn Ads','Email','Google Ads','Organic','Partner'],data:[420,360,240,140,80],color:GREEN},
     ]},
     'webinar/funnel':{ sub:'Ads → Registration → Attended → SQL → Conversion', blocks:[
-      {type:'signatureFunnel',w:12,title:'Webinar funnel',spend:'€2,140',
-        steps:[{name:'Impressions',value:184000,p:'100%'},{name:'Reg. page views',value:9600,p:'5.2%'},{name:'Registered',value:1240,p:'0.67%'},{name:'Attended',value:512,p:'0.28%'},{name:'SQL',value:96,p:'0.05%'},{name:'Conversion',value:24,p:'0.013%'}],
-        side:[{label:'Cost / registrant',value:'€1.73',delta:'8%',up:false},{label:'Attendance rate',value:'41%',delta:'2%',up:true},{label:'Reg → SQL',value:'7.7%'},{label:'Cost / SQL',value:'€22.30',delta:'5%',up:false}],
-        footer:'108% of previous webinar'},
+      {type:'journey',w:12,title:'Webinar funnel',spend:'€2,140',
+        stages:[{label:'Impressions',value:184000},{label:'Reg. page views',value:9600},{label:'Registered',value:1240},{label:'Attended',value:512},{label:'SQL',value:96},{label:'Conversion',value:24}],
+        stats:[{label:'Cost / registrant',value:'€1.73'},{label:'Attendance rate',value:'41%'},{label:'Reg → SQL',value:'7.7%'},{label:'Cost / SQL',value:'€22.30'}]},
     ]},
   },
 
   awareness:{
     'meta/overview':{ sub:'Reach, frequency & video engagement', blocks:[
       {type:'kpis',items:[k('Reach','1.84M','▲ 22%',true,true,SP.up),k('Frequency','2.3','▲ 0.2',true,'plain',null),k('Video views','512k','▲ 14%',true,true,SP.up)]},
-      {type:'chart',kind:'stack',title:'Video engagement (play %)',src:'Meta Ads',w:12,...AW_VIDEO},
+      {type:'chart',kind:'stack',title:'Video engagement (play %)',src:'Meta Ads',w:6,weekly:'video',...AW_VIDEO},
+      {type:'weekFunnels',w:6,title:'Video completion funnel · by week',src:'Meta Ads',height:150},
       {type:'kpis',items:[k('Video Views','512k','▲ 14%',true,true,null),k('Reach','1.84M','▲ 22%',true,true,null),k('Frequency','2.3','▲ 0.2',true,'plain',null),k('Clicks','48,210','▲ 12%',true,true,null),k('CTR%','3.44%','▲ 0.2%',true,true,null),k('CPC','€0.91','▼ 5%',false,true,null),k('CPM','€4.90','▼ 6%',false,'plain',null),k('CPA','€36.00','▲ 3%',true,false,null),k('Conversions','512','▲ 6%',true,true,null),k('Conv. Value','€18.4k','▲ 8%',true,true,null),k('ROAS','1.8x','▼ 0.2x',false,false,null)]},
     ]},
     'ads/overview':{ sub:'Display reach & search visibility', blocks:[
@@ -204,9 +207,6 @@ const TYPED = {
 }
 
 /* ================= SHARED (type-independent) CONTENT ================= */
-const ORGANIC_NOTE = { sub:'', blocks:[
-  {type:'note',icon:'rocket_launch',title:'Post-MVP — organic roadmap',text:'Organic social — TikTok, Instagram, YouTube and LinkedIn organic — is on the Future Roadmap. This integration is named and reserved; it will light up with real content once the channel is connected. Paid performance for these platforms already lives under Meta Ads.'},
-] }
 
 const C = {
   /* ---------------- GA4 shared tabs ---------------- */
@@ -218,7 +218,7 @@ const C = {
     {type:'kpis',items:[k('Top country','United States'),k('Top age','25-34'),k('Top device','Desktop · 62%'),k('Economic tier','Mid 40%')]},
     {type:'chart',kind:'bar',title:'Users by age',w:6,x:AGE,data:[14,38,24,12,8,4]},
     donut('Gender',[{name:'Female',value:54,color:GREEN},{name:'Male',value:43,color:BLUE},{name:'Unknown',value:3,color:GREY}],6),
-    geoBlock(6,'Users by country'),
+    geoBlock(12,'Users by country'),
     {type:'chart',kind:'hbar',title:'Top cities',w:6,x:['Athens','Thessaloniki','Patras','Heraklion','Larissa','London'],data:[2280,901,556,317,260,232],color:GREEN},
     {type:'chart',kind:'hbar',title:'State / Region',w:6,x:['Attica','Central Macedonia','Crete','Western Greece','Thessaly','Peloponnese'],data:[44200,18600,9800,7400,6100,4800],color:BLUE},
     donut('Device',DEV,6),
@@ -226,9 +226,127 @@ const C = {
   ]},
 
   /* ---------------- Placeholder integrations ---------------- */
-  'youtube/overview':ORGANIC_NOTE,
-  'linkedin/overview':ORGANIC_NOTE,
-  'social/overview':ORGANIC_NOTE,
+  'youtube/overview':{ sub:'Organic channel performance — views, watch time & subscribers · vs previous 28 days', blocks:[
+    {type:'kpis',items:[
+      k('Views','742k','▲ 18%',true,true,SP.up),
+      k('Watch time','48.6k hrs','▲ 14%',true,true,SP.up),
+      k('Avg view duration','3:56','▲ 6%',true,true,null),
+      k('Net subscribers','+7,730','▲ 22%',true,true,SP.up),
+    ]},
+    {type:'chart',kind:'line',title:'Views & watch time',src:'YouTube Analytics',w:12,x:WK,series:[
+      {name:'Views (k)',color:GREEN,data:[78,84,88,92,96,98,102,104],area:true},
+      {name:'Watch time (k hrs)',color:BLUE,data:[5.2,5.6,5.8,6.1,6.3,6.4,6.6,6.6]},
+    ]},
+    donut('Traffic sources',[{name:'YouTube search',value:31,color:GREEN},{name:'Suggested',value:28,color:BLUE},{name:'Browse',value:22,color:'#5AAFF2'},{name:'External',value:9,color:GREY},{name:'Direct',value:6,color:'#28C3AE'},{name:'Other',value:4,color:'#3a4f7a'}],6),
+    donut('Device',[{name:'Mobile',value:64,color:GREEN},{name:'Desktop',value:21,color:BLUE},{name:'TV',value:11,color:GREY},{name:'Tablet',value:4,color:'#5AAFF2'}],6),
+    {type:'kpis',items:[
+      k('Engaged views','512k','▲ 12%',true,true,null),
+      k('Avg % viewed','41.3%','▲ 2%',true,true,null),
+      k('Likes','58.9k','▲ 16%',true,true,null),
+      k('Shares','6,420','▲ 9%',true,true,null),
+      k('Comments','4,180','▲ 7%',true,true,null),
+      k('Playlist saves','3,050','▲ 5%',true,true,null),
+      k('Subscribers gained','9,240','▲ 20%',true,true,null),
+      k('Total subscribers','214.8k','▲ 4%',true,true,null),
+    ]},
+    geoBlock(12,'Views by country'),
+    {type:'table',w:12,title:'Top videos',src:'YouTube Analytics',columns:[
+      {k:'name',label:'Video'},{k:'pub',label:'Published'},{k:'views',label:'Views',r:true},{k:'dur',label:'Avg duration',r:true},{k:'watch',label:'Watch time (hrs)',r:true},{k:'pct',label:'Avg % viewed',r:true},{k:'likes',label:'Likes',r:true},{k:'subs',label:'Subs +',r:true},
+    ],rows:[
+      {name:'Ultralight Backpacking Gear List 2026',pub:'May 12',views:'148,320',dur:'4:37',watch:'11,420',pct:'44%',likes:'9,240',subs:'1,860'},
+      {name:'Why Your Tent Is Leaking (Fix in 60s) #Shorts',pub:'Jun 25',views:'210,450',dur:'0:31',watch:'1,810',pct:'88%',likes:'12,900',subs:'970'},
+      {name:'We Tested 7 Waterproof Jackets in a Storm',pub:'Apr 28',views:'96,540',dur:'5:12',watch:'8,370',pct:'47%',likes:'6,110',subs:'1,205'},
+      {name:'How to Pack a Bag for 5 Days (One Carry-On)',pub:'Jun 03',views:'74,880',dur:'3:58',watch:'4,955',pct:'40%',likes:'4,530',subs:'812'},
+      {name:'Sunrise Summit Vlog — Dolomites',pub:'Jun 18',views:'61,940',dur:'6:03',watch:'6,245',pct:'49%',likes:'5,880',subs:'1,090'},
+      {name:'Trail-Tested: Our New Merino Base Layer',pub:'May 21',views:'52,110',dur:'2:44',watch:'2,375',pct:'38%',likes:'3,020',subs:'540'},
+      {name:'Fall Layering System Explained',pub:'May 30',views:'44,230',dur:'4:09',watch:'3,060',pct:'42%',likes:'2,780',subs:'425'},
+      {name:'5 Campsite Coffee Setups Ranked',pub:'Apr 15',views:'38,760',dur:'3:21',watch:'2,165',pct:'36%',likes:'2,410',subs:'318'},
+    ]},
+  ]},
+  'linkedin/overview':{ sub:'Organic page & LinkedIn Ads — followers, engagement & lead gen · vs previous 28 days', blocks:[
+    {type:'kpis',items:[
+      k('Followers','14,238','▲ 4.5%',true,true,SP.up),
+      k('Impressions','248.9k','▲ 12%',true,true,SP.up),
+      k('Engagement rate','5.8%','▲ 0.4%',true,true,SP.up),
+      k('Follower gains','+612','▲ 9%',true,true,SP.up),
+    ]},
+    {type:'chart',kind:'line',title:'Follower growth & impressions',src:'LinkedIn Pages API',w:12,x:WK,series:[
+      {name:'Followers',color:GREEN,data:[13626,13758,13904,14010,14092,14148,14196,14238],area:true},
+      {name:'Impressions (k)',color:BLUE,data:[26.1,29.4,31.8,33.2,30.5,34.1,31.9,31.9]},
+    ]},
+    {type:'chart',kind:'hbar',title:'Followers by seniority',src:'LinkedIn',w:6,x:['Senior','Manager','Director','Entry','VP','CXO','Owner/Partner','Training'],data:[24,21,16,14,9,7,5,4],color:GREEN},
+    donut('Engagement by post type',[{name:'Article',value:34,color:GREEN},{name:'Image',value:22,color:BLUE},{name:'Video',value:18,color:'#5AAFF2'},{name:'Document',value:12,color:GREY},{name:'Poll',value:9,color:'#28C3AE'},{name:'Text',value:5,color:'#3a4f7a'}],6),
+    {type:'chart',kind:'hbar',title:'Followers by job function',src:'LinkedIn',w:6,x:['Legal','Business Dev','Finance','Operations','Consulting','Sales','HR','Marketing'],data:[28,13,11,10,9,8,7,6],color:BLUE},
+    {type:'chart',kind:'hbar',title:'Followers by company size',src:'LinkedIn',w:6,x:['1k–5k','201–500','51–200','501–1k','10k+','11–50','5k–10k','1–10'],data:[19,17,16,14,12,11,7,4],color:GREEN},
+    {type:'kpis',items:[
+      k('Unique reach','96.4k','▲ 8%',true,true,null),
+      k('Post clicks','5,120','▲ 11%',true,true,null),
+      k('Reactions','7,340','▲ 14%',true,true,null),
+      k('Comments','892','▲ 6%',true,true,null),
+      k('Shares','1,046','▲ 9%',true,true,null),
+      k('Page views','11,470','▲ 9%',true,true,null),
+    ]},
+    {type:'kpis',items:[
+      k('Ad spend','€6,420','▲ 3%',true,'plain',null),
+      k('Ad impressions','142.6k','▲ 10%',true,true,null),
+      k('CTR','1.53%','▲ 0.2%',true,true,null),
+      k('CPC','€2.95','▼ 4%',false,true,null),
+      k('Leads','74','▲ 12%',true,true,null),
+      k('CPL','€86.76','▼ 6%',false,true,null),
+      k('Conversions','96','▲ 8%',true,true,null),
+      k('Cost / conv.','€66.88','▼ 5%',false,true,null),
+    ]},
+    {type:'table',w:12,title:'Top posts',src:'LinkedIn Pages API',columns:[
+      {k:'name',label:'Post'},{k:'type',label:'Type'},{k:'impr',label:'Impressions',r:true},{k:'react',label:'Reactions',r:true},{k:'comments',label:'Comments',r:true},{k:'shares',label:'Shares',r:true},{k:'ctr',label:'CTR',r:true},{k:'er',label:'Eng. rate',r:true},
+    ],rows:[
+      {name:'New EU AI Act: 5 compliance steps for GCs',type:'Article',impr:'18,400',react:'742',comments:'118',shares:'214',ctr:'2.9%',er:'7.4%'},
+      {name:'Partner spotlight: Q&A on cross-border M&A',type:'Video',impr:'14,900',react:'615',comments:'96',shares:'88',ctr:'1.6%',er:'6.1%'},
+      {name:'2026 Employment Law Handbook (gated)',type:'Document',impr:'12,300',react:'389',comments:'41',shares:'132',ctr:'4.2%',er:'6.8%'},
+      {name:'Client win: €40M dispute resolution',type:'Image',impr:'9,850',react:'508',comments:'74',shares:'61',ctr:'1.1%',er:'6.9%'},
+      {name:'Webinar recap: Data privacy in fintech',type:'Article',impr:'8,600',react:'296',comments:'52',shares:'79',ctr:'2.4%',er:'5.6%'},
+      {name:"We're hiring: Senior Associate, Corporate",type:'Image',impr:'7,200',react:'341',comments:'63',shares:'38',ctr:'1.8%',er:'6.4%'},
+      {name:'Poll: Biggest 2026 regulatory concern?',type:'Poll',impr:'6,750',react:'210',comments:'187',shares:'24',ctr:'0.9%',er:'6.3%'},
+      {name:'Thought leadership: ESG reporting shifts',type:'Article',impr:'5,400',react:'178',comments:'29',shares:'46',ctr:'2.1%',er:'4.7%'},
+    ]},
+  ]},
+  'social/overview':{ sub:'Organic Instagram & Facebook — reach, engagement & audience · vs previous 28 days', blocks:[
+    {type:'kpis',items:[
+      k('Reach','412.8k','▲ 11.4%',true,true,SP.up),
+      k('Followers','85.2k','▲ 3,180',true,true,SP.up),
+      k('Engagement rate','5.42%','▲ 0.4%',true,true,SP.up),
+      k('Total interactions','96.3k','▲ 12.7%',true,true,SP.up),
+    ]},
+    {type:'chart',kind:'line',title:'Reach & follower growth',src:'Instagram Graph API',w:12,x:WK,series:[
+      {name:'Reach (k)',color:GREEN,data:[44.1,47.8,51.2,49.6,55.4,58.9,52.3,53.5],area:true},
+      {name:'Net new followers',color:BLUE,data:[310,420,505,290,640,470,285,260]},
+    ]},
+    donut('Reach by content type',[{name:'Reels',value:54,color:GREEN},{name:'Carousels',value:24,color:BLUE},{name:'Images',value:14,color:'#5AAFF2'},{name:'Stories',value:8,color:GREY}],6),
+    donut('Follower vs non-follower reach',[{name:'Non-followers',value:63,color:GREEN},{name:'Followers',value:37,color:BLUE}],6),
+    {type:'kpis',items:[
+      k('IG Views','1.34M','▲ 9.2%',true,true,null),
+      k('Profile views','58.4k','▲ 6.8%',true,true,null),
+      k('Accounts engaged','47.6k','▲ 8.1%',true,true,null),
+      k('Website taps','6,420','▲ 5.3%',true,true,null),
+      k('Saves','9,800','▲ 14%',true,true,null),
+      k('Shares','6,400','▲ 10%',true,true,null),
+      k('FB Reach','248.7k','▲ 4.6%',true,true,null),
+      k('FB Followers','48.9k','▲ 1,240',true,true,null),
+    ]},
+    {type:'chart',kind:'bar',title:'Audience by age',w:6,x:['18-24','25-34','35-44','45-54','55-64','65+'],data:[19,38,26,11,4,2]},
+    donut('Audience gender',[{name:'Female',value:52,color:GREEN},{name:'Male',value:46,color:BLUE},{name:'Unknown',value:2,color:GREY}],6),
+    {type:'table',w:12,title:'Top posts',src:'Instagram + Facebook',columns:[
+      {k:'name',label:'Post'},{k:'plat',label:'Platform'},{k:'type',label:'Type'},{k:'reach',label:'Reach',r:true},{k:'likes',label:'Likes',r:true},{k:'comments',label:'Comments',r:true},{k:'saves',label:'Saves',r:true},{k:'er',label:'Eng. rate',r:true},
+    ],rows:[
+      {name:'Golden hour on the ridgeline',plat:'Instagram',type:'Image',reach:'36,800',likes:'4,110',comments:'205',saves:'690',er:'14.7%'},
+      {name:'Trail-tested: 3 layering systems',plat:'Instagram',type:'Carousel',reach:'41,200',likes:'3,180',comments:'388',saves:'1,620',er:'14.0%'},
+      {name:'Summit Series jacket — first look',plat:'Instagram',type:'Reel',reach:'88,400',likes:'7,240',comments:'512',saves:'2,180',er:'13.4%'},
+      {name:'Pack it in 60 sec',plat:'Instagram',type:'Reel',reach:'72,600',likes:'5,880',comments:'431',saves:'1,340',er:'12.6%'},
+      {name:'Behind the fabric: recycled shell',plat:'Instagram',type:'Carousel',reach:'28,900',likes:'2,020',comments:'266',saves:'980',er:'12.4%'},
+      {name:'Customer trip report: Dolomites',plat:'Facebook',type:'Image',reach:'22,300',likes:'1,340',comments:'184',saves:'—',er:'8.2%'},
+      {name:'Fall collection drop — shop now',plat:'Facebook',type:'Video',reach:'31,700',likes:'1,890',comments:'142',saves:'—',er:'8.0%'},
+      {name:'Weekend restock is live',plat:'Instagram',type:'Story',reach:'19,400',likes:'640',comments:'58',saves:'—',er:'4.7%'},
+    ]},
+  ]},
 
   /* ---------------- CLIENTS (agency) ---------------- */
   'clients/portfolio':{ sub:'12 clients · $214k managed spend this month', blocks:[
@@ -248,6 +366,7 @@ const C = {
     {type:'chart',kind:'line',title:'Blended ROAS trend',w:6,x:WK,series:[{name:'ROAS',color:GREEN,data:[4.2,4.4,4.3,4.6,4.5,4.7,4.8,4.9],area:true}]},
   ]},
   'clients/alerts':{ sub:'KPIs that crossed a threshold', blocks:[
+    {type:'digest',w:12},
     {type:'table',title:'Open alerts',w:12,columns:[{k:'name',label:'Client'},{k:'metric',label:'Metric'},{k:'msg',label:'Alert'},{k:'when',label:'When',r:true}],rows:[
       {name:'Harbor Dental',metric:'ROAS',msg:'ROAS dropped below 2.5x',msg_s:'bad',when:'2h ago'},{name:'Briar & Co',metric:'CPA',msg:'CPA up 38% week-over-week',msg_s:'bad',when:'6h ago'},{name:'Apex Legal',metric:'CPL',msg:'CPL above $120 target',msg_s:'bad',when:'1d ago'},{name:'Northwind',metric:'Conv. rate',msg:'Conversion rate down 2.7%',msg_s:'plain',when:'1d ago'},
     ]},

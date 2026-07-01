@@ -6,5 +6,6 @@ const subs = new Set()
 export const clientStore = {
   get: () => clients,
   add: c => { clients = [...clients, c]; subs.forEach(cb => cb()) },
+  setLogo: (id, logo) => { clients = clients.map(c => c.id === id ? { ...c, logo } : c); subs.forEach(cb => cb()) },
   subscribe: cb => { subs.add(cb); return () => subs.delete(cb) },
 }
